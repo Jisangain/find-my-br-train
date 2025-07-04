@@ -34,6 +34,6 @@ async def github_webhook(request: Request):
     subprocess.run("nohup bash restart_app.sh > restart.log 2>&1 &", shell=True)
     return PlainTextResponse("Pulled and restarted", status_code=200)
 
-@app.post("/test1")
+@app.post("/test2")
 async def webhook(request: Request):
     return PlainTextResponse("Auto restart working", status_code=200)

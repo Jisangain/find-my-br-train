@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /path/to/your/fastapi || { echo "Directory not found"; exit 1; }
+cd find-my-br-train || echo "Directory not found"
 
 # Kill existing Gunicorn process
 PID=$(ps aux | grep '[g]unicorn.*main:app' | awk '{print $2}')

@@ -11,6 +11,9 @@ else
     echo "No running gunicorn process found."
 fi
 
+# Remove untracked files that would be overwritten
+git clean -fd
+
 # Reset and pull latest code
 git reset --hard origin/master
 git pull origin master

@@ -1,5 +1,6 @@
-# Requirements for Find My BR Train Mock Server
+# Requirements for Find My BR Train FastAPI Server
 # Install with: pip install -r requirements.txt
 
-Flask==2.3.3
-Flask-CORS==4.0.0
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.0

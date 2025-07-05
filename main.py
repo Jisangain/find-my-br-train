@@ -66,7 +66,13 @@ def load_data():
 
 class TimedItem:
     def __init__(self, value: dict):
-        self.timestamp = value["timestamp"]
+        # Convert timestamp from milliseconds to seconds if needed
+        timestamp = value["timestamp"]
+        # If timestamp is in milliseconds, convert to seconds
+        if timestamp > 2500000000:
+            self.timestamp = timestamp / 1000.0
+        else:
+            self.timestamp = timestamp
         self.user_id = value["user_id"]
         self.train_id = value["train_id"]
         self.position = value["position"]
@@ -106,34 +112,40 @@ class AsyncTimedStack:
         """Process the stack to update train positions"""
         async with self._lock2:
             async with self._lock3:
-                for train_id, position in self._trains.items():
-                    if len(position) == 1:
-                        self.unconfirmed_position[train_id] = [position[0][0], position[0][1]]
-                    elif len(position) == 2:
-                        self.unconfirmed_position[train_id] = [(position[0][0] + position[0][1]) / 2.0, max(position[0][1], position[1][1])]
-                    elif len(position) == 3:
-                        self.unconfirmed_position[train_id] = [(position[-2] + position[-3]) / 2.0, max(position[-2][1], position[-3][1])]
+                for train_id, positions in self._trains.items():
+                    if len(positions) == 1:
+                        self.unconfirmed_position[train_id] = [positions[0][0], positions[0][1]]
+                    elif len(positions) == 2:
+                        # Average the positions, use max timestamp
+                        avg_position = (positions[0][0] + positions[1][0]) / 2.0
+                        max_timestamp = max(positions[0][1], positions[1][1])
+                        self.unconfirmed_position[train_id] = [avg_position, max_timestamp]
+                    elif len(positions) == 3:
+                        # Average two positions, use max timestamp
+                        avg_position = (positions[-2][0] + positions[-3][0]) / 2.0
+                        max_timestamp = max(positions[-2][1], positions[-3][1])
+                        self.unconfirmed_position[train_id] = [avg_position, max_timestamp]
                     
 
 
-                    if len(position) > 3:
-                        n = len(position)
+                    if len(positions) > 3:
+                        n = len(positions)
                         k = int(0.67 * n)
                         best_i = 0
-                        best_span = position[k-1] - position[0]
+                        best_span = positions[k-1][0] - positions[0][0]
 
                         for i in range(1, n - k + 1):
-                            span = position[i + k - 1] - position[i]
+                            span = positions[i + k - 1][0] - positions[i][0]
                             if span < best_span:
                                 best_span = span
                                 best_i = i
-                        slice = position[best_i : best_i + k]
+                        slice = positions[best_i : best_i + k]
                         mid_index = k // 2
                         timestamp = max(item[1] for item in slice)
                         middle_value = (
-                            slice[mid_index]
+                            slice[mid_index][0]
                             if k % 2 == 1
-                            else 0.5 * (slice[mid_index - 1] + slice[mid_index])
+                            else 0.5 * (slice[mid_index - 1][0] + slice[mid_index][0])
                         )
                         self.confirmed_position[train_id] = [middle_value, timestamp]
                         
@@ -151,7 +163,7 @@ class AsyncTimedStack:
                     position, timestamp = self.confirmed_position[train_id]
                     train_data["confirmed"] = {
                         "position": position,
-                        "timestamp": timestamp
+                        "timestamp": int(timestamp)  # Ensure timestamp is integer seconds
                     }
 
                 # Add unconfirmed position if exists
@@ -159,7 +171,7 @@ class AsyncTimedStack:
                     position, timestamp = self.unconfirmed_position[train_id]
                     train_data["unconfirmed"] = {
                         "position": position,
-                        "timestamp": timestamp
+                        "timestamp": int(timestamp)  # Ensure timestamp is integer seconds
                     }
 
                 # Only add if we have any data

@@ -7,17 +7,17 @@
     "online_user_update_delay": 10,
     "update_delay": 30,
     "sid_to_sname": {
-      "00001": "dhaka",
-      "00002": "chittagong", 
-      "00003": "sylhet",
-      "00004": "rajshahi",
-      "00005": "khulna",
-      "00006": "comilla",
-      "00007": "mymensingh",
-      "00008": "rangpur",
-      "00009": "narayanganj",
-      "00010": "gazipur",
-      "00011": "brahmanbaria"
+      "0001": "dhaka",
+      "0002": "chittagong", 
+      "0003": "sylhet",
+      "0004": "rajshahi",
+      "0005": "khulna",
+      "0006": "comilla",
+      "0007": "mymensingh",
+      "0008": "rangpur",
+      "0009": "narayanganj",
+      "0010": "gazipur",
+      "0011": "brahmanbaria"
     },
     "sid_to_sloc": {
       "0001": [24.71194782785143, 92.89540247340949],

@@ -1,8 +1,11 @@
 {
-  "CURRENT_REVISION": 131,
+  "CURRENT_REVISION": 132,
   "UPDATE_DELAY": 20,
   "ONLINE_USER_UPDATE_DELAY": 10,
   "DATA": {
+    "Revision": 132,
+    "online_user_update_delay": 10,
+    "update_delay": 20,
     "sid_to_sloc": {
       "ABD": [24.2598727,88.971789],
       "ADI": [25.9241917,89.3487255],

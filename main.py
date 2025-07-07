@@ -54,13 +54,15 @@ def load_data():
         print("Warning: data.json not found, using fallback data")
         # Fallback data in case JSON file is missing
         return {
-            "Revision": 0,
-            "online_user_update_delay": 10,
-            "update_delay": 20,
-            "sid_to_sname": {"001": "dhaka", "002": "chittagong"},
-            "sid_to_sloc": {"001": [24.7119, 92.8954], "002": [22.3569, 91.7832]},
-            "train_names": {"101": "Test Express"},
-            "tid_to_stations": {"101": [["001", 1, "22:30"], ["002", 1, "01:45"]]}
+            "CURRENT_REVISION": 0,
+            "ONLINE_USER_UPDATE_DELAY": 10,
+            "UPDATE_DELAY": 20,
+            "DATA": {
+                "sid_to_sname": {"001": "dhaka", "002": "chittagong"},
+                "sid_to_sloc": {"001": [24.7119, 92.8954], "002": [22.3569, 91.7832]},
+                "train_names": {"101": "Test Express"},
+                "tid_to_stations": {"101": [["001", 1, "22:30"], ["002", 1, "01:45"]]}
+            }
         }, 127
 
 

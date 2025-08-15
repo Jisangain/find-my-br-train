@@ -1,8 +1,8 @@
 # main.py
 from fastapi import FastAPI, Request, HTTPException, status
-from fastapi.responses import PlainTextResponse
+from fastapi.responses import PlainTextResponse, HTMLResponse
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional, Dict, Any, List
 import time
 import json
@@ -13,6 +13,7 @@ import hmac
 import hashlib
 import os
 import asyncio
+from datetime import datetime, timedelta
 
 app = FastAPI()
 
@@ -152,6 +153,68 @@ class AsyncTimedStack:
                         self.confirmed_position[train_id] = [middle_value, timestamp]
                         
 
+    def reset_train_positions_for_schedule(self):
+        """Reset train positions to 0 one hour before their scheduled start time"""
+        try:
+            current_time = datetime.now()
+            tid_to_stations = DATA.get("tid_to_stations", {})
+            
+            trains_to_reset = []
+            
+            for train_id, stations in tid_to_stations.items():
+                if not stations:
+                    continue
+                    
+                # Get the first station's departure time
+                first_station = stations[0]
+                if len(first_station) >= 3:
+                    departure_time_str = first_station[2]  # Time format like "15:10"
+                    
+                    try:
+                        # Parse departure time
+                        departure_hour, departure_minute = map(int, departure_time_str.split(':'))
+                        
+                        # Create today's departure datetime
+                        departure_today = current_time.replace(
+                            hour=departure_hour, 
+                            minute=departure_minute, 
+                            second=0, 
+                            microsecond=0
+                        )
+                        
+                        # If departure time has passed today, consider tomorrow
+                        if departure_today < current_time:
+                            departure_today += timedelta(days=1)
+                        
+                        # Reset position if we're within 1 hour of departure
+                        time_until_departure = departure_today - current_time
+                        if timedelta(0) <= time_until_departure <= timedelta(hours=1):
+                            trains_to_reset.append(train_id)
+                            
+                    except (ValueError, IndexError):
+                        # Skip trains with invalid time format
+                        continue
+            
+            # Reset positions for qualifying trains
+            reset_count = 0
+            for train_id in trains_to_reset:
+                if train_id in self.confirmed_position or train_id in self.unconfirmed_position:
+                    # Reset to position 0
+                    reset_timestamp = time.time()
+                    self.confirmed_position[train_id] = [0.0, reset_timestamp]
+                    
+                    # Remove from unconfirmed if exists
+                    if train_id in self.unconfirmed_position:
+                        del self.unconfirmed_position[train_id]
+                    
+                    reset_count += 1
+            
+            if reset_count > 0:
+                print(f"🔄 Reset {reset_count} trains to position 0 (approaching departure time)")
+                
+        except Exception as e:
+            print(f"Error in train position reset: {e}")
+
     async def get_all_positions(self, train_ids: List[str]) -> Dict[str, Dict[str, Dict[str, float]]]:
         """Get both confirmed and unconfirmed positions for specified train IDs"""
         positions = {}
@@ -191,6 +254,11 @@ async def periodic_clean_and_preprocess(stack: AsyncTimedStack, interval_seconds
     while True:
         await stack.clean_and_preprocess()
         await stack.process()
+        
+        # Reset train positions if they're approaching departure time (every 5 minutes)
+        if int(time.time()) % 300 < interval_seconds:  # Check every 5 minutes
+            stack.reset_train_positions_for_schedule()
+        
         await asyncio.sleep(interval_seconds)
 
         
@@ -199,6 +267,109 @@ async def periodic_clean_and_preprocess(stack: AsyncTimedStack, interval_seconds
 # Load data at startup
 DATA, CURRENT_REVISION = load_data()
 
+# Utility function to calculate distance between two points using Haversine formula
+def calculate_distance(lat1, lon1, lat2, lon2):
+    """Calculate the distance between two points on Earth using Haversine formula"""
+    import math
+    
+    # Convert latitude and longitude from degrees to radians
+    lat1, lon1, lat2, lon2 = map(math.radians, [lat1, lon1, lat2, lon2])
+    
+    # Haversine formula
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+    a = math.sin(dlat/2)**2 + math.cos(lat1) * math.cos(lat2) * math.sin(dlon/2)**2
+    c = 2 * math.asin(math.sqrt(a))
+    
+    # Radius of earth in kilometers
+    r = 6371
+    return c * r
+
+# Precalculated train routes (only stations with stop_type = 1)
+TRAIN_ROUTES = {}
+
+# Precalculated distances between stations (sorted by distance)
+STATION_DISTANCES = {}
+
+def precalculate_train_routes():
+    """Precalculate train routes with only regular stops (middle value = 1) for faster calculations"""
+    global TRAIN_ROUTES
+    tid_to_stations = DATA.get("tid_to_stations", {})
+    
+    for train_id, stations in tid_to_stations.items():
+        # Filter stations with stop_type = 1 (middle value)
+        regular_stops = [station[0] for station in stations if len(station) >= 2 and station[1] == 1]
+        TRAIN_ROUTES[train_id] = regular_stops
+    
+    print(f"Precalculated routes for {len(TRAIN_ROUTES)} trains with regular stops only")
+
+def precalculate_station_distances():
+    """Precalculate distances from each station to all other stations, sorted by distance"""
+    global STATION_DISTANCES
+    sid_to_sloc = DATA.get("sid_to_sloc", {})
+    
+    # Filter out stations with invalid coordinates (0.0, 0.0)
+    valid_stations = {
+        station_id: coords for station_id, coords in sid_to_sloc.items()
+        if not (coords[0] == 0.0 and coords[1] == 0.0)
+    }
+    
+    print(f"Calculating distances between {len(valid_stations)} stations...")
+    
+    for from_station, from_coords in valid_stations.items():
+        distances = []
+        
+        for to_station, to_coords in valid_stations.items():
+            if from_station != to_station:  # Skip self-distance
+                distance = calculate_distance(
+                    from_coords[0], from_coords[1], 
+                    to_coords[0], to_coords[1]
+                )
+                distances.append((to_station, distance))
+        
+        # Sort by distance (closest first)
+        distances.sort(key=lambda x: x[1])
+        STATION_DISTANCES[from_station] = distances
+    
+    print(f"Precalculated and sorted distances for {len(STATION_DISTANCES)} stations")
+
+def get_nearby_stations(station_id, max_distance_km):
+    """Get nearby stations within the specified distance (optimized lookup)"""
+    if station_id not in STATION_DISTANCES:
+        return []
+    
+    nearby = []
+    for other_station, distance in STATION_DISTANCES[station_id]:
+        if distance <= max_distance_km:
+            nearby.append(other_station)
+        else:
+            break  # Since distances are sorted, we can stop here
+    
+    return nearby
+
+def get_nearest_station(reference_station, candidate_stations):
+    """Get the nearest station from a list of candidates to a reference station"""
+    if not candidate_stations or reference_station not in STATION_DISTANCES:
+        return candidate_stations
+    
+    # If reference station is in the candidates, return it (distance = 0)
+    if reference_station in candidate_stations:
+        return [reference_station]
+    
+    # Find the nearest station from candidates
+    nearest_station = None
+    nearest_distance = float('inf')
+    
+    for station, distance in STATION_DISTANCES[reference_station]:
+        if station in candidate_stations and distance < nearest_distance:
+            nearest_station = station
+            nearest_distance = distance
+    
+    return [nearest_station] if nearest_station else candidate_stations
+
+# Precalculate routes and distances at startup
+precalculate_train_routes()
+precalculate_station_distances()
 # Store current train positions (simulation) - separate confirmed and unconfirmed
 train_positions_confirmed = {}
 train_positions_unconfirmed = {}
@@ -346,6 +517,109 @@ async def report_issue_post(report: IssueReport):
 
     return {"status": "success", "message": "Issue report received"}
 
+@app.get("/report", response_class=HTMLResponse)
+async def view_reports():
+    """View all issue reports in simple HTML format"""
+    try:
+        reports = []
+        
+        # Read reports from the log file
+        try:
+            with open("issue_reports.log", "r") as f:
+                for line in f:
+                    if line.strip():
+                        try:
+                            report = json.loads(line.strip())
+                            reports.append(report)
+                        except json.JSONDecodeError:
+                            continue
+        except FileNotFoundError:
+            pass  # No reports file exists yet
+        
+        # Sort reports by timestamp (newest first)
+        reports.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        
+        # Generate statistics
+        total_reports = len(reports)
+        categorized_issues = len([r for r in reports if r.get('issue_type')])
+        affected_trains = len(set(r.get('train_id', 'Unknown') for r in reports))
+        unique_users = len(set(r.get('user_id', 'Anonymous') for r in reports))
+        
+        # Generate simple HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Find My BR Train - Issue Reports</title>
+            <meta charset="UTF-8">
+        </head>
+        <body>
+            <h1>🚂 Find My BR Train - Issue Reports</h1>
+            
+            <h2>📊 Statistics</h2>
+            <ul>
+                <li><strong>Total Reports:</strong> {total_reports}</li>
+                <li><strong>Categorized Issues:</strong> {categorized_issues}</li>
+                <li><strong>Affected Trains:</strong> {affected_trains}</li>
+                <li><strong>Unique Users:</strong> {unique_users}</li>
+            </ul>
+            
+            <h2>📋 Reports ({total_reports} total)</h2>
+        """
+        
+        if not reports:
+            html_content += "<p><em>No reports submitted yet.</em></p>"
+        else:
+            for i, report in enumerate(reports):
+                issue_type = report.get('issue_type', 'General Issue')
+                train_name = report.get('train_name', 'Unknown Train')
+                train_id = report.get('train_id', 'Unknown ID')
+                user_id = report.get('user_id', 'Anonymous')
+                timestamp = report.get('timestamp', 'Unknown Time')
+                description = report.get('description', 'No description provided')
+                blue_pos = report.get('blue_train_position')
+                gray_pos = report.get('gray_train_position')
+                is_gps = report.get('is_using_gps', False)
+                
+                html_content += f"""
+                <div style="border: 1px solid #ccc; margin: 10px 0; padding: 15px;">
+                    <h3>#{i+1}: {issue_type}</h3>
+                    <p><strong>Train:</strong> {train_name} ({train_id})</p>
+                    <p><strong>Reported By:</strong> {user_id}</p>
+                    <p><strong>Time:</strong> {timestamp}</p>
+                    <p><strong>Description:</strong> {description}</p>
+                """
+                
+                if blue_pos or gray_pos:
+                    html_content += "<p><strong>Position Information:</strong></p><ul>"
+                    if blue_pos:
+                        gps_indicator = "(GPS)" if is_gps else "(System)"
+                        html_content += f"<li>Blue Train Position: {blue_pos} {gps_indicator}</li>"
+                    if gray_pos:
+                        html_content += f"<li>Gray Train Position: {gray_pos} (User Report)</li>"
+                    html_content += "</ul>"
+                
+                html_content += "</div>"
+        
+        html_content += f"""
+            <hr>
+            <p><small>Last updated: {int(time.time())} | <a href="/report">Refresh</a></small></p>
+        </body>
+        </html>
+        """
+        
+        return HTMLResponse(content=html_content)
+        
+    except Exception as e:
+        return HTMLResponse(content=f"""
+        <html>
+        <body>
+            <h1>Error Loading Reports</h1>
+            <p>Error: {str(e)}</p>
+        </body>
+        </html>
+        """)
+
 @app.get("/health")
 async def health_check():
     """Health check endpoint"""
@@ -355,6 +629,92 @@ async def health_check():
         "revision": CURRENT_REVISION,
         "active_trains_confirmed": len(train_positions_confirmed),
         "active_trains_unconfirmed": len(train_positions_unconfirmed)
+    }
+
+class NearbyRouteRequest(BaseModel):
+    from_station: str = Field(alias="from")  
+    to: str
+
+@app.post("/nearbyroute")
+async def find_nearby_routes(request: NearbyRouteRequest):
+    """Find alternative train routes through nearby stations (optimized with precalculated routes and distances)"""
+    from_station = request.from_station.upper()
+    to_station = request.to.upper()
+    
+    sid_to_sloc = DATA.get("sid_to_sloc", {})
+    
+    if from_station not in sid_to_sloc or to_station not in sid_to_sloc:
+        raise HTTPException(status_code=400, detail="One or both stations not found")
+    
+    # Check for invalid coordinates using the sid_to_sloc data
+    from_coords = sid_to_sloc[from_station]
+    to_coords = sid_to_sloc[to_station]
+    
+    if (from_coords[0] == 0.0 and from_coords[1] == 0.0) or (to_coords[0] == 0.0 and to_coords[1] == 0.0):
+        raise HTTPException(status_code=400, detail="Station coordinates not available")
+    
+    # Get direct distance from precalculated distances
+    direct_distance = None
+    if from_station in STATION_DISTANCES:
+        for station, distance in STATION_DISTANCES[from_station]:
+            if station == to_station:
+                direct_distance = distance
+                break
+    
+    if direct_distance is None:
+        raise HTTPException(status_code=400, detail="Could not calculate distance between stations")
+    
+    
+    direct_trains = set()
+    for train_id, station_ids in TRAIN_ROUTES.items():
+        if from_station in station_ids and to_station in station_ids:
+            from_index = station_ids.index(from_station)
+            to_index = station_ids.index(to_station)
+            
+            if from_index < to_index:
+                direct_trains.add(train_id)
+    
+    
+    search_radius = direct_distance * 0.15  # 15% of direct distance as search radius
+    
+    
+    nearby_from_list = get_nearby_stations(from_station, search_radius)
+    nearby_from = {from_station}  
+    nearby_from.update(nearby_from_list)
+    
+    nearby_to_list = get_nearby_stations(to_station, search_radius)
+    nearby_to = {to_station}  
+    nearby_to.update(nearby_to_list)
+    
+    
+    alternative_trains = {}
+    for train_id, station_ids in TRAIN_ROUTES.items():
+        if train_id in direct_trains:
+            continue  
+        
+        train_nearby_from = [station for station in station_ids if station in nearby_from]
+        train_nearby_to = [station for station in station_ids if station in nearby_to]
+        
+        if train_nearby_from and train_nearby_to:
+            from_indices = [i for i, station in enumerate(station_ids) if station in nearby_from]
+            to_indices = [i for i, station in enumerate(station_ids) if station in nearby_to]
+            
+            # Check if any from station comes before any to station
+            if any(from_idx < to_idx for from_idx in from_indices for to_idx in to_indices):
+                # Get only the nearest stations
+                nearest_from = get_nearest_station(from_station, train_nearby_from)
+                nearest_to = get_nearest_station(to_station, train_nearby_to)
+                
+                # Store the nearest stations this train connects
+                alternative_trains[train_id] = {
+                    "from_nearby": nearest_from,
+                    "to_nearby": nearest_to
+                }
+    
+    
+    return {
+        "alternative_trains": alternative_trains,
+        "total_alternative_routes": len(alternative_trains)
     }
 
 @app.get("/")
@@ -370,6 +730,8 @@ async def root():
             "/current/{train_ids}": "GET - Get current train positions",
             "/sendupdate": "POST - Submit location update",
             "/fix": "POST - Report incorrect information",
+            "/report": "GET - View all issue reports in webpage",
+            "/nearbyroute": "POST - Find alternative routes through nearby stations",
             "/health": "GET - Server health check",
             "/docs": "GET - Interactive API documentation",
         },

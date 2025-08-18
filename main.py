@@ -631,6 +631,105 @@ async def health_check():
         "active_trains_unconfirmed": len(train_positions_unconfirmed)
     }
 
+@app.get("/live", response_class=HTMLResponse)
+async def view_live_trains():
+    """View all live trains that recently received user data (simple HTML format)"""
+    try:
+        # Get live trains from the time stack
+        confirmed_trains = list(stack.confirmed_position.keys()) if stack.confirmed_position else []
+        unconfirmed_trains = list(stack.unconfirmed_position.keys()) if stack.unconfirmed_position else []
+        
+        # Combine and deduplicate
+        all_live_trains = list(set(confirmed_trains + unconfirmed_trains))
+        all_live_trains.sort()  # Sort train IDs for consistent display
+        
+        # Get train names from DATA
+        train_names = {}
+        tid_to_name = DATA.get("tid_to_name", {})
+        
+        # Generate statistics
+        total_live_trains = len(all_live_trains)
+        confirmed_count = len(confirmed_trains)
+        unconfirmed_count = len(unconfirmed_trains)
+        
+        # Generate simple HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Find My BR Train - Live Trains</title>
+            <meta charset="UTF-8">
+        </head>
+        <body>
+            <h1>🚂 Find My BR Train - Live Trains</h1>
+            
+            <h2>📊 Live Statistics</h2>
+            <ul>
+                <li><strong>Total Live Trains:</strong> {total_live_trains}</li>
+                <li><strong>Confirmed Positions:</strong> {confirmed_count}</li>
+                <li><strong>Unconfirmed Positions:</strong> {unconfirmed_count}</li>
+                <li><strong>Data Age:</strong> Last 10 minutes</li>
+            </ul>
+            
+            <h2>🔴 Live Trains ({total_live_trains} trains)</h2>
+        """
+        
+        if not all_live_trains:
+            html_content += "<p><em>No trains are currently live (no recent user data).</em></p>"
+        else:
+            html_content += "<div>"
+            
+            for i, train_id in enumerate(all_live_trains):
+                train_name = tid_to_name.get(train_id, "Unknown Train")
+                
+                # Determine status
+                status = ""
+                position_info = ""
+                timestamp_info = ""
+                
+                if train_id in confirmed_trains:
+                    status = "✅ Confirmed"
+                    if train_id in stack.confirmed_position:
+                        position, timestamp = stack.confirmed_position[train_id]
+                        position_info = f"Position: {position:.2f}"
+                        timestamp_info = f"Updated: {int(time.time() - timestamp)}s ago"
+                elif train_id in unconfirmed_trains:
+                    status = "⚠️ Unconfirmed"
+                    if train_id in stack.unconfirmed_position:
+                        position, timestamp = stack.unconfirmed_position[train_id]
+                        position_info = f"Position: {position:.2f}"
+                        timestamp_info = f"Updated: {int(time.time() - timestamp)}s ago"
+                
+                html_content += f"""
+                <div style="border: 1px solid #ddd; margin: 5px 0; padding: 10px;">
+                    <h3>#{i+1}: {train_name} ({train_id})</h3>
+                    <p><strong>Status:</strong> {status}</p>
+                    <p><strong>{position_info}</strong></p>
+                    <p><small>{timestamp_info}</small></p>
+                </div>
+                """
+            
+            html_content += "</div>"
+        
+        html_content += f"""
+            <hr>
+            <p><small>Last updated: {int(time.time())} | <a href="/live">Refresh</a> | <a href="/health">Health Check</a></small></p>
+        </body>
+        </html>
+        """
+        
+        return HTMLResponse(content=html_content)
+        
+    except Exception as e:
+        return HTMLResponse(content=f"""
+        <html>
+        <body>
+            <h1>Error Loading Live Trains</h1>
+            <p>Error: {str(e)}</p>
+        </body>
+        </html>
+        """)
+
 class NearbyRouteRequest(BaseModel):
     from_station: str = Field(alias="from")  
     to: str

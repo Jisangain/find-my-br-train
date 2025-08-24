@@ -737,15 +737,29 @@ class NearbyRouteRequest(BaseModel):
 @app.post("/nearbyroute")
 async def find_nearby_routes(request: NearbyRouteRequest):
     """Find alternative train routes through nearby stations (optimized with precalculated routes and distances)"""
-    from_station = request.from_station.upper()
-    to_station = request.to.upper()
+    
+    from_station_input = request.from_station.strip()
+    to_station_input = request.to.strip()
     
     sid_to_sloc = DATA.get("sid_to_sloc", {})
     
-    if from_station not in sid_to_sloc or to_station not in sid_to_sloc:
-        raise HTTPException(status_code=400, detail="One or both stations not found")
+    # Case-insensitive station lookup - create mapping from lowercase to actual station ID
+    station_lookup = {station.lower(): station for station in sid_to_sloc.keys()}
     
-    # Check for invalid coordinates using the sid_to_sloc data
+    # Find the correct station IDs (case-insensitive)
+    from_station = station_lookup.get(from_station_input.lower())
+    to_station = station_lookup.get(to_station_input.lower())
+    
+    if from_station is None or to_station is None:
+        # Show some similar stations for debugging
+        available_stations = list(sid_to_sloc.keys())
+        similar_from = [s for s in available_stations if from_station_input.lower() in s.lower() or s.lower() in from_station_input.lower()][:5]
+        similar_to = [s for s in available_stations if to_station_input.lower() in s.lower() or s.lower() in to_station_input.lower()][:5]
+        
+        error_msg = f"Station not found. From: '{from_station_input}' (similar: {similar_from}), To: '{to_station_input}' (similar: {similar_to})"
+        raise HTTPException(status_code=400, detail=error_msg)
+    
+    # Check for invalid coordinates
     from_coords = sid_to_sloc[from_station]
     to_coords = sid_to_sloc[to_station]
     

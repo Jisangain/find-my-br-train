@@ -13,7 +13,11 @@ import hmac
 import hashlib
 import os
 import asyncio
+import requests
 from datetime import datetime, timedelta
+
+# In-memory cache for seat data
+seat_cache = {}  # Format: {cache_key: {"data": seat_data, "timestamp": datetime, "expires_at": datetime}}
 
 app = FastAPI()
 
@@ -50,21 +54,16 @@ def load_data():
     try:
         with open('data.json', 'r') as f:
             data = json.load(f)
-            return data['DATA'], data['CURRENT_REVISION']
+            return data, data['Revision']
     except FileNotFoundError:
         print("Warning: data.json not found, using fallback data")
         # Fallback data in case JSON file is missing
         return {
-            "CURRENT_REVISION": 0,
-            "ONLINE_USER_UPDATE_DELAY": 10,
-            "UPDATE_DELAY": 20,
-            "DATA": {
-                "sid_to_sname": {"001": "dhaka", "002": "chittagong"},
+                "sid_to_sname": {"001": "Dhaka", "002": "Chittagong"},
                 "sid_to_sloc": {"001": [24.7119, 92.8954], "002": [22.3569, 91.7832]},
                 "train_names": {"101": "Test Express"},
                 "tid_to_stations": {"101": [["001", 1, "22:30"], ["002", 1, "01:45"]]}
-            }
-        }, 127
+            }, 127
 
 
 class TimedItem:
@@ -631,6 +630,96 @@ async def health_check():
         "active_trains_unconfirmed": len(train_positions_unconfirmed)
     }
 
+@app.get("/token")
+async def get_token():
+    """Return API token from environment variable TRAIN_API_TOKEN"""
+    token = os.getenv("TRAIN_API_TOKEN", "")
+    return {"token": token}
+
+class SeatAvailabilityRequest(BaseModel):
+    from_city: str
+    to_city: str
+    date_of_journey: str
+    seat_class: str = "ALL"
+
+@app.post("/seat-availability")
+async def get_seat_availability(request: SeatAvailabilityRequest):
+    """Get seat availability data with in-memory caching logic"""
+    
+    # Create cache key
+    cache_key = f"{request.from_city}_{request.to_city}_{request.date_of_journey}_{request.seat_class}"
+    
+    # Check if we have cached data in memory
+    current_time = datetime.now()
+    
+    if cache_key in seat_cache:
+        cached_entry = seat_cache[cache_key]
+        time_passed = int((current_time - cached_entry["timestamp"]).total_seconds() / 60)
+        return {
+            "isexist": True,
+            "rawdata": cached_entry["data"],
+            "timepassed": time_passed
+        }
+    return {
+        "isexist": False,
+        "rawdata": None,
+        "timepassed": None
+    }
+
+@app.post("/refresh-seat-data")
+async def refresh_seat_data(request: SeatAvailabilityRequest):
+    """Receive and cache seat data sent from the Flutter app"""
+    
+    try:
+        # The app should send the raw data in the request
+        # We'll expect the raw data to be included in the request
+        return {
+            "status": "success",
+            "message": "Please send raw data in the request body"
+        }
+            
+    except Exception as e:
+        print(f"Error saving seat data: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+class SeatDataCacheRequest(BaseModel):
+    from_city: str
+    to_city: str
+    date_of_journey: str
+    seat_class: str = "ALL"
+    rawdata: dict  # The actual seat data from external API
+
+@app.post("/cache-seat-data")
+async def cache_seat_data(request: SeatDataCacheRequest):
+    """Cache seat data in memory sent from the Flutter app after it fetches from external API"""
+    
+    try:
+        # Create cache key
+        cache_key = f"{request.from_city}_{request.to_city}_{request.date_of_journey}_{request.seat_class}"
+        
+        # Store in memory with 5-minute expiration
+        current_time = datetime.now()
+        expires_at = current_time + timedelta(minutes=5)
+        
+        seat_cache[cache_key] = {
+            "timestamp": current_time,
+            "expires_at": expires_at,
+            "data": request.rawdata
+        }
+        
+        print(f"Cached seat data in memory for route: {request.from_city} -> {request.to_city} on {request.date_of_journey}")
+        
+        return {
+            "isexist": True,
+            "rawdata": request.rawdata,
+            "timepassed": 0,
+            "status": "cached_successfully_in_memory"
+        }
+        
+    except Exception as e:
+        print(f"Error caching seat data in memory: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/live", response_class=HTMLResponse)
 async def view_live_trains():
     """View all live trains that recently received user data (simple HTML format)"""
@@ -846,6 +935,9 @@ async def root():
             "/report": "GET - View all issue reports in webpage",
             "/nearbyroute": "POST - Find alternative routes through nearby stations",
             "/health": "GET - Server health check",
+            "/token": "GET - Return API token from environment",
+            "/seat-availability": "POST - Get seat availability with caching",
+            "/cache-seat-data": "POST - Cache seat data sent from Flutter app",
             "/docs": "GET - Interactive API documentation",
         },
         "github": "https://github.com/jisangain/find-my-br-train",

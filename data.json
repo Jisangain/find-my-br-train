@@ -1,9 +1,5 @@
 {
-  "CURRENT_REVISION": 135,
-  "UPDATE_DELAY": 20,
-  "ONLINE_USER_UPDATE_DELAY": 10,
-  "DATA": {
-    "Revision": 135,
+    "Revision": 136,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "sid_to_sloc": {
@@ -2691,5 +2687,4 @@
             ["Lalmonirhat", 1, "12:55"]
         ]
     }
-  }
 }

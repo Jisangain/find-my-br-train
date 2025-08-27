@@ -13,7 +13,6 @@ import hmac
 import hashlib
 import os
 import asyncio
-import requests
 from datetime import datetime, timedelta
 
 # In-memory cache for seat data

@@ -13,10 +13,17 @@ import hmac
 import hashlib
 import os
 import asyncio
+import requests
 from datetime import datetime, timedelta
 
 # In-memory cache for seat data
 seat_cache = {}  # Format: {cache_key: {"data": seat_data, "timestamp": datetime, "expires_at": datetime}}
+
+# In-memory cache for API token
+api_token_cache = {
+    "token": None,
+    "updated_at": None
+}
 
 app = FastAPI()
 
@@ -631,9 +638,41 @@ async def health_check():
 
 @app.get("/token")
 async def get_token():
-    """Return API token from environment variable TRAIN_API_TOKEN"""
+    """Return API token from cache or environment variable TRAIN_API_TOKEN"""
+    # First check if we have a cached token
+    if api_token_cache["token"] is not None:
+        return {"token": api_token_cache["token"], "source": "cache", "updated_at": api_token_cache["updated_at"]}
+    
+    # Fall back to environment variable
     token = os.getenv("TRAIN_API_TOKEN", "")
-    return {"token": token}
+    return {"token": token, "source": "environment"}
+
+class TokenUpdateRequest(BaseModel):
+    token: str
+
+@app.post("/update-token")
+async def update_token(request: TokenUpdateRequest):
+    """Update the API token in cache"""
+    try:
+        if not request.token or not request.token.strip():
+            raise HTTPException(status_code=400, detail="Token cannot be empty")
+        
+        # Update the token cache
+        api_token_cache["token"] = request.token.strip()
+        api_token_cache["updated_at"] = int(time.time())
+        
+        print(f"🔄 API TOKEN UPDATED: {request.token[:20]}... (timestamp: {api_token_cache['updated_at']})")
+        
+        return {
+            "status": "success",
+            "message": "Token updated successfully",
+            "token_preview": f"{request.token[:20]}...",
+            "updated_at": api_token_cache["updated_at"]
+        }
+        
+    except Exception as e:
+        print(f"❌ Error updating token: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 class SeatAvailabilityRequest(BaseModel):
     from_city: str
@@ -934,7 +973,8 @@ async def root():
             "/report": "GET - View all issue reports in webpage",
             "/nearbyroute": "POST - Find alternative routes through nearby stations",
             "/health": "GET - Server health check",
-            "/token": "GET - Return API token from environment",
+            "/token": "GET - Return API token from cache or environment",
+            "/update-token": "POST - Update API token in cache",
             "/seat-availability": "POST - Get seat availability with caching",
             "/cache-seat-data": "POST - Cache seat data sent from Flutter app",
             "/docs": "GET - Interactive API documentation",

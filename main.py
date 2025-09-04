@@ -25,6 +25,14 @@ api_token_cache = {
     "updated_at": None
 }
 
+# Token generation permission control
+token_permission = {
+    "is_blocked": False,
+    "block_until": None,
+    "last_permission_granted": None,
+    "last_token_received": None
+}
+
 app = FastAPI()
 
 
@@ -647,6 +655,49 @@ async def get_token():
     token = os.getenv("TRAIN_API_TOKEN", "")
     return {"token": token, "source": "environment"}
 
+@app.get("/request-token-permission")
+async def request_token_permission():
+    """Request permission to generate a new token"""
+    try:
+        current_time = time.time()
+        
+        # Check if currently blocked
+        if token_permission["is_blocked"] and token_permission["block_until"] and current_time < token_permission["block_until"]:
+            remaining_time = int(token_permission["block_until"] - current_time)
+            return {
+                "permission_granted": False,
+                "reason": "blocked",
+                "remaining_seconds": remaining_time,
+                "message": f"Token generation is blocked for {remaining_time} more seconds"
+            }
+        
+        # Clear expired blocks
+        if token_permission["is_blocked"] and token_permission["block_until"] and current_time >= token_permission["block_until"]:
+            token_permission["is_blocked"] = False
+            token_permission["block_until"] = None
+            print("🔓 Token generation block expired")
+        
+        # Grant permission and block for 1 minute
+        token_permission["is_blocked"] = True
+        token_permission["block_until"] = current_time + 60  # 1 minute block
+        token_permission["last_permission_granted"] = current_time
+        
+        print(f"✅ Token generation permission granted for 1 minute (blocked until {token_permission['block_until']})")
+        
+        return {
+            "permission_granted": True,
+            "blocked_until": token_permission["block_until"],
+            "message": "Permission granted. You have 1 minute to generate token. Other users are blocked."
+        }
+        
+    except Exception as e:
+        print(f"❌ Error handling token permission request: {e}")
+        return {
+            "permission_granted": False,
+            "reason": "error",
+            "message": str(e)
+        }
+
 class TokenUpdateRequest(BaseModel):
     token: str
 
@@ -657,17 +708,26 @@ async def update_token(request: TokenUpdateRequest):
         if not request.token or not request.token.strip():
             raise HTTPException(status_code=400, detail="Token cannot be empty")
         
+        current_time = time.time()
+        
         # Update the token cache
         api_token_cache["token"] = request.token.strip()
-        api_token_cache["updated_at"] = int(time.time())
+        api_token_cache["updated_at"] = int(current_time)
+        
+        # Update token permission state - block for 10 minutes after receiving token
+        token_permission["is_blocked"] = True
+        token_permission["block_until"] = current_time + 600  # 10 minutes block
+        token_permission["last_token_received"] = current_time
         
         print(f"🔄 API TOKEN UPDATED: {request.token[:20]}... (timestamp: {api_token_cache['updated_at']})")
+        print(f"🔒 Token generation blocked for 10 minutes (until {token_permission['block_until']})")
         
         return {
             "status": "success",
-            "message": "Token updated successfully",
+            "message": "Token updated successfully. Token generation blocked for 10 minutes.",
             "token_preview": f"{request.token[:20]}...",
-            "updated_at": api_token_cache["updated_at"]
+            "updated_at": api_token_cache["updated_at"],
+            "blocked_until": token_permission["block_until"]
         }
         
     except Exception as e:
@@ -974,6 +1034,7 @@ async def root():
             "/nearbyroute": "POST - Find alternative routes through nearby stations",
             "/health": "GET - Server health check",
             "/token": "GET - Return API token from cache or environment",
+            "/request-token-permission": "GET - Request permission to generate new token",
             "/update-token": "POST - Update API token in cache",
             "/seat-availability": "POST - Get seat availability with caching",
             "/cache-seat-data": "POST - Cache seat data sent from Flutter app",

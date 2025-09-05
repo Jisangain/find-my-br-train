@@ -4,7 +4,7 @@ import folium
 with open('data.json', 'r', encoding='utf-8') as f:
     payload = json.load(f)
 
-data = payload['DATA']
+data = payload
 sid_to_sloc    = data['sid_to_sloc']
 sid_to_sname   = data['sid_to_sname']
 train_names    = data['train_names']

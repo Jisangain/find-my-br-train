@@ -13,6 +13,7 @@ import hmac
 import hashlib
 import os
 import asyncio
+import requests
 from datetime import datetime, timedelta
 
 # In-memory cache for seat data
@@ -165,6 +166,68 @@ class AsyncTimedStack:
                         self.confirmed_position[train_id] = [middle_value, timestamp]
                         
 
+    def reset_train_positions_for_schedule(self):
+        """Reset train positions to 0 one hour before their scheduled start time"""
+        try:
+            current_time = datetime.now()
+            tid_to_stations = DATA.get("tid_to_stations", {})
+            
+            trains_to_reset = []
+            
+            for train_id, stations in tid_to_stations.items():
+                if not stations:
+                    continue
+                    
+                # Get the first station's departure time
+                first_station = stations[0]
+                if len(first_station) >= 3:
+                    departure_time_str = first_station[2]  # Time format like "15:10"
+                    
+                    try:
+                        # Parse departure time
+                        departure_hour, departure_minute = map(int, departure_time_str.split(':'))
+                        
+                        # Create today's departure datetime
+                        departure_today = current_time.replace(
+                            hour=departure_hour, 
+                            minute=departure_minute, 
+                            second=0, 
+                            microsecond=0
+                        )
+                        
+                        # If departure time has passed today, consider tomorrow
+                        if departure_today < current_time:
+                            departure_today += timedelta(days=1)
+                        
+                        # Reset position if we're within 1 hour of departure
+                        time_until_departure = departure_today - current_time
+                        if timedelta(0) <= time_until_departure <= timedelta(hours=1):
+                            trains_to_reset.append(train_id)
+                            
+                    except (ValueError, IndexError):
+                        # Skip trains with invalid time format
+                        continue
+            
+            # Reset positions for qualifying trains
+            reset_count = 0
+            for train_id in trains_to_reset:
+                if train_id in self.confirmed_position or train_id in self.unconfirmed_position:
+                    # Reset to position 0
+                    reset_timestamp = time.time()
+                    self.confirmed_position[train_id] = [0.0, reset_timestamp]
+                    
+                    # Remove from unconfirmed if exists
+                    if train_id in self.unconfirmed_position:
+                        del self.unconfirmed_position[train_id]
+                    
+                    reset_count += 1
+            
+            if reset_count > 0:
+                print(f"🔄 Reset {reset_count} trains to position 0 (approaching departure time)")
+                
+        except Exception as e:
+            print(f"Error in train position reset: {e}")
+
     async def get_all_positions(self, train_ids: List[str]) -> Dict[str, Dict[str, Dict[str, float]]]:
         """Get both confirmed and unconfirmed positions for specified train IDs"""
         positions = {}
@@ -204,6 +267,10 @@ async def periodic_clean_and_preprocess(stack: AsyncTimedStack, interval_seconds
     while True:
         await stack.clean_and_preprocess()
         await stack.process()
+        
+        # Reset train positions if they're approaching departure time (every 5 minutes)
+        if int(time.time()) % 300 < interval_seconds:  # Check every 5 minutes
+            stack.reset_train_positions_for_schedule()
         
         await asyncio.sleep(interval_seconds)
 
@@ -382,6 +449,8 @@ class IssueReport(BaseModel):
     blue_train_position: Optional[float] = None
     gray_train_position: Optional[float] = None
     is_using_gps: Optional[bool] = False
+    latitude: Optional[float] = None
+    longitude: Optional[float] = None
 
 @app.get("/initrevision")
 async def get_revision():
@@ -451,6 +520,15 @@ async def report_issue_post(report: IssueReport):
         print(f"   Blue Train Position: {report.blue_train_position} {gps_indicator}")
     if report.gray_train_position:
         print(f"   Gray Train Position: {report.gray_train_position} (User reports)")
+    
+    # Log location data if available
+    if report.latitude is not None and report.longitude is not None:
+        print(f"   📍 Location: {report.latitude:.6f}, {report.longitude:.6f}")
+        print(f"   🗺️  Maps Link: https://maps.google.com/maps?q={report.latitude},{report.longitude}")
+    elif report.latitude is not None or report.longitude is not None:
+        print(f"   ⚠️  Partial location data: lat={report.latitude}, lng={report.longitude}")
+    else:
+        print(f"   📍 Location: Not available")
     
     print("   ✅ Issue report logged successfully\n")
     
@@ -526,6 +604,8 @@ async def view_reports():
                 blue_pos = report.get('blue_train_position')
                 gray_pos = report.get('gray_train_position')
                 is_gps = report.get('is_using_gps', False)
+                latitude = report.get('latitude')
+                longitude = report.get('longitude')
                 
                 html_content += f"""
                 <div style="border: 1px solid #ccc; margin: 10px 0; padding: 15px;">
@@ -544,6 +624,24 @@ async def view_reports():
                     if gray_pos:
                         html_content += f"<li>Gray Train Position: {gray_pos} (User Report)</li>"
                     html_content += "</ul>"
+                
+                # Add location information if available
+                if latitude is not None and longitude is not None:
+                    html_content += f"""
+                    <p><strong>📍 Location Information:</strong></p>
+                    <ul>
+                        <li>Latitude: {latitude:.6f}</li>
+                        <li>Longitude: {longitude:.6f}</li>
+                        <li><a href="https://maps.google.com/maps?q={latitude},{longitude}" target="_blank">🗺️ View on Google Maps</a></li>
+                        <li><a href="https://www.openstreetmap.org/?mlat={latitude}&mlon={longitude}&zoom=16" target="_blank">🗺️ View on OpenStreetMap</a></li>
+                    </ul>
+                    """
+                elif latitude is not None or longitude is not None:
+                    html_content += f"""
+                    <p><strong>⚠️ Partial Location:</strong> lat={latitude}, lng={longitude}</p>
+                    """
+                else:
+                    html_content += "<p><strong>📍 Location:</strong> Not available</p>"
                 
                 html_content += "</div>"
         
@@ -673,6 +771,11 @@ class SeatAvailabilityRequest(BaseModel):
     date_of_journey: str
     seat_class: str = "ALL"
 
+class BatchSeatRequest(BaseModel):
+    routes: List[Dict[str, str]]  # List of {from_city, to_city} combinations
+    date_of_journey: str
+    seat_class: str = "ALL"
+
 @app.post("/seat-availability")
 async def get_seat_availability(request: SeatAvailabilityRequest):
     """Get seat availability data with in-memory caching logic"""
@@ -695,6 +798,46 @@ async def get_seat_availability(request: SeatAvailabilityRequest):
         "isexist": False,
         "rawdata": None,
         "timepassed": None
+    }
+
+@app.post("/batch-seat-availability")
+async def get_batch_seat_availability(request: BatchSeatRequest):
+    """Get seat availability for multiple routes in a single request"""
+    
+    results = {}
+    current_time = datetime.now()
+    
+    for route in request.routes:
+        from_city = route["fromCity"]  # Match Flutter key names
+        to_city = route["toCity"]      # Match Flutter key names
+        
+        # Create cache key for this route
+        cache_key = f"{from_city}_{to_city}_{request.date_of_journey}_{request.seat_class}"
+        route_key = f"{from_city}_to_{to_city}"
+        
+        # Check if we have cached data in memory
+        if cache_key in seat_cache:
+            cached_entry = seat_cache[cache_key]
+            time_passed = int((current_time - cached_entry["timestamp"]).total_seconds() / 60)
+            results[route_key] = {
+                "isexist": True,
+                "rawdata": cached_entry["data"],
+                "timepassed": time_passed,
+                "from_city": from_city,
+                "to_city": to_city
+            }
+        else:
+            results[route_key] = {
+                "isexist": False,
+                "rawdata": None,
+                "timepassed": None,
+                "from_city": from_city,
+                "to_city": to_city
+            }
+    
+    return {
+        "total_routes": len(request.routes),
+        "results": results
     }
 
 @app.post("/refresh-seat-data")
@@ -761,7 +904,20 @@ async def view_live_trains():
         
         # Combine and deduplicate
         all_live_trains = list(set(confirmed_trains + unconfirmed_trains))
-        all_live_trains.sort()  # Sort train IDs for consistent display
+        
+        # Sort trains by most recent update time (newest first)
+        def get_latest_timestamp(train_id):
+            confirmed_timestamp = 0
+            unconfirmed_timestamp = 0
+            
+            if train_id in stack.confirmed_position:
+                confirmed_timestamp = stack.confirmed_position[train_id][1]
+            if train_id in stack.unconfirmed_position:
+                unconfirmed_timestamp = stack.unconfirmed_position[train_id][1]
+            
+            return max(confirmed_timestamp, unconfirmed_timestamp)
+        
+        all_live_trains.sort(key=get_latest_timestamp, reverse=True)  # Sort by most recent update time
         
         # Get train names from DATA
         train_names = {}

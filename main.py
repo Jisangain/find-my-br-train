@@ -166,68 +166,6 @@ class AsyncTimedStack:
                         self.confirmed_position[train_id] = [middle_value, timestamp]
                         
 
-    def reset_train_positions_for_schedule(self):
-        """Reset train positions to 0 one hour before their scheduled start time"""
-        try:
-            current_time = datetime.now()
-            tid_to_stations = DATA.get("tid_to_stations", {})
-            
-            trains_to_reset = []
-            
-            for train_id, stations in tid_to_stations.items():
-                if not stations:
-                    continue
-                    
-                # Get the first station's departure time
-                first_station = stations[0]
-                if len(first_station) >= 3:
-                    departure_time_str = first_station[2]  # Time format like "15:10"
-                    
-                    try:
-                        # Parse departure time
-                        departure_hour, departure_minute = map(int, departure_time_str.split(':'))
-                        
-                        # Create today's departure datetime
-                        departure_today = current_time.replace(
-                            hour=departure_hour, 
-                            minute=departure_minute, 
-                            second=0, 
-                            microsecond=0
-                        )
-                        
-                        # If departure time has passed today, consider tomorrow
-                        if departure_today < current_time:
-                            departure_today += timedelta(days=1)
-                        
-                        # Reset position if we're within 1 hour of departure
-                        time_until_departure = departure_today - current_time
-                        if timedelta(0) <= time_until_departure <= timedelta(hours=1):
-                            trains_to_reset.append(train_id)
-                            
-                    except (ValueError, IndexError):
-                        # Skip trains with invalid time format
-                        continue
-            
-            # Reset positions for qualifying trains
-            reset_count = 0
-            for train_id in trains_to_reset:
-                if train_id in self.confirmed_position or train_id in self.unconfirmed_position:
-                    # Reset to position 0
-                    reset_timestamp = time.time()
-                    self.confirmed_position[train_id] = [0.0, reset_timestamp]
-                    
-                    # Remove from unconfirmed if exists
-                    if train_id in self.unconfirmed_position:
-                        del self.unconfirmed_position[train_id]
-                    
-                    reset_count += 1
-            
-            if reset_count > 0:
-                print(f"🔄 Reset {reset_count} trains to position 0 (approaching departure time)")
-                
-        except Exception as e:
-            print(f"Error in train position reset: {e}")
-
     async def get_all_positions(self, train_ids: List[str]) -> Dict[str, Dict[str, Dict[str, float]]]:
         """Get both confirmed and unconfirmed positions for specified train IDs"""
         positions = {}
@@ -267,10 +205,6 @@ async def periodic_clean_and_preprocess(stack: AsyncTimedStack, interval_seconds
     while True:
         await stack.clean_and_preprocess()
         await stack.process()
-        
-        # Reset train positions if they're approaching departure time (every 5 minutes)
-        if int(time.time()) % 300 < interval_seconds:  # Check every 5 minutes
-            stack.reset_train_positions_for_schedule()
         
         await asyncio.sleep(interval_seconds)
 

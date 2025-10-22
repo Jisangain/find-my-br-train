@@ -420,7 +420,7 @@ async def receive_update(update: LocationUpdate):
     if not (0 <= update.position <= 150):
         raise HTTPException(400, "Invalid position value")
     
-    if not all([train_id, timestamp, position]):
+    if train_id is None or timestamp is None or position is None:
         raise HTTPException(status_code=400, detail="Missing required fields")
     
     # Store the user-provided position as confirmed

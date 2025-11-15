@@ -67,7 +67,6 @@ The `data.json` file contains all train and station information. **After each mo
 #### 🚉 Adding Stations (sid_to_sname & sid_to_sloc)
 
 **sid_to_sname**: Station ID to Station Name
-- Use 4-digit IDs (e.g., "0001", "0002")
 - **Always append new stations** - don't modify existing IDs
 - **Check if station already exists** before adding
 - Use lowercase names (e.g., "dhaka", "chittagong")
@@ -80,10 +79,10 @@ The `data.json` file contains all train and station information. **After each mo
 Example:
 ```json
 "sid_to_sname": {
-  "0012": "jessore"
+  "Jashore": "Jashore/Jessore"
 },
 "sid_to_sloc": {
-  "012": [23.1634, 89.2182]
+  "Jashore": [23.1634, 89.2182]
 }
 ```
 
@@ -117,9 +116,9 @@ Example:
 ```json
 "tid_to_stations": {
   "109": [
-    ["001", 1, "18:00"],    // Dhaka - stops
-    ["006", 0, "19:30"],    // Comilla - passes through
-    ["002", 1, "21:15"]     // Chittagong - stops
+    ["Dhaka", 1, "18:00"],    // Dhaka - stops
+    ["Comilla", 0, "19:30"],    // Comilla - passes through
+    ["Chittagong", 1, "21:15"]     // Chittagong - stops
   ]
 }
 ```
@@ -130,8 +129,9 @@ Example:
 2. **Create a new branch** for your changes
 3. **Update data.json** following the structure above
 4. **Increment CURRENT_REVISION** by 1
-5. **Test your changes** by running the server
-6. **Submit a pull request** with a clear description
+5. **Test your changes** by running data_validator.py
+6. **Location_analysis.py** creates html file to debug geo location.
+7. **Submit a pull request** with a clear description
 
 ### ✅ Before Contributing
 

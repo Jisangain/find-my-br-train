@@ -390,9 +390,66 @@ def precalculate_two_train_routes():
                         if route_info not in routes[route_key]:
                             routes[route_key].append(route_info)
     
-    # Limit to top 5 routes per station pair
+    # Sort and limit to top 5 routes per station pair
     for key in routes:
-        routes[key] = routes[key][:5]
+        # Sort routes by total journey time (shortest first)
+        def get_total_journey_time(route_info):
+            train1_id, train2_id, interchange_id = route_info
+            
+            # Get train stations
+            train1_stations = tid_to_stations.get(train1_id, [])
+            train2_stations = tid_to_stations.get(train2_id, [])
+            
+            from_sid, to_sid = key
+            
+            # Find times for all points in the journey
+            train1_departure = None  # From origin
+            train1_arrival = None    # At interchange
+            train2_departure = None  # From interchange
+            train2_arrival = None    # At destination
+            
+            for station in train1_stations:
+                if station[0] == from_sid and len(station) > 2:
+                    train1_departure = parse_time(station[2])
+                elif station[0] == interchange_id and len(station) > 2:
+                    train1_arrival = parse_time(station[2])
+            
+            for station in train2_stations:
+                if station[0] == interchange_id and len(station) > 2:
+                    train2_departure = parse_time(station[2])
+                elif station[0] == to_sid and len(station) > 2:
+                    train2_arrival = parse_time(station[2])
+            
+            if train1_departure is None or train2_arrival is None:
+                return float('inf')  # Put routes without times at the end
+            
+            # Track day offsets through the journey
+            days = 0
+            
+            # Check if train1 arrives next day at interchange
+            if train1_arrival is not None and train1_arrival < train1_departure:
+                days += 1
+            
+            # Check if train2 departs after train1 arrival (considering current day)
+            if train1_arrival is not None and train2_departure is not None:
+                if train2_departure < train1_arrival:
+                    days += 1  # Train2 departs next day from interchange
+            
+            # Check if train2 arrives next day from its departure
+            if train2_departure is not None and train2_arrival < train2_departure:
+                days += 1
+            elif train2_departure is None and train2_arrival < train1_departure:
+                # If we don't have train2_departure, check against start
+                days += 1
+            
+            # Calculate total journey time including day offsets
+            total_time = (train2_arrival - train1_departure) + (days * 24 * 60)
+            if total_time < 0:
+                total_time += 24 * 60  # Safety check
+            
+            return total_time
+        
+        routes[key] = sorted(routes[key], key=get_total_journey_time)[:10]  # Increased from 5 to 10
     
     print(f"✓ Precalculation complete. Found {len(routes)} station pairs with two-train routes.")
     

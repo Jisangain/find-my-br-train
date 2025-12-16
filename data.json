@@ -1,8 +1,16 @@
 {
-    "Revision": 140,
+    "Revision": 141,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "seat_cache_time": 300,
+    "persistence_notice": {
+        "all": "",
+        "less": [23, ""],
+        "greater": [21, ""]
+    },
+    "first_open_notice": "",
+    "app_update_notice": "App Updated: location is more accurate now",
+    "data_update_notice": "",
     "sid_to_sloc": {
         "Dhaka": [23.73424596143561, 90.4264201316412],
         "Biman_Bandar": [23.8520672672048, 90.40806533450319],

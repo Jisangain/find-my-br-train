@@ -1,0 +1,2872 @@
+[
+    {
+        "latitude": 26.098879247963,
+        "longitude": 88.391266434272,
+        "code": "AKH",
+        "id": 4,
+        "name": "Akhanagar"
+    },
+    {
+        "latitude": 23.869214462692,
+        "longitude": 91.205658142242,
+        "code": "AKH",
+        "id": 5,
+        "name": "Akhaura"
+    },
+    {
+        "latitude": 24.965183217165,
+        "longitude": 89.016767975663,
+        "code": "AKK",
+        "id": 6,
+        "name": "Akkelpur"
+    },
+    {
+        "latitude": 23.761431903366,
+        "longitude": 88.936938653374,
+        "code": "ALA",
+        "id": 7,
+        "name": "Alamdanga"
+    },
+    {
+        "latitude": 23.639690817189,
+        "longitude": 89.744243201428,
+        "code": "AMI",
+        "id": 8,
+        "name": "Amirabad"
+    },
+    {
+        "latitude": 24.624716358947,
+        "longitude": 88.399097827437,
+        "code": "AMN",
+        "id": 9,
+        "name": "Amnura"
+    },
+    {
+        "latitude": 24.615226331016,
+        "longitude": 88.396455783998,
+        "code": "AMN",
+        "id": 10,
+        "name": "Amnura_Bypass"
+    },
+    {
+        "latitude": 24.291637370660,
+        "longitude": 88.881843297514,
+        "code": "ARA",
+        "id": 11,
+        "name": "Arani"
+    },
+    {
+        "latitude": 24.039080715605,
+        "longitude": 91.003691612737,
+        "code": "ASH",
+        "id": 12,
+        "name": "Ashuganj"
+    },
+    {
+        "latitude": 24.641419429840,
+        "longitude": 90.714368760166,
+        "code": "ATH",
+        "id": 13,
+        "name": "Atharabari"
+    },
+    {
+        "latitude": 23.893665294777,
+        "longitude": 91.221842398551,
+        "code": "AZA",
+        "id": 14,
+        "name": "Azampur"
+    },
+    {
+        "latitude": 24.206791435686,
+        "longitude": 89.006187815055,
+        "code": "AZI",
+        "id": 15,
+        "name": "Azim Nagar"
+    },
+    {
+        "latitude": 25.672934792135,
+        "longitude": 89.057439154399,
+        "code": "BAD",
+        "id": 16,
+        "name": "Badarganj"
+    },
+    {
+        "latitude": 23.897244133961,
+        "longitude": 89.636922171450,
+        "code": "BAD",
+        "id": 17,
+        "name": "Badherhat"
+    },
+    {
+        "latitude": 25.236033094072,
+        "longitude": 89.543927821820,
+        "code": "BAD",
+        "id": 18,
+        "name": "Badiakhali"
+    },
+    {
+        "latitude": 23.687097459082,
+        "longitude": 89.563516035867,
+        "code": "BAH",
+        "id": 19,
+        "name": "Baharpur"
+    },
+    {
+        "latitude": 24.200376912826,
+        "longitude": 90.914584898031,
+        "code": "BAJ",
+        "id": 20,
+        "name": "Bajitpur"
+    },
+    {
+        "latitude": 22.992606651619,
+        "longitude": 91.100590229843,
+        "code": "BAJ",
+        "id": 21,
+        "name": "Bajra"
+    },
+    {
+        "latitude": 25.533027980179,
+        "longitude": 89.447713629358,
+        "code": "BAM",
+        "id": 22,
+        "name": "Bamondanga"
+    },
+    {
+        "latitude": 24.588051006248,
+        "longitude": 91.980178275482,
+        "code": "BAR",
+        "id": 23,
+        "name": "Baramchal"
+    },
+    {
+        "latitude": 24.897884757441,
+        "longitude": 90.881560210583,
+        "code": "BAR",
+        "id": 24,
+        "name": "Barhatta"
+    },
+    {
+        "latitude": 26.203166032640,
+        "longitude": 89.113045675720,
+        "code": "BAR",
+        "id": 25,
+        "name": "Barkhata"
+    },
+    {
+        "latitude": 26.206145559253,
+        "longitude": 89.127031775947,
+        "code": "BAU",
+        "id": 26,
+        "name": "Baura"
+    },
+    {
+        "latitude": 23.043737414843,
+        "longitude": 88.903851666819,
+        "code": "BEN",
+        "id": 27,
+        "name": "Benapole"
+    },
+    {
+        "latitude": 24.050267278320,
+        "longitude": 90.978559371577,
+        "code": "BHA",
+        "id": 28,
+        "name": "Bhairab_Bazar"
+    },
+    {
+        "latitude": 23.400805437156,
+        "longitude": 89.984785169865,
+        "code": "BHA",
+        "id": 29,
+        "name": "Bhanga"
+    },
+    {
+        "latitude": 23.397253139710,
+        "longitude": 89.986829012132,
+        "code": "BHA",
+        "id": 30,
+        "name": "Bhanga_Junction"
+    },
+    {
+        "latitude": 24.351828176538,
+        "longitude": 91.841486696824,
+        "code": "BHA",
+        "id": 31,
+        "name": "Bhanugach"
+    },
+    {
+        "latitude": 22.433911492000,
+        "longitude": 91.750210118939,
+        "code": "BHA",
+        "id": 32,
+        "name": "Bhatiary"
+    },
+    {
+        "latitude": 24.030186699444,
+        "longitude": 88.992007008367,
+        "code": "BHE",
+        "id": 33,
+        "name": "Bheramara"
+    },
+    {
+        "latitude": 25.959190274883,
+        "longitude": 88.427534823079,
+        "code": "BHO",
+        "id": 34,
+        "name": "Bhomradah"
+    },
+    {
+        "latitude": 26.029766194669,
+        "longitude": 89.170353445122,
+        "code": "BHO",
+        "id": 35,
+        "name": "Bhotmari"
+    },
+    {
+        "latitude": 24.467766707629,
+        "longitude": 89.867453778203,
+        "code": "BHU",
+        "id": 36,
+        "name": "Bhuapur"
+    },
+    {
+        "latitude": 24.824128602180,
+        "longitude": 90.259433287963,
+        "code": "BID",
+        "id": 37,
+        "name": "Bidyaganj"
+    },
+    {
+        "latitude": 23.851896962642,
+        "longitude": 90.408134015411,
+        "code": "BIM",
+        "id": 38,
+        "name": "Biman_Bandar"
+    },
+    {
+        "latitude": 25.397995396592,
+        "longitude": 88.994577007070,
+        "code": "BIR",
+        "id": 39,
+        "name": "Birampur"
+    },
+    {
+        "latitude": 25.635418159740,
+        "longitude": 88.539431203369,
+        "code": "BIR",
+        "id": 40,
+        "name": "Birol"
+    },
+    {
+        "latitude": 23.389831177151,
+        "longitude": 89.687668162819,
+        "code": "BOA",
+        "id": 41,
+        "name": "Boalmari_Bazar"
+    },
+    {
+        "latitude": 24.848624769285,
+        "longitude": 89.367010403343,
+        "code": "BOG",
+        "id": 42,
+        "name": "Bogura"
+    },
+    {
+        "latitude": 25.165610353663,
+        "longitude": 89.523599627545,
+        "code": "BON",
+        "id": 43,
+        "name": "Bonar_Para"
+    },
+    {
+        "latitude": 24.215032470622,
+        "longitude": 89.381201741430,
+        "code": "BOR",
+        "id": 44,
+        "name": "Boral_Bridge"
+    },
+    {
+        "latitude": 22.995056513361,
+        "longitude": 89.842812576301,
+        "code": "BOR",
+        "id": 45,
+        "name": "Borashi"
+    },
+    {
+        "latitude": 23.967000725775,
+        "longitude": 91.109133444380,
+        "code": "BRA",
+        "id": 46,
+        "name": "Brahmanbaria"
+    },
+    {
+        "latitude": 26.396287351385,
+        "longitude": 88.935258272705,
+        "code": "BUR",
+        "id": 47,
+        "name": "Burimari"
+    },
+    {
+        "latitude": 21.756511097423,
+        "longitude": 92.043235926008,
+        "code": "CHA",
+        "id": 48,
+        "name": "Chakaria"
+    },
+    {
+        "latitude": 23.230754514812,
+        "longitude": 90.643700255857,
+        "code": "CHA",
+        "id": 49,
+        "name": "Chandpur"
+    },
+    {
+        "latitude": 23.225544135508,
+        "longitude": 90.655179338687,
+        "code": "CHA",
+        "id": 50,
+        "name": "Chandpur_Court"
+    },
+    {
+        "latitude": 23.073325867424,
+        "longitude": 89.776021177322,
+        "code": "CHA",
+        "id": 51,
+        "name": "Chandradighalia"
+    },
+    {
+        "latitude": 24.598967219129,
+        "longitude": 88.281121712607,
+        "code": "CHA",
+        "id": 52,
+        "name": "Chapainawabganj"
+    },
+    {
+        "latitude": 23.197936597491,
+        "longitude": 89.752171302199,
+        "code": "CHA",
+        "id": 53,
+        "name": "Chapta"
+    },
+    {
+        "latitude": 24.188900352155,
+        "longitude": 89.275181118157,
+        "code": "CHA",
+        "id": 54,
+        "name": "Chatmohar"
+    },
+    {
+        "latitude": 22.334181553711,
+        "longitude": 91.829883207481,
+        "code": "CHA",
+        "id": 55,
+        "name": "Chattogram"
+    },
+    {
+        "latitude": 26.243166813556,
+        "longitude": 88.796685616882,
+        "code": "CHI",
+        "id": 56,
+        "name": "Chilahati"
+    },
+    {
+        "latitude": 25.646014202939,
+        "longitude": 88.776118734061,
+        "code": "CHI",
+        "id": 57,
+        "name": "Chirirbandar"
+    },
+    {
+        "latitude": 23.235851868524,
+        "longitude": 91.029978353035,
+        "code": "CHI",
+        "id": 58,
+        "name": "Chitoshi_Road"
+    },
+    {
+        "latitude": 23.141090425481,
+        "longitude": 89.781960233978,
+        "code": "CHO",
+        "id": 59,
+        "name": "Choto Bahirbag"
+    },
+    {
+        "latitude": 22.944017426305,
+        "longitude": 91.121168313469,
+        "code": "CHO",
+        "id": 60,
+        "name": "Choumuhani"
+    },
+    {
+        "latitude": 23.640243640259,
+        "longitude": 88.857181362575,
+        "code": "CHU",
+        "id": 61,
+        "name": "Chuadanga"
+    },
+    {
+        "latitude": 21.429429379027,
+        "longitude": 92.014088158218,
+        "code": "COX",
+        "id": 62,
+        "name": "Cox's Bazar"
+    },
+    {
+        "latitude": 23.463679303961,
+        "longitude": 91.167120360970,
+        "code": "CUM",
+        "id": 63,
+        "name": "Cumilla"
+    },
+    {
+        "latitude": 23.529417170562,
+        "longitude": 88.809970090831,
+        "code": "DAR",
+        "id": 64,
+        "name": "Darshana_Halt"
+    },
+    {
+        "latitude": 24.113736567092,
+        "longitude": 89.128438943649,
+        "code": "DAS",
+        "id": 65,
+        "name": "Dashuria"
+    },
+    {
+        "latitude": 22.876512098820,
+        "longitude": 89.522783505133,
+        "code": "DAU",
+        "id": 66,
+        "name": "Daulatpur"
+    },
+    {
+        "latitude": 25.157228500858,
+        "longitude": 89.756672718698,
+        "code": "DEW",
+        "id": 67,
+        "name": "Dewanganj_Bazar"
+    },
+    {
+        "latitude": 23.735179801373,
+        "longitude": 90.426054287608,
+        "code": "DHA",
+        "id": 68,
+        "name": "Dhaka"
+    },
+    {
+        "latitude": 23.840841686163,
+        "longitude": 89.668621691673,
+        "code": "DHA",
+        "id": 69,
+        "name": "Dhalarchar"
+    },
+    {
+        "latitude": 25.626715632007,
+        "longitude": 88.640236642279,
+        "code": "DIN",
+        "id": 70,
+        "name": "Dinajpur"
+    },
+    {
+        "latitude": 22.163633207528,
+        "longitude": 92.071669773494,
+        "code": "DOH",
+        "id": 71,
+        "name": "Dohazari"
+    },
+    {
+        "latitude": 26.101797400831,
+        "longitude": 88.819818388040,
+        "code": "DOM",
+        "id": 72,
+        "name": "Domar"
+    },
+    {
+        "latitude": 23.977707161302,
+        "longitude": 89.371034345896,
+        "code": "DUB",
+        "id": 73,
+        "name": "Dublia"
+    },
+    {
+        "latitude": 21.675270325194,
+        "longitude": 92.074052420442,
+        "code": "DUL",
+        "id": 74,
+        "name": "Dulahazara"
+    },
+    {
+        "latitude": 23.611151990973,
+        "longitude": 89.842928092703,
+        "code": "FAR",
+        "id": 75,
+        "name": "Faridpur"
+    },
+    {
+        "latitude": 23.013532428489,
+        "longitude": 91.403870560956,
+        "code": "FEN",
+        "id": 76,
+        "name": "Feni"
+    },
+    {
+        "latitude": 22.378337508670,
+        "longitude": 91.917444845846,
+        "code": "GOM",
+        "id": 78,
+        "name": "GOMDANDI"
+    },
+    {
+        "latitude": 24.342336253910,
+        "longitude": 90.825047507035,
+        "code": "GAC",
+        "id": 79,
+        "name": "Gachihata"
+    },
+    {
+        "latitude": 24.453812874410,
+        "longitude": 90.548369610747,
+        "code": "GAF",
+        "id": 80,
+        "name": "Gafargaon"
+    },
+    {
+        "latitude": 25.333232974602,
+        "longitude": 89.542065294087,
+        "code": "GAI",
+        "id": 81,
+        "name": "Gaibandha"
+    },
+    {
+        "latitude": 22.696075952080,
+        "longitude": 88.279902020473,
+        "code": "GOB",
+        "id": 82,
+        "name": "Gobra"
+    },
+    {
+        "latitude": 23.033884318014,
+        "longitude": 89.839592429501,
+        "code": "GOP",
+        "id": 83,
+        "name": "Gopalganj"
+    },
+    {
+        "latitude": 24.764061426870,
+        "longitude": 90.566011780067,
+        "code": "GOU",
+        "id": 84,
+        "name": "Gouripur_Myn"
+    },
+    {
+        "latitude": 23.087757291430,
+        "longitude": 91.297887605140,
+        "code": "GUN",
+        "id": 85,
+        "name": "Gunabati"
+    },
+    {
+        "latitude": 21.850326325358,
+        "longitude": 92.048763227866,
+        "code": "HAR",
+        "id": 86,
+        "name": "HARBANG"
+    },
+    {
+        "latitude": 23.258551876070,
+        "longitude": 90.844737155145,
+        "code": "HAJ",
+        "id": 87,
+        "name": "Hajiganj"
+    },
+    {
+        "latitude": 24.017253678021,
+        "longitude": 91.310964247497,
+        "code": "HAR",
+        "id": 88,
+        "name": "Harashpur"
+    },
+    {
+        "latitude": 23.135467881079,
+        "longitude": 91.237129695869,
+        "code": "HAS",
+        "id": 89,
+        "name": "Hasanpur"
+    },
+    {
+        "latitude": 26.128530566447,
+        "longitude": 89.139041708950,
+        "code": "HAT",
+        "id": 90,
+        "name": "Hatibandha"
+    },
+    {
+        "latitude": 24.569001314128,
+        "longitude": 89.857510329383,
+        "code": "HEM",
+        "id": 91,
+        "name": "Hemnagar"
+    },
+    {
+        "latitude": 24.092140574999,
+        "longitude": 90.302263193716,
+        "code": "HI-",
+        "id": 92,
+        "name": "Hi-Tech City"
+    },
+    {
+        "latitude": 25.277758800732,
+        "longitude": 89.007137476375,
+        "code": "HIL",
+        "id": 93,
+        "name": "Hili"
+    },
+    {
+        "latitude": 21.563754928958,
+        "longitude": 92.055412998994,
+        "code": "ISL",
+        "id": 94,
+        "name": "ISLAMABAD"
+    },
+    {
+        "latitude": 24.389543349088,
+        "longitude": 89.820010349873,
+        "code": "IBR",
+        "id": 95,
+        "name": "Ibrahimabad"
+    },
+    {
+        "latitude": 24.130116002456,
+        "longitude": 89.064387406659,
+        "code": "ISH",
+        "id": 96,
+        "name": "Ishwardi"
+    },
+    {
+        "latitude": 24.156845728692,
+        "longitude": 89.055918627294,
+        "code": "ISH",
+        "id": 97,
+        "name": "Ishwardi Bypass"
+    },
+    {
+        "latitude": 25.078018349066,
+        "longitude": 89.791886149387,
+        "code": "ISL",
+        "id": 98,
+        "name": "Islampur_Bazar"
+    },
+    {
+        "latitude": 24.813178099969,
+        "longitude": 89.858709657305,
+        "code": "JAF",
+        "id": 99,
+        "name": "Jaforshahi"
+    },
+    {
+        "latitude": 24.710143773933,
+        "longitude": 89.988000224077,
+        "code": "JAG",
+        "id": 100,
+        "name": "Jagannathgonj_Bazar"
+    },
+    {
+        "latitude": 25.030707689817,
+        "longitude": 89.022593043312,
+        "code": "JAM",
+        "id": 101,
+        "name": "Jamalganj"
+    },
+    {
+        "latitude": 24.984550211588,
+        "longitude": 90.222172901389,
+        "code": "JAM",
+        "id": 102,
+        "name": "Jamalpur_Town"
+    },
+    {
+        "latitude": 24.361709782393,
+        "longitude": 89.660040019181,
+        "code": "JAM",
+        "id": 103,
+        "name": "Jamtail"
+    },
+    {
+        "latitude": 22.395952412775,
+        "longitude": 91.872656178137,
+        "code": "JAN",
+        "id": 104,
+        "name": "Janali_Hat"
+    },
+    {
+        "latitude": 23.154365532507,
+        "longitude": 89.208987761215,
+        "code": "JES",
+        "id": 105,
+        "name": "Jessore"
+    },
+    {
+        "latitude": 23.101054861951,
+        "longitude": 89.103389007830,
+        "code": "JHI",
+        "id": 106,
+        "name": "Jhikargacha"
+    },
+    {
+        "latitude": 23.998249894085,
+        "longitude": 90.420776410732,
+        "code": "JOY",
+        "id": 107,
+        "name": "Joydebpur"
+    },
+    {
+        "latitude": 25.098925835747,
+        "longitude": 89.025201731097,
+        "code": "JOY",
+        "id": 108,
+        "name": "Joypurhat"
+    },
+    {
+        "latitude": 24.507187212251,
+        "longitude": 88.472074291695,
+        "code": "KAK",
+        "id": 109,
+        "name": "Kakonhat"
+    },
+    {
+        "latitude": 23.767973764542,
+        "longitude": 89.481328637707,
+        "code": "KAL",
+        "id": 110,
+        "name": "Kalukhali"
+    },
+    {
+        "latitude": 25.623836977570,
+        "longitude": 88.600493041478,
+        "code": "KAN",
+        "id": 111,
+        "name": "Kanchan_Junction"
+    },
+    {
+        "latitude": 25.955415984015,
+        "longitude": 89.243633145708,
+        "code": "KAN",
+        "id": 112,
+        "name": "Kankina"
+    },
+    {
+        "latitude": 24.308375865477,
+        "longitude": 90.512651318670,
+        "code": "KAO",
+        "id": 113,
+        "name": "Kaoraid"
+    },
+    {
+        "latitude": 23.233569616804,
+        "longitude": 89.725511601181,
+        "code": "KAS",
+        "id": 114,
+        "name": "Kashiani"
+    },
+    {
+        "latitude": 23.970491977949,
+        "longitude": 89.590160447495,
+        "code": "KAS",
+        "id": 115,
+        "name": "Kashinathpur"
+    },
+    {
+        "latitude": 25.778021334295,
+        "longitude": 89.422947338284,
+        "code": "KAU",
+        "id": 116,
+        "name": "Kaunia"
+    },
+    {
+        "latitude": 25.619229110611,
+        "longitude": 88.706362945651,
+        "code": "KAW",
+        "id": 117,
+        "name": "Kawgaon"
+    },
+    {
+        "latitude": 24.858204823710,
+        "longitude": 89.911079111894,
+        "code": "KEN",
+        "id": 118,
+        "name": "Kendua_Bazar"
+    },
+    {
+        "latitude": 23.832065340873,
+        "longitude": 89.307303234814,
+        "code": "KHO",
+        "id": 119,
+        "name": "Khoksha"
+    },
+    {
+        "latitude": 25.657058271529,
+        "longitude": 88.983292523494,
+        "code": "KHO",
+        "id": 120,
+        "name": "Kholahati"
+    },
+    {
+        "latitude": 22.833109369917,
+        "longitude": 89.584589044541,
+        "code": "KHU",
+        "id": 121,
+        "name": "Khulna"
+    },
+    {
+        "latitude": 24.427769737448,
+        "longitude": 90.791713267858,
+        "code": "KIS",
+        "id": 122,
+        "name": "Kishorganj"
+    },
+    {
+        "latitude": 26.222297846388,
+        "longitude": 88.447535274554,
+        "code": "KIS",
+        "id": 123,
+        "name": "Kismat"
+    },
+    {
+        "latitude": 23.415605033623,
+        "longitude": 89.014466778168,
+        "code": "KOT",
+        "id": 124,
+        "name": "Kotchandpur"
+    },
+    {
+        "latitude": 24.522868438210,
+        "longitude": 92.036995207041,
+        "code": "KUL",
+        "id": 125,
+        "name": "Kulaura"
+    },
+    {
+        "latitude": 24.151118775792,
+        "longitude": 90.928316365466,
+        "code": "KUL",
+        "id": 126,
+        "name": "Kuliarchar"
+    },
+    {
+        "latitude": 23.860498923619,
+        "longitude": 89.241548659128,
+        "code": "KUM",
+        "id": 127,
+        "name": "Kumarkhali"
+    },
+    {
+        "latitude": 22.505113409222,
+        "longitude": 91.716409879995,
+        "code": "KUM",
+        "id": 128,
+        "name": "Kumira"
+    },
+    {
+        "latitude": 25.807786564739,
+        "longitude": 89.621596318721,
+        "code": "KUR",
+        "id": 129,
+        "name": "Kurigram"
+    },
+    {
+        "latitude": 23.907258386915,
+        "longitude": 89.128525134002,
+        "code": "KUS",
+        "id": 130,
+        "name": "Kushtia_Court"
+    },
+    {
+        "latitude": 23.202906228427,
+        "longitude": 89.639448032609,
+        "code": "LOH",
+        "id": 131,
+        "name": "LOHAGARA"
+    },
+    {
+        "latitude": 23.254988129762,
+        "longitude": 91.124686852781,
+        "code": "LAK",
+        "id": 132,
+        "name": "Laksam"
+    },
+    {
+        "latitude": 25.912479434926,
+        "longitude": 89.445620828252,
+        "code": "LAL",
+        "id": 133,
+        "name": "Lalmonirhat"
+    },
+    {
+        "latitude": 23.202245537263,
+        "longitude": 89.639544592136,
+        "code": "LOH",
+        "id": 134,
+        "name": "Lohagora"
+    },
+    {
+        "latitude": 24.281203887801,
+        "longitude": 88.933770484269,
+        "code": "LOK",
+        "id": 135,
+        "name": "Lokmanpur"
+    },
+    {
+        "latitude": 24.562815278125,
+        "longitude": 88.434942109406,
+        "code": "LOL",
+        "id": 136,
+        "name": "Lolitnagar"
+    },
+    {
+        "latitude": 24.536060258351,
+        "longitude": 88.961936467078,
+        "code": "MAD",
+        "id": 137,
+        "name": "Madhnagar"
+    },
+    {
+        "latitude": 23.546738485295,
+        "longitude": 89.630724995882,
+        "code": "MAD",
+        "id": 138,
+        "name": "Madhukhali"
+    },
+    {
+        "latitude": 25.878927324348,
+        "longitude": 89.447588995960,
+        "code": "MAH",
+        "id": 139,
+        "name": "Mahendranagar"
+    },
+    {
+        "latitude": 25.104356354545,
+        "longitude": 89.493803717097,
+        "code": "MAH",
+        "id": 140,
+        "name": "Mahimaganj"
+    },
+    {
+        "latitude": 22.860892451477,
+        "longitude": 91.104884509351,
+        "code": "MAI",
+        "id": 141,
+        "name": "Maijdi Court"
+    },
+    {
+        "latitude": 24.686328478043,
+        "longitude": 91.951510853592,
+        "code": "MAI",
+        "id": 142,
+        "name": "Maijgaon"
+    },
+    {
+        "latitude": 24.163018111923,
+        "longitude": 89.092217178447,
+        "code": "MAJ",
+        "id": 143,
+        "name": "Majhgram"
+    },
+    {
+        "latitude": 24.297385178301,
+        "longitude": 90.846623138234,
+        "code": "MAN",
+        "id": 144,
+        "name": "Manikkhali"
+    },
+    {
+        "latitude": 25.658823048266,
+        "longitude": 88.852508067116,
+        "code": "MAN",
+        "id": 145,
+        "name": "Manmathapur"
+    },
+    {
+        "latitude": 23.503748978839,
+        "longitude": 90.274508995881,
+        "code": "MAW",
+        "id": 146,
+        "name": "Mawa"
+    },
+    {
+        "latitude": 23.245205479018,
+        "longitude": 90.943338224709,
+        "code": "MEH",
+        "id": 147,
+        "name": "Meher"
+    },
+    {
+        "latitude": 24.978345032872,
+        "longitude": 89.853525189897,
+        "code": "MEL",
+        "id": 148,
+        "name": "Melandah_Bazar"
+    },
+    {
+        "latitude": 23.992806730122,
+        "longitude": 90.867041750950,
+        "code": "MET",
+        "id": 149,
+        "name": "Methikanda"
+    },
+    {
+        "latitude": 25.765217758278,
+        "longitude": 89.352140161301,
+        "code": "MIR",
+        "id": 150,
+        "name": "Mirbagh"
+    },
+    {
+        "latitude": 23.941752281450,
+        "longitude": 88.997065967058,
+        "code": "MIR",
+        "id": 151,
+        "name": "Mirpur"
+    },
+    {
+        "latitude": 24.105421891964,
+        "longitude": 90.101684567064,
+        "code": "MIR",
+        "id": 152,
+        "name": "Mirzapur"
+    },
+    {
+        "latitude": 23.244339536998,
+        "longitude": 90.755583624709,
+        "code": "MOD",
+        "id": 153,
+        "name": "Modhu_Road"
+    },
+    {
+        "latitude": 24.870924122453,
+        "longitude": 90.973250214401,
+        "code": "MOH",
+        "id": 154,
+        "name": "Mohanganj"
+    },
+    {
+        "latitude": 25.719089331915,
+        "longitude": 88.535337542589,
+        "code": "MON",
+        "id": 155,
+        "name": "Mongalpur"
+    },
+    {
+        "latitude": 24.069529682478,
+        "longitude": 91.345078895899,
+        "code": "MON",
+        "id": 156,
+        "name": "Montola"
+    },
+    {
+        "latitude": 23.400480532508,
+        "longitude": 89.124505495877,
+        "code": "MUB",
+        "id": 157,
+        "name": "Mubarakganj"
+    },
+    {
+        "latitude": 23.964099822698,
+        "longitude": 91.265155138223,
+        "code": "MUK",
+        "id": 158,
+        "name": "Mukundapur"
+    },
+    {
+        "latitude": 24.164629767091,
+        "longitude": 89.146722453575,
+        "code": "MUL",
+        "id": 159,
+        "name": "Muladhuli"
+    },
+    {
+        "latitude": 24.753585201463,
+        "longitude": 90.410443895921,
+        "code": "MYM",
+        "id": 160,
+        "name": "Mymensingh"
+    },
+    {
+        "latitude": 24.724890052034,
+        "longitude": 88.402263050174,
+        "code": "NAC",
+        "id": 161,
+        "name": "Nachole"
+    },
+    {
+        "latitude": 23.599352483738,
+        "longitude": 89.607296082128,
+        "code": "NAL",
+        "id": 162,
+        "name": "Naliagram"
+    },
+    {
+        "latitude": 24.867824143871,
+        "longitude": 90.032868132165,
+        "code": "NAN",
+        "id": 163,
+        "name": "Nandina"
+    },
+    {
+        "latitude": 23.165432080930,
+        "longitude": 91.201346166772,
+        "code": "NAN",
+        "id": 164,
+        "name": "Nangolkot"
+    },
+    {
+        "latitude": 23.176927816121,
+        "longitude": 89.495453695609,
+        "code": "NAR",
+        "id": 165,
+        "name": "Narail"
+    },
+    {
+        "latitude": 23.617887292048,
+        "longitude": 90.505977050637,
+        "code": "NAR",
+        "id": 166,
+        "name": "Narayanganj"
+    },
+    {
+        "latitude": 23.930999204672,
+        "longitude": 90.721154501451,
+        "code": "NAR",
+        "id": 167,
+        "name": "Narsingdi"
+    },
+    {
+        "latitude": 24.881246780648,
+        "longitude": 90.117242393996,
+        "code": "NAR",
+        "id": 168,
+        "name": "Narundi"
+    },
+    {
+        "latitude": 23.113133808530,
+        "longitude": 91.115438447458,
+        "code": "NAT",
+        "id": 169,
+        "name": "Natherpetua"
+    },
+    {
+        "latitude": 24.410955963783,
+        "longitude": 88.966463271070,
+        "code": "NAT",
+        "id": 170,
+        "name": "Natore"
+    },
+    {
+        "latitude": 26.278170936908,
+        "longitude": 88.497110224537,
+        "code": "NAY",
+        "id": 171,
+        "name": "Nayaniburuj"
+    },
+    {
+        "latitude": 24.180764616002,
+        "longitude": 91.356682395637,
+        "code": "NAY",
+        "id": 172,
+        "name": "Nayapara"
+    },
+    {
+        "latitude": 24.888830702783,
+        "longitude": 90.720754442141,
+        "code": "NET",
+        "id": 173,
+        "name": "Netrakona"
+    },
+    {
+        "latitude": 25.952830919211,
+        "longitude": 88.835185184281,
+        "code": "NIL",
+        "id": 174,
+        "name": "Nilphamari"
+    },
+    {
+        "latitude": 22.827590090804,
+        "longitude": 91.101379266763,
+        "code": "NOA",
+        "id": 175,
+        "name": "Noakhali"
+    },
+    {
+        "latitude": 23.033225187860,
+        "longitude": 89.395208384231,
+        "code": "NOA",
+        "id": 176,
+        "name": "Noapara"
+    },
+    {
+        "latitude": 24.016060578498,
+        "longitude": 89.256193432140,
+        "code": "PAB",
+        "id": 177,
+        "name": "Pabna"
+    },
+    {
+        "latitude": 23.747436237842,
+        "longitude": 89.712069895625,
+        "code": "PAC",
+        "id": 178,
+        "name": "Pachuria"
+    },
+    {
+        "latitude": 23.398426439256,
+        "longitude": 90.218769453286,
+        "code": "PAD",
+        "id": 179,
+        "name": "Padma"
+    },
+    {
+        "latitude": 24.070891279984,
+        "longitude": 89.040772247503,
+        "code": "PAK",
+        "id": 180,
+        "name": "Paksey"
+    },
+    {
+        "latitude": 26.326586060961,
+        "longitude": 88.535746766867,
+        "code": "PAN",
+        "id": 181,
+        "name": "Panchagarh"
+    },
+    {
+        "latitude": 25.189156937980,
+        "longitude": 89.021358416832,
+        "code": "PAN",
+        "id": 182,
+        "name": "Panchbibi"
+    },
+    {
+        "latitude": 23.786169496244,
+        "longitude": 89.417220399906,
+        "code": "PAN",
+        "id": 183,
+        "name": "Pangsha"
+    },
+    {
+        "latitude": 25.653113464344,
+        "longitude": 88.915939999906,
+        "code": "PAR",
+        "id": 184,
+        "name": "Parbatipur"
+    },
+    {
+        "latitude": 26.343561376999,
+        "longitude": 89.021235095703,
+        "code": "PAT",
+        "id": 185,
+        "name": "Patgram"
+    },
+    {
+        "latitude": 22.297745653114,
+        "longitude": 91.981921495585,
+        "code": "PAT",
+        "id": 186,
+        "name": "Patiya"
+    },
+    {
+        "latitude": 25.660613636018,
+        "longitude": 89.407250266846,
+        "code": "PIR",
+        "id": 187,
+        "name": "Pirgacha"
+    },
+    {
+        "latitude": 25.860125977298,
+        "longitude": 88.357718995688,
+        "code": "PIR",
+        "id": 188,
+        "name": "Pirganj"
+    },
+    {
+        "latitude": 24.879008533403,
+        "longitude": 90.196691713454,
+        "code": "PIY",
+        "id": 189,
+        "name": "Piyarpur"
+    },
+    {
+        "latitude": 23.864715167046,
+        "longitude": 89.032688137956,
+        "code": "POR",
+        "id": 190,
+        "name": "Poradaha"
+    },
+    {
+        "latitude": 23.442534071784,
+        "longitude": 89.957308611199,
+        "code": "PUK",
+        "id": 191,
+        "name": "Pukuria"
+    },
+    {
+        "latitude": 23.740337715172,
+        "longitude": 91.155765649884,
+        "code": "QUA",
+        "id": 192,
+        "name": "Quasba"
+    },
+    {
+        "latitude": 23.995235607510,
+        "longitude": 89.304917685679,
+        "code": "RAG",
+        "id": 193,
+        "name": "Raghabpur"
+    },
+    {
+        "latitude": 23.762912478670,
+        "longitude": 89.645177995625,
+        "code": "RAJ",
+        "id": 194,
+        "name": "Rajbari"
+    },
+    {
+        "latitude": 24.374955160725,
+        "longitude": 88.608500966807,
+        "code": "RAJ",
+        "id": 195,
+        "name": "Rajshahi"
+    },
+    {
+        "latitude": 24.379103867026,
+        "longitude": 88.565496937971,
+        "code": "RAJ",
+        "id": 196,
+        "name": "Rajshahi_Court"
+    },
+    {
+        "latitude": 21.422474522383,
+        "longitude": 92.095320940384,
+        "code": "RAM",
+        "id": 197,
+        "name": "Ramu"
+    },
+    {
+        "latitude": 25.728499503017,
+        "longitude": 89.263463560870,
+        "code": "RAN",
+        "id": 198,
+        "name": "Rangpur"
+    },
+    {
+        "latitude": 24.820700814971,
+        "longitude": 88.319408517425,
+        "code": "ROH",
+        "id": 199,
+        "name": "Rohanpur"
+    },
+    {
+        "latitude": 26.168274108435,
+        "longitude": 88.405478563489,
+        "code": "RUH",
+        "id": 200,
+        "name": "Ruhia"
+    },
+    {
+        "latitude": 24.397293749028,
+        "longitude": 89.690080237972,
+        "code": "SH ",
+        "id": 201,
+        "name": "SH M Monsur Ali"
+    },
+    {
+        "latitude": 24.396016836478,
+        "longitude": 89.733445437972,
+        "code": "SOY",
+        "id": 202,
+        "name": "SOYDABAD"
+    },
+    {
+        "latitude": 23.463076853653,
+        "longitude": 88.959843666781,
+        "code": "SAF",
+        "id": 203,
+        "name": "Safdarpur"
+    },
+    {
+        "latitude": 25.788271177343,
+        "longitude": 88.892423995686,
+        "code": "SAI",
+        "id": 204,
+        "name": "Saidpur"
+    },
+    {
+        "latitude": 24.807352069409,
+        "longitude": 88.986034799906,
+        "code": "SAN",
+        "id": 205,
+        "name": "Santahar"
+    },
+    {
+        "latitude": 24.218812593820,
+        "longitude": 90.900648266803,
+        "code": "SAR",
+        "id": 206,
+        "name": "Sararchar"
+    },
+    {
+        "latitude": 24.337245753707,
+        "longitude": 88.752389995642,
+        "code": "SAR",
+        "id": 207,
+        "name": "Sardah_Road"
+    },
+    {
+        "latitude": 24.760979343088,
+        "longitude": 89.840025997505,
+        "code": "SAR",
+        "id": 208,
+        "name": "Sarishabari"
+    },
+    {
+        "latitude": 23.972808041930,
+        "longitude": 89.486950214944,
+        "code": "SAT",
+        "id": 209,
+        "name": "Sathia_Rajapur"
+    },
+    {
+        "latitude": 22.092407938581,
+        "longitude": 92.061602676502,
+        "code": "SAT",
+        "id": 210,
+        "name": "Satkania"
+    },
+    {
+        "latitude": 25.798112936863,
+        "longitude": 88.461650666850,
+        "code": "SET",
+        "id": 211,
+        "name": "Setabganj"
+    },
+    {
+        "latitude": 24.253307628339,
+        "longitude": 91.382024487968,
+        "code": "SHA",
+        "id": 212,
+        "name": "Shahaji_Bazar"
+    },
+    {
+        "latitude": 24.278059458309,
+        "longitude": 91.449942037968,
+        "code": "SHA",
+        "id": 213,
+        "name": "Shaistaganj"
+    },
+    {
+        "latitude": 24.382933259638,
+        "longitude": 91.900220001464,
+        "code": "SHA",
+        "id": 214,
+        "name": "Shamshernagar"
+    },
+    {
+        "latitude": 23.639354302550,
+        "longitude": 91.146911004392,
+        "code": "SHA",
+        "id": 215,
+        "name": "Shashidal"
+    },
+    {
+        "latitude": 23.385725172249,
+        "longitude": 90.129447217697,
+        "code": "SHI",
+        "id": 216,
+        "name": "Shibchar"
+    },
+    {
+        "latitude": 25.998073823825,
+        "longitude": 88.403452208737,
+        "code": "SHI",
+        "id": 217,
+        "name": "Shibganj"
+    },
+    {
+        "latitude": 22.368631019844,
+        "longitude": 91.826553854476,
+        "code": "SHO",
+        "id": 218,
+        "name": "Sholoshohor"
+    },
+    {
+        "latitude": 24.838321064975,
+        "longitude": 90.579346189836,
+        "code": "SHY",
+        "id": 219,
+        "name": "Shyamgonj"
+    },
+    {
+        "latitude": 25.694232436262,
+        "longitude": 89.148896175340,
+        "code": "SHY",
+        "id": 220,
+        "name": "Shyampur"
+    },
+    {
+        "latitude": 23.120910277886,
+        "longitude": 89.346471866771,
+        "code": "SIN",
+        "id": 221,
+        "name": "Singia"
+    },
+    {
+        "latitude": 24.448517754188,
+        "longitude": 89.705478902075,
+        "code": "SIR",
+        "id": 222,
+        "name": "Sirajganj_Bazar"
+    },
+    {
+        "latitude": 24.437416410537,
+        "longitude": 89.699935937973,
+        "code": "SIR",
+        "id": 223,
+        "name": "Sirajganjraipur"
+    },
+    {
+        "latitude": 23.040660860269,
+        "longitude": 91.097913595605,
+        "code": "SON",
+        "id": 224,
+        "name": "Sonaimuri"
+    },
+    {
+        "latitude": 25.044066493737,
+        "longitude": 89.497132903012,
+        "code": "SON",
+        "id": 225,
+        "name": "Sonatola"
+    },
+    {
+        "latitude": 24.306543422721,
+        "longitude": 91.734762966805,
+        "code": "SRE",
+        "id": 226,
+        "name": "Sreemangal"
+    },
+    {
+        "latitude": 24.199188220231,
+        "longitude": 90.479557537966,
+        "code": "SRE",
+        "id": 227,
+        "name": "Sreepur"
+    },
+    {
+        "latitude": 25.822892997590,
+        "longitude": 88.403813675934,
+        "code": "SUL",
+        "id": 228,
+        "name": "Sultanpur"
+    },
+    {
+        "latitude": 24.882188473060,
+        "longitude": 91.868248287244,
+        "code": "SYL",
+        "id": 229,
+        "name": "Sylhet"
+    },
+    {
+        "latitude": 23.490207478857,
+        "longitude": 89.876545966782,
+        "code": "TAL",
+        "id": 230,
+        "name": "Talma"
+    },
+    {
+        "latitude": 24.824169860774,
+        "longitude": 89.180656172343,
+        "code": "TAL",
+        "id": 231,
+        "name": "Talora"
+    },
+    {
+        "latitude": 24.273878960186,
+        "longitude": 89.937676680297,
+        "code": "TAN",
+        "id": 232,
+        "name": "Tangail"
+    },
+    {
+        "latitude": 23.974428175301,
+        "longitude": 89.408559266795,
+        "code": "TAN",
+        "id": 233,
+        "name": "Tantibandha"
+    },
+    {
+        "latitude": 24.685237239975,
+        "longitude": 89.824065691017,
+        "code": "TAR",
+        "id": 234,
+        "name": "Tarakandi"
+    },
+    {
+        "latitude": 23.817325008450,
+        "longitude": 90.411102836356,
+        "code": "DHA",
+        "id": 338,
+        "name": "Dhaka_Cantt"
+    },
+    {
+        "latitude": 23.959027906364,
+        "longitude": 90.415765308950,
+        "code": "DHI",
+        "id": 339,
+        "name": "Dhirasrom"
+    },
+    {
+        "latitude": 24.531683915579,
+        "longitude": 90.508711517341,
+        "code": "DHO",
+        "id": 340,
+        "name": "Dhola"
+    },
+    {
+        "latitude": 24.239760423586,
+        "longitude": 89.447186459227,
+        "code": "DIL",
+        "id": 341,
+        "name": "Dilpashar"
+    },
+    {
+        "latitude": 23.235466096939,
+        "longitude": 91.119449810036,
+        "code": "DOU",
+        "id": 342,
+        "name": "Doulatganj"
+    },
+    {
+        "latitude": 24.260011181548,
+        "longitude": 88.971894134014,
+        "code": "ABD",
+        "id": 1,
+        "name": "Abdulpur"
+    },
+    {
+        "latitude": 25.924438153686,
+        "longitude": 89.348822016499,
+        "code": "ADI",
+        "id": 2,
+        "name": "Aditmari"
+    },
+    {
+        "latitude": 24.614527754045,
+        "longitude": 88.975115215248,
+        "code": "AHS",
+        "id": 3,
+        "name": "Ahsanganj"
+    },
+    {
+        "latitude": 25.495666962789,
+        "longitude": 88.968725136419,
+        "code": "FUL",
+        "id": 77,
+        "name": "Fulbari"
+    },
+    {
+        "latitude": 24.074850378459,
+        "longitude": 89.204574801455,
+        "code": "TEB",
+        "id": 235,
+        "name": "Tebunia"
+    },
+    {
+        "latitude": 25.808545536673,
+        "longitude": 89.440790117768,
+        "code": "TEE",
+        "id": 236,
+        "name": "Teesta_Junction"
+    },
+    {
+        "latitude": 24.907341933002,
+        "longitude": 90.818018722342,
+        "code": "THA",
+        "id": 237,
+        "name": "Thakrokona"
+    },
+    {
+        "latitude": 26.040761477186,
+        "longitude": 88.426625295694,
+        "code": "THA",
+        "id": 238,
+        "name": "Thakurgaon_Road"
+    },
+    {
+        "latitude": 25.967177116706,
+        "longitude": 89.202743209008,
+        "code": "TUS",
+        "id": 239,
+        "name": "Tushbhandar"
+    },
+    {
+        "latitude": 24.290082442182,
+        "longitude": 89.570192330911,
+        "code": "ULL",
+        "id": 240,
+        "name": "Ullapara"
+    },
+    {
+        "latitude": 22.354075782601,
+        "longitude": 91.795622997753,
+        "code": "PAH",
+        "id": 241,
+        "name": "Pahartoli"
+    },
+    {
+        "latitude": 22.429969167396,
+        "longitude": 91.748936375090,
+        "code": "BHA",
+        "id": 242,
+        "name": "Bhatiari"
+    },
+    {
+        "latitude": 22.623309947571,
+        "longitude": 91.660445900967,
+        "code": "SHI",
+        "id": 243,
+        "name": "Shitakundo"
+    },
+    {
+        "latitude": 22.884887088231,
+        "longitude": 91.538869472116,
+        "code": "CHI",
+        "id": 244,
+        "name": "Chinki_Astana"
+    },
+    {
+        "latitude": 22.954945842876,
+        "longitude": 91.486696033606,
+        "code": "FAJ",
+        "id": 245,
+        "name": "Fajilpur"
+    },
+    {
+        "latitude": 23.087633923285,
+        "longitude": 91.297475595986,
+        "code": "GUN",
+        "id": 246,
+        "name": "Gunoboti"
+    },
+    {
+        "latitude": 23.240240259999,
+        "longitude": 90.987822630096,
+        "code": "SHA",
+        "id": 247,
+        "name": "Shaharasti_Road"
+    },
+    {
+        "latitude": 23.249606093484,
+        "longitude": 90.903053577018,
+        "code": "WAR",
+        "id": 248,
+        "name": "Waruk"
+    },
+    {
+        "latitude": 23.256143800314,
+        "longitude": 90.814998660935,
+        "code": "BOL",
+        "id": 249,
+        "name": "Bolakhal"
+    },
+    {
+        "latitude": 23.240761651874,
+        "longitude": 90.724843977524,
+        "code": "SHA",
+        "id": 250,
+        "name": "Shahatoli"
+    },
+    {
+        "latitude": 24.023437313520,
+        "longitude": 90.949589165238,
+        "code": "DOU",
+        "id": 343,
+        "name": "Doulatkandi"
+    },
+    {
+        "latitude": 25.031405137821,
+        "longitude": 89.818932134780,
+        "code": "DUR",
+        "id": 344,
+        "name": "Durmuth"
+    },
+    {
+        "latitude": 24.633191575623,
+        "longitude": 90.461459404223,
+        "code": "FAT",
+        "id": 345,
+        "name": "Fatema_Nagar"
+    },
+    {
+        "latitude": 24.693156985816,
+        "longitude": 91.947203220348,
+        "code": "FEN",
+        "id": 346,
+        "name": "Fenchuganj"
+    },
+    {
+        "latitude": 22.978386929872,
+        "longitude": 89.447164518441,
+        "code": "FUL",
+        "id": 347,
+        "name": "Fultola"
+    },
+    {
+        "latitude": 24.891760141873,
+        "longitude": 89.462007124509,
+        "code": "GAB",
+        "id": 348,
+        "name": "Gabtoli"
+    },
+    {
+        "latitude": 23.701598891355,
+        "longitude": 90.429249137777,
+        "code": "GAN",
+        "id": 349,
+        "name": "Gandaria"
+    },
+    {
+        "latitude": 23.826182615468,
+        "longitude": 91.194163466617,
+        "code": "GAN",
+        "id": 350,
+        "name": "Gangashagor"
+    },
+    {
+        "latitude": 24.178635529415,
+        "longitude": 89.220020632240,
+        "code": "GOF",
+        "id": 352,
+        "name": "Gofurabad"
+    },
+    {
+        "latitude": 24.801601501458,
+        "longitude": 88.510611885818,
+        "code": "GOL",
+        "id": 353,
+        "name": "Golabari"
+    },
+    {
+        "latitude": 24.231930099859,
+        "longitude": 89.376089036619,
+        "code": "GUA",
+        "id": 354,
+        "name": "Guakhara"
+    },
+    {
+        "latitude": 23.815181771876,
+        "longitude": 88.991328502514,
+        "code": "HAL",
+        "id": 355,
+        "name": "Halsa"
+    },
+    {
+        "latitude": 25.572596921020,
+        "longitude": 89.431097750803,
+        "code": "HAS",
+        "id": 356,
+        "name": "Hasanganj"
+    },
+    {
+        "latitude": 23.969639890335,
+        "longitude": 90.824386684596,
+        "code": "HAT",
+        "id": 357,
+        "name": "Hatubhanga"
+    },
+    {
+        "latitude": 22.854334334271,
+        "longitude": 91.104005837115,
+        "code": "HOR",
+        "id": 358,
+        "name": "Horinaraynpur"
+    },
+    {
+        "latitude": 24.017256244609,
+        "longitude": 91.310650379372,
+        "code": "HOR",
+        "id": 359,
+        "name": "Horoshpur"
+    },
+    {
+        "latitude": 24.375449768458,
+        "longitude": 88.685858692532,
+        "code": "HOR",
+        "id": 360,
+        "name": "Horyan"
+    },
+    {
+        "latitude": 24.144075289258,
+        "longitude": 90.463271510222,
+        "code": "IJJ",
+        "id": 361,
+        "name": "Ijjatpur"
+    },
+    {
+        "latitude": 23.792542640261,
+        "longitude": 91.173405095511,
+        "code": "IMA",
+        "id": 362,
+        "name": "Imambari"
+    },
+    {
+        "latitude": 24.692375958598,
+        "longitude": 90.594575778804,
+        "code": "ISH",
+        "id": 363,
+        "name": "Ishwarganj"
+    },
+    {
+        "latitude": 24.920817953795,
+        "longitude": 89.015385606618,
+        "code": "JAF",
+        "id": 364,
+        "name": "Jaforpur"
+    },
+    {
+        "latitude": 24.908065287638,
+        "longitude": 90.594034195992,
+        "code": "JAL",
+        "id": 365,
+        "name": "Jalsuka"
+    },
+    {
+        "latitude": 25.009600551009,
+        "longitude": 90.648792656358,
+        "code": "JAR",
+        "id": 366,
+        "name": "Jariajhanzile"
+    },
+    {
+        "latitude": 23.194402430278,
+        "longitude": 89.183507224289,
+        "code": "JAS",
+        "id": 367,
+        "name": "Jashore_Cantt"
+    },
+    {
+        "latitude": 23.930503869133,
+        "longitude": 90.674275812115,
+        "code": "JIN",
+        "id": 368,
+        "name": "Jinardi"
+    },
+    {
+        "latitude": 23.574273849915,
+        "longitude": 88.809655750996,
+        "code": "JOY",
+        "id": 369,
+        "name": "Joyrampur"
+    },
+    {
+        "latitude": 24.836458402360,
+        "longitude": 89.301298144758,
+        "code": "KAH",
+        "id": 370,
+        "name": "Kahalu"
+    },
+    {
+        "latitude": 24.092307371473,
+        "longitude": 90.939549282716,
+        "code": "KAL",
+        "id": 371,
+        "name": "Kalikaprosad"
+    },
+    {
+        "latitude": 25.435211993376,
+        "longitude": 89.498340134357,
+        "code": "KAM",
+        "id": 372,
+        "name": "Kamarpara"
+    },
+    {
+        "latitude": 24.462776371222,
+        "longitude": 91.987932564875,
+        "code": "LON",
+        "id": 383,
+        "name": "Longla"
+    },
+    {
+        "latitude": 23.804405982703,
+        "longitude": 89.358083009823,
+        "code": "MAC",
+        "id": 384,
+        "name": "Machpara"
+    },
+    {
+        "latitude": 22.882539550580,
+        "longitude": 91.108740061139,
+        "code": "MAI",
+        "id": 385,
+        "name": "Maijdi"
+    },
+    {
+        "latitude": 24.306033225695,
+        "longitude": 88.963650057013,
+        "code": "MAL",
+        "id": 386,
+        "name": "Malonchi"
+    },
+    {
+        "latitude": 24.798115834481,
+        "longitude": 91.911434001155,
+        "code": "MOG",
+        "id": 387,
+        "name": "Moghla_bazar"
+    },
+    {
+        "latitude": 23.216830410753,
+        "longitude": 89.164225874599,
+        "code": "MEH",
+        "id": 388,
+        "name": "Meherulla_Nagar"
+    },
+    {
+        "latitude": 26.175885219048,
+        "longitude": 88.804220625170,
+        "code": "MIR",
+        "id": 389,
+        "name": "Mirzaganj"
+    },
+    {
+        "latitude": 22.791720643837,
+        "longitude": 89.520388948809,
+        "code": "MOH",
+        "id": 390,
+        "name": "Mohammad_Nagar"
+    },
+    {
+        "latitude": 24.168252899044,
+        "longitude": 90.031423159544,
+        "code": "MOH",
+        "id": 391,
+        "name": "Mohera"
+    },
+    {
+        "latitude": 23.684165266194,
+        "longitude": 88.878905443292,
+        "code": "MOM",
+        "id": 392,
+        "name": "Mominpur"
+    },
+    {
+        "latitude": 23.688251610986,
+        "longitude": 91.152397281281,
+        "code": "MON",
+        "id": 393,
+        "name": "Mondobag"
+    },
+    {
+        "latitude": 22.477466774135,
+        "longitude": 89.599428872546,
+        "code": "MON",
+        "id": 394,
+        "name": "Mongla"
+    },
+    {
+        "latitude": 24.426298932022,
+        "longitude": 91.938875703618,
+        "code": "MON",
+        "id": 395,
+        "name": "Monu"
+    },
+    {
+        "latitude": 24.385396129392,
+        "longitude": 90.536175758507,
+        "code": "MOS",
+        "id": 396,
+        "name": "Moshakhali"
+    },
+    {
+        "latitude": 25.108197156252,
+        "longitude": 89.773676980724,
+        "code": "MOS",
+        "id": 397,
+        "name": "Mosharofganj"
+    },
+    {
+        "latitude": 24.038738072469,
+        "longitude": 90.282302803820,
+        "code": "MOW",
+        "id": 398,
+        "name": "Mowchak"
+    },
+    {
+        "latitude": 22.939338347664,
+        "longitude": 91.514623268399,
+        "code": "MUH",
+        "id": 399,
+        "name": "Muhuriganj"
+    },
+    {
+        "latitude": 24.629088502311,
+        "longitude": 91.989358882347,
+        "code": "BHA",
+        "id": 321,
+        "name": "Bhatera_Bazar"
+    },
+    {
+        "latitude": 24.048673316375,
+        "longitude": 90.434809843107,
+        "code": "BHA",
+        "id": 322,
+        "name": "Bhawal_Gazipur"
+    },
+    {
+        "latitude": 24.824187543474,
+        "longitude": 90.259395531315,
+        "code": "BID",
+        "id": 323,
+        "name": "Biddaganj"
+    },
+    {
+        "latitude": 24.802806817682,
+        "longitude": 90.306284979496,
+        "code": "BAI",
+        "id": 324,
+        "name": "Baigunbari"
+    },
+    {
+        "latitude": 25.726119301036,
+        "longitude": 88.906532089549,
+        "code": "BEL",
+        "id": 325,
+        "name": "Belaichondi"
+    },
+    {
+        "latitude": 23.077461560578,
+        "longitude": 91.108556997569,
+        "code": "BIP",
+        "id": 326,
+        "name": "Bipulshar"
+    },
+    {
+        "latitude": 24.559415867740,
+        "longitude": 88.964479995745,
+        "code": "BIR",
+        "id": 327,
+        "name": "Birkutsha"
+    },
+    {
+        "latitude": 22.992640978493,
+        "longitude": 91.102612313152,
+        "code": "BOJ",
+        "id": 329,
+        "name": "Bojra"
+    },
+    {
+        "latitude": 23.795614720609,
+        "longitude": 90.400850577208,
+        "code": "BON",
+        "id": 330,
+        "name": "Bonani"
+    },
+    {
+        "latitude": 24.587328476063,
+        "longitude": 91.978897286825,
+        "code": "BOR",
+        "id": 331,
+        "name": "Boromchal"
+    },
+    {
+        "latitude": 24.472116362808,
+        "longitude": 88.494448673696,
+        "code": "CHA",
+        "id": 332,
+        "name": "Chabbish_Nagar"
+    },
+    {
+        "latitude": 23.076544132210,
+        "longitude": 89.365955951539,
+        "code": "CHE",
+        "id": 333,
+        "name": "Chengutia"
+    },
+    {
+        "latitude": 24.559533800429,
+        "longitude": 92.016972905000,
+        "code": "CHO",
+        "id": 334,
+        "name": "Chokapon"
+    },
+    {
+        "latitude": 25.607951527185,
+        "longitude": 89.420563874349,
+        "code": "CHO",
+        "id": 335,
+        "name": "Chowdhurani"
+    },
+    {
+        "latitude": 22.691459616559,
+        "longitude": 89.651554036136,
+        "code": "CHU",
+        "id": 336,
+        "name": "Chulkati_Bazar"
+    },
+    {
+        "latitude": 25.883540791362,
+        "longitude": 88.840566845523,
+        "code": "DAR",
+        "id": 337,
+        "name": "Darwani"
+    },
+    {
+        "latitude": 23.716864782927,
+        "longitude": 88.894533144198,
+        "code": "MUN",
+        "id": 400,
+        "name": "Munshiganj"
+    },
+    {
+        "latitude": 24.774249858371,
+        "longitude": 90.367642626805,
+        "code": "MYM",
+        "id": 401,
+        "name": "Mymensingh_Road"
+    },
+    {
+        "latitude": 24.579402242590,
+        "longitude": 90.748561611070,
+        "code": "NAN",
+        "id": 402,
+        "name": "Nandail_Road"
+    },
+    {
+        "latitude": 24.315147289317,
+        "longitude": 88.801410685351,
+        "code": "NAN",
+        "id": 403,
+        "name": "Nandigachi"
+    },
+    {
+        "latitude": 23.055945150855,
+        "longitude": 88.994107205505,
+        "code": "NAV",
+        "id": 404,
+        "name": "Navaron"
+    },
+    {
+        "latitude": 24.887463127655,
+        "longitude": 90.731486711517,
+        "code": "NET",
+        "id": 405,
+        "name": "Netrakona_Court"
+    },
+    {
+        "latitude": 24.497034428604,
+        "longitude": 90.793258725682,
+        "code": "NIL",
+        "id": 406,
+        "name": "Nilganj"
+    },
+    {
+        "latitude": 24.839638863650,
+        "longitude": 90.230747091310,
+        "code": "NIM",
+        "id": 407,
+        "name": "Nimtola_Bazar"
+    },
+    {
+        "latitude": 24.691129593815,
+        "longitude": 88.417379348217,
+        "code": "NIZ",
+        "id": 408,
+        "name": "Nizampur"
+    },
+    {
+        "latitude": 25.480923804003,
+        "longitude": 89.474323352193,
+        "code": "NOL",
+        "id": 409,
+        "name": "Noldanga"
+    },
+    {
+        "latitude": 24.502480753833,
+        "longitude": 88.959468603410,
+        "code": "NOL",
+        "id": 410,
+        "name": "Noldangarhat"
+    },
+    {
+        "latitude": 24.813739541678,
+        "longitude": 89.076228912349,
+        "code": "NOS",
+        "id": 411,
+        "name": "Noshrotpur"
+    },
+    {
+        "latitude": 25.733709909382,
+        "longitude": 89.409191163882,
+        "code": "ONN",
+        "id": 412,
+        "name": "Onnoda_Nagar"
+    },
+    {
+        "latitude": 24.827543072720,
+        "longitude": 89.221350925178,
+        "code": "PAC",
+        "id": 413,
+        "name": "Pachpirmazar"
+    },
+    {
+        "latitude": 23.924282091840,
+        "longitude": 91.139421215540,
+        "code": "PAG",
+        "id": 414,
+        "name": "Paghachong"
+    },
+    {
+        "latitude": 25.735307856610,
+        "longitude": 89.625029711752,
+        "code": "PAN",
+        "id": 415,
+        "name": "Panchpir"
+    },
+    {
+        "latitude": 24.880815992560,
+        "longitude": 90.200356482184,
+        "code": "PUB",
+        "id": 416,
+        "name": "Pubail"
+    },
+    {
+        "latitude": 24.951371669750,
+        "longitude": 90.604519746818,
+        "code": "PUR",
+        "id": 417,
+        "name": "Purbadhola"
+    },
+    {
+        "latitude": 24.376867702969,
+        "longitude": 88.645231256526,
+        "code": "RAJ",
+        "id": 418,
+        "name": "Raj_Univ"
+    },
+    {
+        "latitude": 23.577906881430,
+        "longitude": 91.155431691004,
+        "code": "RAJ",
+        "id": 419,
+        "name": "Rajapur"
+    },
+    {
+        "latitude": 25.798983017406,
+        "longitude": 89.547368984004,
+        "code": "RAJ",
+        "id": 420,
+        "name": "Rajarhat"
+    },
+    {
+        "latitude": 24.097269843961,
+        "longitude": 90.449586532974,
+        "code": "RAJ",
+        "id": 421,
+        "name": "Rajendrapur"
+    },
+    {
+        "latitude": 24.741430387370,
+        "longitude": 88.969467161889,
+        "code": "RAN",
+        "id": 422,
+        "name": "Rani_Nagar"
+    },
+    {
+        "latitude": 25.579492346925,
+        "longitude": 89.674882688759,
+        "code": "ROM",
+        "id": 423,
+        "name": "Romnabazar"
+    },
+    {
+        "latitude": 24.281235450566,
+        "longitude": 91.564353211373,
+        "code": "ROS",
+        "id": 424,
+        "name": "Roshidpur"
+    },
+    {
+        "latitude": 23.125448250129,
+        "longitude": 89.286601257514,
+        "code": "RUP",
+        "id": 425,
+        "name": "Rupdia"
+    },
+    {
+        "latitude": 24.944471538306,
+        "longitude": 89.492358789886,
+        "code": "SAY",
+        "id": 426,
+        "name": "Sayedahmed_College"
+    },
+    {
+        "latitude": 24.686171539620,
+        "longitude": 88.991343955433,
+        "code": "SHA",
+        "id": 427,
+        "name": "Shahagola"
+    },
+    {
+        "latitude": 23.670818338406,
+        "longitude": 91.155868105007,
+        "code": "SHA",
+        "id": 428,
+        "name": "Shaldanodi"
+    },
+    {
+        "latitude": 24.222665096856,
+        "longitude": 89.405704868060,
+        "code": "SHA",
+        "id": 429,
+        "name": "Sharat_Nagar"
+    },
+    {
+        "latitude": 24.234295682814,
+        "longitude": 90.490498247418,
+        "code": "SHA",
+        "id": 430,
+        "name": "Shatkhamair"
+    },
+    {
+        "latitude": 25.804505567123,
+        "longitude": 89.503250375993,
+        "code": "SHI",
+        "id": 431,
+        "name": "Shingardabari"
+    },
+    {
+        "latitude": 24.431393495606,
+        "longitude": 88.546168668497,
+        "code": "SHI",
+        "id": 432,
+        "name": "Shitolai"
+    },
+    {
+        "latitude": 23.519339487515,
+        "longitude": 91.168633133716,
+        "code": "SHO",
+        "id": 433,
+        "name": "Shodor_Roshulpur"
+    },
+    {
+        "latitude": 24.689063189275,
+        "longitude": 90.654038272700,
+        "code": "SHO",
+        "id": 434,
+        "name": "Shohagi"
+    },
+    {
+        "latitude": 24.316188418773,
+        "longitude": 89.612411347478,
+        "code": "SHO",
+        "id": 435,
+        "name": "Sholop"
+    },
+    {
+        "latitude": 24.760362065074,
+        "longitude": 90.449552649656,
+        "code": "SHO",
+        "id": 436,
+        "name": "Shombhuganj"
+    },
+    {
+        "latitude": 22.417265476389,
+        "longitude": 91.813779906017,
+        "code": "CHI",
+        "id": 456,
+        "name": "Chittagong_Cantonment"
+    },
+    {
+        "latitude": 22.335040462596,
+        "longitude": 91.825831371330,
+        "code": "BOT",
+        "id": 457,
+        "name": "Bottoli"
+    },
+    {
+        "latitude": 22.356557559248,
+        "longitude": 91.807522612540,
+        "code": "JHA",
+        "id": 458,
+        "name": "Jhawtola"
+    },
+    {
+        "latitude": 22.446261783367,
+        "longitude": 91.817986027293,
+        "code": "CHO",
+        "id": 459,
+        "name": "Chowdhury_Hat"
+    },
+    {
+        "latitude": 22.458895893822,
+        "longitude": 91.811562085612,
+        "code": "FAT",
+        "id": 460,
+        "name": "Fateyabad"
+    },
+    {
+        "latitude": 22.470981704114,
+        "longitude": 91.794251360230,
+        "code": "CHI",
+        "id": 461,
+        "name": "Chittagong_University"
+    },
+    {
+        "latitude": 23.234858517623,
+        "longitude": 90.697725284965,
+        "code": "MOI",
+        "id": 251,
+        "name": "Moishadi"
+    },
+    {
+        "latitude": 24.808967083421,
+        "longitude": 89.047421743504,
+        "code": "ADA",
+        "id": 300,
+        "name": "Adamdighi"
+    },
+    {
+        "latitude": 24.748176673134,
+        "longitude": 90.432708074883,
+        "code": "AGR",
+        "id": 301,
+        "name": "Agri_Univ"
+    },
+    {
+        "latitude": 24.611375594079,
+        "longitude": 90.483759011104,
+        "code": "AHM",
+        "id": 302,
+        "name": "Ahmodbari"
+    },
+    {
+        "latitude": 24.818956597258,
+        "longitude": 89.130025501603,
+        "code": "ALT",
+        "id": 303,
+        "name": "Altaf_Nagar"
+    },
+    {
+        "latitude": 23.935793148782,
+        "longitude": 90.772448746010,
+        "code": "AMI",
+        "id": 304,
+        "name": "Amirganj"
+    },
+    {
+        "latitude": 23.492145151713,
+        "longitude": 88.885566813239,
+        "code": "ANS",
+        "id": 305,
+        "name": "Ansarbaria"
+    },
+    {
+        "latitude": 23.928714140627,
+        "longitude": 90.554124866584,
+        "code": "ARI",
+        "id": 306,
+        "name": "Arikhola"
+    },
+    {
+        "latitude": 24.621497202379,
+        "longitude": 88.976762476230,
+        "code": "ATR",
+        "id": 307,
+        "name": "Atrai"
+    },
+    {
+        "latitude": 24.569419043674,
+        "longitude": 90.505665025676,
+        "code": "AUL",
+        "id": 308,
+        "name": "Aulia_Nagar"
+    },
+    {
+        "latitude": 25.682422086667,
+        "longitude": 89.108806061707,
+        "code": "AUL",
+        "id": 309,
+        "name": "Auliaganj"
+    },
+    {
+        "latitude": 25.604833884133,
+        "longitude": 89.649909990465,
+        "code": "BAL",
+        "id": 310,
+        "name": "Balabari"
+    },
+    {
+        "latitude": 22.753760327321,
+        "longitude": 91.597948371875,
+        "code": "BAR",
+        "id": 311,
+        "name": "Baratkia"
+    },
+    {
+        "latitude": 24.630615294891,
+        "longitude": 89.831191889206,
+        "code": "BOR",
+        "id": 312,
+        "name": "Boroi_Potol"
+    },
+    {
+        "latitude": 23.306228552468,
+        "longitude": 89.149903502264,
+        "code": "BAR",
+        "id": 313,
+        "name": "Barobazar"
+    },
+    {
+        "latitude": 24.638130622638,
+        "longitude": 87.983373002049,
+        "code": "BAS",
+        "id": 314,
+        "name": "Bashudebpur"
+    },
+    {
+        "latitude": 24.788818596512,
+        "longitude": 89.854706119579,
+        "code": "BAU",
+        "id": 315,
+        "name": "Baushi"
+    },
+    {
+        "latitude": 22.978323051507,
+        "longitude": 89.446889646281,
+        "code": "BEJ",
+        "id": 316,
+        "name": "Bejerdanga"
+    },
+    {
+        "latitude": 23.780787934733,
+        "longitude": 89.541349783341,
+        "code": "BEL",
+        "id": 317,
+        "name": "Belgachi"
+    },
+    {
+        "latitude": 25.578808242981,
+        "longitude": 88.942592049058,
+        "code": "BHO",
+        "id": 318,
+        "name": "Bhobanipur"
+    },
+    {
+        "latitude": 23.892489349513,
+        "longitude": 91.169222944996,
+        "code": "BHA",
+        "id": 319,
+        "name": "Bhatshala"
+    },
+    {
+        "latitude": 24.210888909917,
+        "longitude": 89.364512740434,
+        "code": "BHA",
+        "id": 320,
+        "name": "Bhangura"
+    },
+    {
+        "latitude": 22.734377108278,
+        "longitude": 89.633101159859,
+        "code": "KAT",
+        "id": 374,
+        "name": "Katakhali"
+    },
+    {
+        "latitude": 23.953478534522,
+        "longitude": 90.798533505948,
+        "code": "KHA",
+        "id": 375,
+        "name": "Khanbari"
+    },
+    {
+        "latitude": 23.701338591996,
+        "longitude": 89.713876552824,
+        "code": "KHA",
+        "id": 376,
+        "name": "Khankhanapur"
+    },
+    {
+        "latitude": 23.171063976102,
+        "longitude": 91.128856686801,
+        "code": "KHI",
+        "id": 377,
+        "name": "Khila"
+    },
+    {
+        "latitude": 25.853991856505,
+        "longitude": 88.851875360940,
+        "code": "KHO",
+        "id": 378,
+        "name": "Khoyrat_Nagar"
+    },
+    {
+        "latitude": 25.374588339398,
+        "longitude": 89.528650443085,
+        "code": "KUP",
+        "id": 379,
+        "name": "Kuptola"
+    },
+    {
+        "latitude": 23.902557843331,
+        "longitude": 89.145468560350,
+        "code": "KUS",
+        "id": 380,
+        "name": "Kushtia"
+    },
+    {
+        "latitude": 24.260727555840,
+        "longitude": 89.499188662877,
+        "code": "LAH",
+        "id": 381,
+        "name": "Lahiri_Mohonpur"
+    },
+    {
+        "latitude": 23.307636545191,
+        "longitude": 91.139263167467,
+        "code": "LAL",
+        "id": 382,
+        "name": "Lalmai"
+    },
+    {
+        "latitude": 24.005868491860,
+        "longitude": 90.902414762454,
+        "code": "SHR",
+        "id": 437,
+        "name": "Shrinidhi"
+    },
+    {
+        "latitude": 23.417250715603,
+        "longitude": 89.085143571863,
+        "code": "SHU",
+        "id": 438,
+        "name": "Shundarpur"
+    },
+    {
+        "latitude": 23.538245160093,
+        "longitude": 90.292223439602,
+        "code": "SRE",
+        "id": 439,
+        "name": "Sreenagar"
+    },
+    {
+        "latitude": 24.928749728998,
+        "longitude": 89.480964610856,
+        "code": "SUK",
+        "id": 440,
+        "name": "Sukhanpukur"
+    },
+    {
+        "latitude": 24.696464502965,
+        "longitude": 90.452159410867,
+        "code": "SUT",
+        "id": 441,
+        "name": "Sutiakhali"
+    },
+    {
+        "latitude": 25.853480164688,
+        "longitude": 89.662528114130,
+        "code": "TAG",
+        "id": 442,
+        "name": "Tagraihat"
+    },
+    {
+        "latitude": 24.010707064533,
+        "longitude": 91.038487011408,
+        "code": "TAL",
+        "id": 443,
+        "name": "Talshohor"
+    },
+    {
+        "latitude": 23.760348969070,
+        "longitude": 90.395083346865,
+        "code": "TEJ",
+        "id": 444,
+        "name": "Tejgao"
+    },
+    {
+        "latitude": 24.444914978359,
+        "longitude": 91.967466141782,
+        "code": "TIL",
+        "id": 445,
+        "name": "Tilagao"
+    },
+    {
+        "latitude": 23.898655184574,
+        "longitude": 90.408369385088,
+        "code": "TON",
+        "id": 446,
+        "name": "Tongi"
+    },
+    {
+        "latitude": 26.023794010144,
+        "longitude": 88.824368044919,
+        "code": "TOR",
+        "id": 447,
+        "name": "Toronibari"
+    },
+    {
+        "latitude": 25.283600071787,
+        "longitude": 89.543085013349,
+        "code": "TRI",
+        "id": 448,
+        "name": "Trimohini"
+    },
+    {
+        "latitude": 25.652549292550,
+        "longitude": 89.623901740623,
+        "code": "ULI",
+        "id": 449,
+        "name": "Ulipur"
+    },
+    {
+        "latitude": 24.987038585776,
+        "longitude": 89.501568735343,
+        "code": "VEL",
+        "id": 450,
+        "name": "Velurpara"
+    },
+    {
+        "latitude": 24.362288901818,
+        "longitude": 88.964164796884,
+        "code": "YAS",
+        "id": 451,
+        "name": "Yasinpur"
+    },
+    {
+        "latitude": 23.492718585452,
+        "longitude": 88.845391612193,
+        "code": "UTH",
+        "id": 452,
+        "name": "Utholi"
+    },
+    {
+        "latitude": 24.877126882614,
+        "longitude": 89.002172644376,
+        "code": "TIL",
+        "id": 453,
+        "name": "Tilokpur"
+    },
+    {
+        "latitude": 23.940490205875,
+        "longitude": 90.619823707591,
+        "code": "GHO",
+        "id": 454,
+        "name": "Ghorashal"
+    },
+    {
+        "latitude": 25.940144248667,
+        "longitude": 89.305993679799,
+        "code": "NAM",
+        "id": 455,
+        "name": "Namurirhat"
+    }
+]

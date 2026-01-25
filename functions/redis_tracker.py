@@ -26,7 +26,7 @@ class RedisTrainTracker:
         self.redis = redis.Redis(host=host, port=port, db=db, decode_responses=True)
         self.ttl = ttl_seconds            # 10 minutes for active user data
         self.last_known_ttl = last_known_ttl  # 10 hours for last known position/bot data
-        self.bound_tolerance = 0.20       # Tolerance for bounds validation
+        self.bound_tolerance = 0.30       # Tolerance for bounds validation
         self.train_data = None            # Reference to train schedule data
     
     def set_train_data(self, data: Dict):
@@ -97,10 +97,20 @@ class RedisTrainTracker:
             else:
                 adjusted_times.append((idx, minutes))
         
+        # Get the adjusted last station time for comparison
+        adjusted_last_time = adjusted_times[-1][1] if adjusted_times else last_station_time
+        
         # Adjust current time for midnight crossing
-        # If schedule crosses midnight and current time is in the "after midnight" portion
+        # Only add 1440 if current time is in the "after midnight" portion of the route
+        # i.e., current time is small (early morning) AND less than last station time (after midnight part)
         if crosses_midnight and current_minutes < first_station_time:
-            current_minutes += 1440
+            # Check if we're in early morning (after midnight portion) vs afternoon (before train starts)
+            # If current_minutes + 1440 would be within the schedule range, we're in post-midnight
+            # If current_minutes is between last_station_time and first_station_time, train is not running
+            if current_minutes <= last_station_time:
+                # Early morning, after midnight - train is still running from yesterday
+                current_minutes += 1440
+            # else: afternoon/evening before train starts - don't adjust, will return 0
         
         # Find bracketing stations
         previous_station_idx = None
@@ -198,8 +208,8 @@ class RedisTrainTracker:
                            scheduled_position: float = None, timestamp: int = None):
         """
         Update bounds for a train based on bot data.
-        - Lower bound: max(0, bot_position - 0.20) - train can't be behind this
-        - Upper bound: scheduled_position + 0.20 - train can't be ahead of schedule
+        - Lower bound: max(0, bot_position - 0.30) - train can't be behind this
+        - Upper bound: scheduled_position + 0.30 - train can't be ahead of schedule
         
         Bot bounds are stored with 10-hour TTL.
         """

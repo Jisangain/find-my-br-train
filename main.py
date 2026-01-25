@@ -2,12 +2,11 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
-import asyncio
 import uvicorn
 
 # Import utility functions
 from functions.data_loader import load_data
-from functions.train_stack import AsyncTimedStack, periodic_clean_and_preprocess
+from functions.redis_tracker import RedisTrainTracker
 from functions.route_calculator import (
     precalculate_train_routes,
     precalculate_station_distances,
@@ -23,9 +22,10 @@ DATA, CURRENT_REVISION = load_data()
 TWO_TRAIN_ROUTES = {}
 TRAIN_ROUTES = {}
 STATION_DISTANCES = {}
-train_positions_confirmed = {}
-train_positions_unconfirmed = {}
-stack = AsyncTimedStack(max_age_seconds=600)
+
+# Redis-based train tracker (replaces AsyncTimedStack)
+tracker = RedisTrainTracker(host="localhost", port=6379, db=0, ttl_seconds=600)
+tracker.set_train_data(DATA)  # Provide train schedule data for scheduled position calculation
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -37,6 +37,12 @@ async def lifespan(app: FastAPI):
     print("Health Check: train.sportsprime.live/health")
     print("\nPress Ctrl+C to stop the server\n")
     
+    # Check Redis connection
+    if tracker.health_check():
+        print("✓ Redis connection established")
+    else:
+        print("⚠ Warning: Redis connection failed - position tracking won't work!")
+    
     # Precalculate routes and distances
     TRAIN_ROUTES = precalculate_train_routes(DATA)
     STATION_DISTANCES = precalculate_station_distances(DATA)
@@ -47,17 +53,7 @@ async def lifespan(app: FastAPI):
     TWO_TRAIN_ROUTES = precalculate_two_train_routes(DATA, CURRENT_REVISION)
     print("="*60 + "\n")
     
-    # Start background tasks
-    task1 = asyncio.create_task(periodic_clean_and_preprocess(stack, interval_seconds=30))
-    
     yield
-    
-    # Cleanup
-    task1.cancel()
-    try:
-        await task1
-    except asyncio.CancelledError:
-        print("Consumer task cancelled cleanly")
     
     print("Shutting down FastAPI Server...")
 
@@ -101,12 +97,18 @@ async def get_all_trains():
 # Position endpoints
 @app.get("/current/{train_ids}")
 async def get_current_positions_handler(train_ids: str):
-    return await positions.get_current_positions(train_ids, stack)
+    return positions.get_current_positions(train_ids, tracker)
+
+
+@app.get("/bounds/{train_id}")
+async def get_train_bounds_handler(train_id: str):
+    """Get current bounds for a train (set by bot users)"""
+    return positions.get_train_bounds(train_id, tracker)
 
 
 @app.post("/sendupdate")
 async def receive_update_handler(update: positions.LocationUpdate):
-    return await positions.receive_update(update, stack)
+    return positions.receive_update(update, tracker)
 
 
 # Route endpoints
@@ -139,12 +141,12 @@ async def view_reports_handler():
 # Live endpoints
 @app.get("/health")
 async def health_check_handler():
-    return await live.health_check(CURRENT_REVISION, train_positions_confirmed, train_positions_unconfirmed)
+    return live.health_check(CURRENT_REVISION, tracker)
 
 
 @app.get("/live")
 async def view_live_trains_handler():
-    return await live.view_live_trains(stack, DATA)
+    return live.view_live_trains(tracker, DATA)
 
 
 # Root endpoint

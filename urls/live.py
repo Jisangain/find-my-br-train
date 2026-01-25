@@ -40,7 +40,7 @@ def view_live_trains(tracker, data: Dict[str, Any]):
             )
         )
         
-        tid_to_name = data.get("tid_to_name", {})
+        tid_to_name = data.get("train_names", {})
         
         total_trains = len(all_trains)
         live_count = len(active_trains)
@@ -84,7 +84,7 @@ def view_live_trains(tracker, data: Dict[str, Any]):
                 if position_data:
                     position = position_data["position"]
                     timestamp = position_data["timestamp"]
-                    user_count = position_data.get("user_count", 0)
+                    user_count = position_data.get("active_user", 0)
                     is_live_data = position_data.get("is_live", False)
                     
                     position_info = f"Position: {position:.2f}"
@@ -111,7 +111,7 @@ def view_live_trains(tracker, data: Dict[str, Any]):
                 
                 html_content += f"""
                 <div class="{css_class}" style="border: 1px solid #ddd; margin: 5px 0; padding: 10px;">
-                    <h3>#{i+1}: {train_name} ({train_id})</h3>
+                    <h3>#{i+1}: {train_name}</h3>
                     <p><strong>{position_info}</strong> | {status}</p>
                     <p><small>{timestamp_info}</small></p>
                 </div>

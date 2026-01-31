@@ -13,12 +13,13 @@ class RedisTrainTracker:
     Redis-based train position tracker.
     - Stores last ping from each user per train
     - Auto-expires user data after 10 minutes (TTL)
-    - Calculates median position from all active users
+    - Pre-calculates and caches median position when new data arrives
     - Stores last known position for 10 hours (fallback when no active users)
     - Bot users (user_id starts with "bot") provide accurate bounds
     - Validates user positions against bot bounds
     - Calculates scheduled position automatically from train data
     - Persists across server restarts (stored in Redis)
+    - Data validity: positions older than 10 hours are considered invalid
     """
     
     def __init__(self, host: str = "localhost", port: int = 6379, db: int = 0, 
@@ -26,7 +27,8 @@ class RedisTrainTracker:
         self.redis = redis.Redis(host=host, port=port, db=db, decode_responses=True)
         self.ttl = ttl_seconds            # 10 minutes for active user data
         self.last_known_ttl = last_known_ttl  # 10 hours for last known position/bot data
-        self.bound_tolerance = 0.30       # Tolerance for bounds validation
+        self.max_valid_age = 36000        # 10 hours in seconds - data older than this is invalid
+        self.bound_tolerance = 0.50       # Tolerance for bounds validation
         self.train_data = None            # Reference to train schedule data
     
     def set_train_data(self, data: Dict):
@@ -199,17 +201,82 @@ class RedisTrainTracker:
         pipe.expire(all_trains_key, self.last_known_ttl)   # 10 hour expiry
         pipe.execute()
         
-        # Update last known position for this train
-        self._update_last_known_position(train_id)
+        # Pre-calculate and cache the current position for this train
+        self._update_cached_position(train_id)
         
         return True, "Position updated"
+    
+    def _update_cached_position(self, train_id: str):
+        """
+        Pre-calculate and cache the current position for a train.
+        Called after each push to keep it fresh - position is served directly from cache.
+        Stores both live position (from active users) and last known position.
+        """
+        active_users_key = f"train:{train_id}:active_users"
+        user_ids = list(self.redis.smembers(active_users_key))
+        
+        if not user_ids:
+            return
+        
+        # Batch fetch all user pings
+        keys = [f"train:{train_id}:user:{uid}:last" for uid in user_ids]
+        raw = self.redis.mget(keys)
+        
+        pings = []
+        expired_users = []
+        current_time = int(time.time())
+        
+        for uid, item in zip(user_ids, raw):
+            if item is None:
+                expired_users.append(uid)
+                continue
+            ping = json.loads(item)
+            # Validate data age - skip if older than max_valid_age (10 hours)
+            if current_time - ping["ts"] > self.max_valid_age:
+                expired_users.append(uid)
+                continue
+            pings.append(ping)
+        
+        # Cleanup expired/invalid users from set
+        if expired_users:
+            self.redis.srem(active_users_key, *expired_users)
+        
+        if not pings:
+            return
+        
+        # Calculate median position
+        positions = [p["pos"] for p in pings]
+        median_position = statistics.median(positions)
+        max_timestamp = max(p["ts"] for p in pings)
+        
+        # Store as cached live position (short TTL, refreshed on each update)
+        live_cache_key = f"train:{train_id}:cached_live"
+        live_data = {
+            "position": median_position,
+            "timestamp": max_timestamp,
+            "active_user": len(pings),
+            "cached_at": current_time
+        }
+        
+        # Store as last known position with 10-hour TTL (fallback)
+        last_known_key = f"train:{train_id}:last_known"
+        last_known_data = {
+            "position": median_position,
+            "timestamp": max_timestamp
+        }
+        
+        # Pipeline for atomic operations
+        pipe = self.redis.pipeline()
+        pipe.set(live_cache_key, json.dumps(live_data), ex=self.ttl)
+        pipe.set(last_known_key, json.dumps(last_known_data), ex=self.last_known_ttl)
+        pipe.execute()
     
     def _update_bot_bounds(self, train_id: str, bot_position: float, 
                            scheduled_position: float = None, timestamp: int = None):
         """
         Update bounds for a train based on bot data.
-        - Lower bound: max(0, bot_position - 0.30) - train can't be behind this
-        - Upper bound: scheduled_position + 0.30 - train can't be ahead of schedule
+        - Lower bound: max(0, bot_position - 0.50) - train can't be behind this
+        - Upper bound: scheduled_position + 0.50 - train can't be ahead of schedule
         
         Bot bounds are stored with 10-hour TTL.
         """
@@ -281,48 +348,12 @@ class RedisTrainTracker:
             return json.loads(data)
         return None
     
-    def _update_last_known_position(self, train_id: str):
-        """
-        Calculate and store the last known position for a train.
-        Called after each push to keep it fresh.
-        Stored with 10-hour TTL.
-        """
-        active_users_key = f"train:{train_id}:active_users"
-        user_ids = list(self.redis.smembers(active_users_key))
-        
-        if not user_ids:
-            return
-        
-        # Batch fetch all user pings
-        keys = [f"train:{train_id}:user:{uid}:last" for uid in user_ids]
-        raw = self.redis.mget(keys)
-        
-        pings = []
-        for item in raw:
-            if item is not None:
-                pings.append(json.loads(item))
-        
-        if not pings:
-            return
-        
-        # Calculate median position
-        positions = [p["pos"] for p in pings]
-        median_position = statistics.median(positions)
-        max_timestamp = max(p["ts"] for p in pings)
-        
-        # Store as last known position with 10-hour TTL
-        last_known_key = f"train:{train_id}:last_known"
-        last_known_data = {
-            "position": median_position,
-            "timestamp": max_timestamp
-        }
-        self.redis.set(last_known_key, json.dumps(last_known_data), ex=self.last_known_ttl)
-    
     def get_train_position(self, train_id: str) -> Optional[Dict]:
         """
-        Get position for a train.
-        1. First tries to calculate from active users (last 10 min)
+        Get position for a train - serves directly from pre-calculated cache.
+        1. First tries cached live position (calculated when data arrives)
         2. Falls back to last known position (up to 10 hours old)
+        3. Validates data age - returns None if data is too old (>10 hours)
         
         Returns format compatible with both old and new app:
         {
@@ -330,22 +361,35 @@ class RedisTrainTracker:
             "unconfirmed": {"position": ..., "timestamp": ...}  # For old app compatibility
         }
         """
-        # Try to get live position from active users
-        live_position = self._get_live_position(train_id)
-        if live_position:
-            result = {**live_position, "is_live": True}
-            # Add unconfirmed field for backward compatibility with old app
-            result["unconfirmed"] = {
-                "position": live_position["position"],
-                "timestamp": live_position["timestamp"]
-            }
-            return result
+        current_time = int(time.time())
+        
+        # Try to get cached live position (pre-calculated on push)
+        live_cache_key = f"train:{train_id}:cached_live"
+        live_data = self.redis.get(live_cache_key)
+        
+        if live_data:
+            cached = json.loads(live_data)
+            # Validate data age
+            if current_time - cached["timestamp"] <= self.max_valid_age:
+                result = {
+                    "position": cached["position"],
+                    "timestamp": cached["timestamp"],
+                    "active_user": cached["active_user"],
+                    "is_live": True
+                }
+                result["unconfirmed"] = {
+                    "position": cached["position"],
+                    "timestamp": cached["timestamp"]
+                }
+                return result
         
         # Fall back to last known position
         last_known = self._get_last_known_position(train_id)
         if last_known:
+            # Validate data age
+            if current_time - last_known["timestamp"] > self.max_valid_age:
+                return None  # Data too old, invalid
             result = {**last_known, "is_live": False, "active_user": 0}
-            # Add unconfirmed field for backward compatibility with old app
             result["unconfirmed"] = {
                 "position": last_known["position"],
                 "timestamp": last_known["timestamp"]
@@ -353,48 +397,6 @@ class RedisTrainTracker:
             return result
         
         return None
-    
-    def _get_live_position(self, train_id: str) -> Optional[Dict]:
-        """
-        Calculate position from active users (last 10 min).
-        Returns None if no active users.
-        """
-        active_users_key = f"train:{train_id}:active_users"
-        user_ids = list(self.redis.smembers(active_users_key))
-        
-        if not user_ids:
-            return None
-        
-        # Batch fetch all user pings
-        keys = [f"train:{train_id}:user:{uid}:last" for uid in user_ids]
-        raw = self.redis.mget(keys)
-        
-        pings = []
-        expired_users = []
-        
-        for uid, item in zip(user_ids, raw):
-            if item is None:  # Key expired
-                expired_users.append(uid)
-                continue
-            pings.append(json.loads(item))
-        
-        # Cleanup expired users from set
-        if expired_users:
-            self.redis.srem(active_users_key, *expired_users)
-        
-        if not pings:
-            return None
-        
-        # Calculate median position (reduces noise)
-        positions = [p["pos"] for p in pings]
-        median_position = statistics.median(positions)
-        max_timestamp = max(p["ts"] for p in pings)
-        
-        return {
-            "position": median_position,
-            "timestamp": max_timestamp,
-            "active_user": len(pings)
-        }
     
     def _get_last_known_position(self, train_id: str) -> Optional[Dict]:
         """
@@ -410,15 +412,61 @@ class RedisTrainTracker:
     
     def get_positions(self, train_ids: List[str]) -> Dict[str, Dict]:
         """
-        Get positions for multiple trains.
+        Get positions for multiple trains efficiently using batch fetch.
+        Serves directly from pre-calculated cache - no recalculation.
         Returns dict with train_id as key.
         """
+        if not train_ids:
+            return {}
+        
+        current_time = int(time.time())
         positions = {}
         
-        for train_id in train_ids:
-            result = self.get_train_position(train_id)
-            if result:
-                positions[train_id] = result
+        # Batch fetch cached live positions (single Redis call)
+        live_keys = [f"train:{tid}:cached_live" for tid in train_ids]
+        live_data = self.redis.mget(live_keys)
+        
+        # Track which trains need fallback to last_known
+        need_fallback = []
+        
+        for tid, data in zip(train_ids, live_data):
+            if data:
+                cached = json.loads(data)
+                # Validate data age
+                if current_time - cached["timestamp"] <= self.max_valid_age:
+                    positions[tid] = {
+                        "position": cached["position"],
+                        "timestamp": cached["timestamp"],
+                        "active_user": cached["active_user"],
+                        "is_live": True,
+                        "unconfirmed": {
+                            "position": cached["position"],
+                            "timestamp": cached["timestamp"]
+                        }
+                    }
+                    continue
+            need_fallback.append(tid)
+        
+        # Batch fetch last_known for trains without live data
+        if need_fallback:
+            last_known_keys = [f"train:{tid}:last_known" for tid in need_fallback]
+            last_known_data = self.redis.mget(last_known_keys)
+            
+            for tid, data in zip(need_fallback, last_known_data):
+                if data:
+                    last_known = json.loads(data)
+                    # Validate data age
+                    if current_time - last_known["timestamp"] <= self.max_valid_age:
+                        positions[tid] = {
+                            "position": last_known["position"],
+                            "timestamp": last_known["timestamp"],
+                            "is_live": False,
+                            "active_user": 0,
+                            "unconfirmed": {
+                                "position": last_known["position"],
+                                "timestamp": last_known["timestamp"]
+                            }
+                        }
         
         return positions
     

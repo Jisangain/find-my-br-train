@@ -5,7 +5,11 @@ import time
 import statistics
 from datetime import datetime
 from typing import Dict, List, Optional, Tuple
+from zoneinfo import ZoneInfo
 import redis
+
+# Bangladesh timezone - train schedules are in this timezone
+BD_TZ = ZoneInfo("Asia/Dhaka")
 
 
 class RedisTrainTracker:
@@ -55,11 +59,11 @@ class RedisTrainTracker:
         if not stations:
             return None
         
-        # Use provided timestamp or current time
+        # Use provided timestamp or current time, always in Bangladesh timezone
         if timestamp:
-            now = datetime.fromtimestamp(timestamp)
+            now = datetime.fromtimestamp(timestamp, tz=BD_TZ)
         else:
-            now = datetime.now()
+            now = datetime.now(tz=BD_TZ)
         
         current_minutes = now.hour * 60 + now.minute
         

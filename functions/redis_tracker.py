@@ -167,6 +167,13 @@ class RedisTrainTracker:
         if timestamp > 2500000000:
             timestamp = int(timestamp / 1000)
         
+        # Reject future timestamps (allow up to 60 seconds tolerance for clock drift)
+        current_time = int(time.time())
+        max_future_tolerance = 60  # seconds
+        if timestamp > current_time + max_future_tolerance:
+            future_diff = timestamp - current_time
+            return False, f"Timestamp rejected: {future_diff}s in the future (clock drift?)"
+        
         is_bot = user_id.lower().startswith("bot")
         
         # Calculate scheduled position for bounds

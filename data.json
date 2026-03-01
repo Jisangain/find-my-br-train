@@ -1,13 +1,13 @@
 {
-    "Revision": 143,
+    "Revision": 144,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "seat_cache_time": 300,
     "persistence_notice": {
         "all": "",
         "less": [
-            23,
-            ""
+            27,
+            "A new version is available in the playstore. Please Update."
         ],
         "greater": [
             21,

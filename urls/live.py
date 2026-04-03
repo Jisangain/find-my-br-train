@@ -21,6 +21,22 @@ def health_check(current_revision: int, tracker):
     }
 
 
+def get_active_trains_details(tracker) -> Dict:
+    """Return JSON details of currently active trains"""
+    active_trains = tracker.get_all_active_trains()
+    positions = tracker.get_positions(active_trains)
+    
+    result = {}
+    for tid, info in positions.items():
+        if info.get("is_live"):
+            result[tid] = {
+                "position": info.get("position"),
+                "timestamp": info.get("timestamp"),
+                "active_user": info.get("active_user", 0)
+            }
+    return result
+
+
 def view_live_trains(tracker, data: Dict[str, Any]):
     """View all trains with position data (live + historical)"""
     try:

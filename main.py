@@ -33,8 +33,8 @@ async def lifespan(app: FastAPI):
     global TWO_TRAIN_ROUTES, TRAIN_ROUTES, STATION_DISTANCES
     
     print("Starting Find My BR Train FastAPI Server...")
-    print("API Base URL: train.sportsprime.live")
-    print("Health Check: train.sportsprime.live/health")
+    print("API Base URL: findmytrain.freeddns.org")
+    print("Health Check: findmytrain.freeddns.org/health")
     print("\nPress Ctrl+C to stop the server\n")
     
     # Check Redis connection
@@ -149,6 +149,11 @@ async def view_live_trains_handler():
     return live.view_live_trains(tracker, DATA)
 
 
+@app.get("/activetrains")
+async def get_active_trains_handler():
+    return live.get_active_trains_details(tracker)
+
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -160,6 +165,7 @@ async def root():
         "endpoints": {
             "/initrevision": "GET - Check data revision",
             "/alltrains": "GET - Download complete database",
+            "/activetrains": "GET - Get active trains details",
             "/current/{train_ids}": "GET - Get current train positions",
             "/sendupdate": "POST - Submit location update",
             "/fix": "POST - Report incorrect information",

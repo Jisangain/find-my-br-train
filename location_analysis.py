@@ -1,14 +1,33 @@
 import json
 import folium
+import argparse
+import os
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--version", type=int, default=0)
+args = parser.parse_args()
 
 with open('data.json', 'r', encoding='utf-8') as f:
     payload = json.load(f)
 
-data = payload
-sid_to_sloc    = data['sid_to_sloc']
-sid_to_sname   = data['sid_to_sname']
-train_names    = data['train_names']
-tid_to_stations = data['tid_to_stations']
+data = payload.get('DATA', payload)
+
+if args.version >= 28:
+    folder_path = os.path.join("train_routes", "version28")
+    if os.path.exists(folder_path):
+        print(f"📂 Loading tid_to_stations from {folder_path} for version {args.version}")
+        tid_to_stations = {}
+        for filename in os.listdir(folder_path):
+            if filename.endswith(".json"):
+                tid = filename[:-5]
+                with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as file:
+                    tid_to_stations[tid] = json.load(file)
+        data["tid_to_stations"] = tid_to_stations
+
+sid_to_sloc    = data.get('sid_to_sloc', {})
+sid_to_sname   = data.get('sid_to_sname', {})
+train_names    = data.get('train_names', {})
+tid_to_stations = data.get('tid_to_stations', {})
 
 m = folium.Map(location=[23.5, 89.5], zoom_start=7)
 

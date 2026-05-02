@@ -8,12 +8,27 @@ import json
 import sys
 from typing import Dict, Set, Any, List
 
-def load_data_file(filepath: str) -> Dict[str, Any]:
+def load_data_file(filepath: str, version: int = 0) -> Dict[str, Any]:
     """Load and return data from JSON file"""
+    import os
     try:
         with open(filepath, 'r', encoding='utf-8') as f:
             data = json.load(f)
-        return data.get('DATA', data)
+        result_data = data.get('DATA', data)
+        
+        if version >= 28:
+            folder_path = os.path.join("train_routes", "version28")
+            if os.path.exists(folder_path):
+                print(f"📂 Loading tid_to_stations from {folder_path} for version {version}")
+                tid_to_stations = {}
+                for filename in os.listdir(folder_path):
+                    if filename.endswith(".json"):
+                        tid = filename[:-5]
+                        with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as file:
+                            tid_to_stations[tid] = json.load(file)
+                result_data["tid_to_stations"] = tid_to_stations
+                
+        return result_data
     except FileNotFoundError:
         print(f"❌ Error: File '{filepath}' not found")
         sys.exit(1)
@@ -164,13 +179,17 @@ def analyze_data_consistency(data: Dict[str, Any]) -> bool:
 
 def main():
     """Main function"""
-    if len(sys.argv) > 1:
-        filepath = sys.argv[1]
-    else:
-        filepath = "data.json"
+    import argparse
+    parser = argparse.ArgumentParser(description="Data Validator for Bangladesh Railway Data")
+    parser.add_argument("filepath", nargs="?", default="data.json", help="Path to data JSON file")
+    parser.add_argument("--version", type=int, default=0, help="Android version code to test (e.g. 28)")
+    args = parser.parse_args()
+    
+    filepath = args.filepath
+    version = args.version
     
     print(f"📂 Analyzing file: {filepath}")
-    data = load_data_file(filepath)
+    data = load_data_file(filepath, version)
     
     success = analyze_data_consistency(data)
     sys.exit(0 if success else 1)

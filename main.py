@@ -1,5 +1,6 @@
 # main.py - Simplified FastAPI application
 from fastapi import FastAPI, Request
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 import uvicorn
@@ -74,6 +75,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Mount static files for train routes
+import os
+if os.path.exists("train_routes"):
+    app.mount("/train_routes", StaticFiles(directory="train_routes"), name="train_routes")
+
 
 # ============= ROUTES =============
 
@@ -90,8 +96,8 @@ async def get_revision():
 
 
 @app.get("/alltrains")
-async def get_all_trains():
-    return data.get_all_trains(DATA)
+async def get_all_trains(version: int = 0):
+    return data.get_all_trains(DATA, version)
 
 
 # Position endpoints

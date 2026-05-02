@@ -1,5 +1,5 @@
 {
-    "Revision": 144,
+    "Revision": 145,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "seat_cache_time": 300,
@@ -16,7 +16,7 @@
     },
     "first_open_notice": "",
     "app_update_notice": "",
-    "data_update_notice": "Nakshikantha Commuter added",
+    "data_update_notice": "",
     "sid_to_sloc": {
         "Dhaka": [
             23.73424596143561,

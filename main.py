@@ -110,10 +110,12 @@ app.add_middleware(
 )
 
 
-# Mount static files for train routes
+# Mount static files
 import os
 if os.path.exists("train_routes"):
     app.mount("/train_routes", StaticFiles(directory="train_routes"), name="train_routes")
+if os.path.exists(".well-known"):
+    app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
 
 
 # ============= ROUTES =============

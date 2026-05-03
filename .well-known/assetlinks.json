@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.mytraintrackerbd.app",
+      "sha256_cert_fingerprints": [
+        "1A:A3:FB:18:7B:F0:06:3C:67:63:5E:A5:A4:69:6F:95:6A:BF:AD:8A:65:B4:1B:23:CA:C6:F9:74:73:6B:D1:6E"
+      ]
+    }
+  }
+]

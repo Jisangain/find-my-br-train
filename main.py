@@ -109,6 +109,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
 # Mount static files for train routes
 import os
 if os.path.exists("train_routes"):
@@ -132,8 +133,22 @@ async def get_revision(version: Optional[int] = None):
 
 
 @app.get("/alltrains")
-async def get_all_trains(version: int = 0):
-    return data.get_all_trains(DATA, version)
+async def get_all_trains(request: Request, version: int = 0):
+    from fastapi.responses import Response
+    import gzip
+    import json
+    
+    result = data.get_all_trains(DATA, version)
+    
+    if version >= 29 and "gzip" in request.headers.get("accept-encoding", ""):
+        compressed_data = gzip.compress(json.dumps(result, separators=(",", ":")).encode("utf-8"))
+        return Response(
+            content=compressed_data,
+            media_type="application/json",
+            headers={"Content-Encoding": "gzip"}
+        )
+        
+    return result
 
 
 # Position endpoints

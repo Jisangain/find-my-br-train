@@ -137,17 +137,25 @@ async def get_all_trains(request: Request, version: int = 0):
     from fastapi.responses import Response
     import gzip
     import json
-    
+
     result = data.get_all_trains(DATA, version)
-    
-    if version >= 29 and "gzip" in request.headers.get("accept-encoding", ""):
-        compressed_data = gzip.compress(json.dumps(result, separators=(",", ":")).encode("utf-8"))
-        return Response(
-            content=compressed_data,
-            media_type="application/json",
-            headers={"Content-Encoding": "gzip"}
-        )
-        
+
+    if version >= 29:
+        # Inject hash using same max-Y <= version logic
+        valid_versions = [v for v in DATA_HASHES.keys() if v <= version and v != 0]
+        if valid_versions:
+            result["hash"] = DATA_HASHES[max(valid_versions)]
+        elif 0 in DATA_HASHES:
+            result["hash"] = DATA_HASHES[0]
+
+        if "gzip" in request.headers.get("accept-encoding", ""):
+            compressed_data = gzip.compress(json.dumps(result, separators=(",", ":")).encode("utf-8"))
+            return Response(
+                content=compressed_data,
+                media_type="application/json",
+                headers={"Content-Encoding": "gzip"}
+            )
+
     return result
 
 

@@ -20,6 +20,40 @@ from urls import github, data, positions, routes, reports, live
 
 # Global variables
 DATA, CURRENT_REVISION = load_data()
+
+import hashlib
+import json
+import os
+from urls.data import get_all_trains
+
+DATA_HASHES = {}
+
+def precalculate_data_hashes():
+    print("Precalculating data hashes...")
+    
+    # Base hash (for versions < 28)
+    base_data = get_all_trains(DATA, version=0)
+    DATA_HASHES[0] = hashlib.sha256(json.dumps(base_data, sort_keys=True).encode("utf-8")).hexdigest()
+    
+    # Precalculate version 28 specifically as it's the fallback
+    v28_data = get_all_trains(DATA, version=28)
+    DATA_HASHES[28] = hashlib.sha256(json.dumps(v28_data, sort_keys=True).encode("utf-8")).hexdigest()
+    
+    # Version hashes based on directories
+    if os.path.exists("train_routes"):
+        for folder in os.listdir("train_routes"):
+            if folder.startswith("version"):
+                try:
+                    version_num = int(folder.replace("version", ""))
+                    if version_num not in DATA_HASHES:
+                        v_data = get_all_trains(DATA, version=version_num)
+                        DATA_HASHES[version_num] = hashlib.sha256(json.dumps(v_data, sort_keys=True).encode("utf-8")).hexdigest()
+                except ValueError:
+                    pass
+    print(f"Hashes precalculated for versions: {list(DATA_HASHES.keys())}")
+
+precalculate_data_hashes()
+
 TWO_TRAIN_ROUTES = {}
 TRAIN_ROUTES = {}
 STATION_DISTANCES = {}
@@ -90,9 +124,11 @@ async def github_webhook_handler(request: Request):
 
 
 # Data endpoints
+from typing import Optional
+
 @app.get("/initrevision")
-async def get_revision():
-    return data.get_revision(CURRENT_REVISION)
+async def get_revision(version: Optional[int] = None):
+    return data.get_revision(CURRENT_REVISION, DATA_HASHES, version)
 
 
 @app.get("/alltrains")

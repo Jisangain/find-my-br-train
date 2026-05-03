@@ -13,7 +13,10 @@ with open('data.json', 'r', encoding='utf-8') as f:
 data = payload.get('DATA', payload)
 
 if args.version >= 28:
-    folder_path = os.path.join("train_routes", "version28")
+    folder_path = os.path.join("train_routes", f"version{args.version}")
+    if not os.path.exists(folder_path):
+        folder_path = os.path.join("train_routes", "version28")
+        
     if os.path.exists(folder_path):
         print(f"📂 Loading tid_to_stations from {folder_path} for version {args.version}")
         tid_to_stations = {}

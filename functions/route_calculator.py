@@ -115,9 +115,9 @@ def find_common_stations(train1_stations, train2_stations):
 
 
 def find_best_interchange_station(common_stations, from_index_train1, to_index_train2):
-    """Find the best interchange station based on maximum time difference"""
+    """Find the best interchange station: earliest valid connection (min positive wait)"""
     best_station = None
-    max_time_diff = -1
+    min_time_diff = float('inf')
     
     for station in common_stations:
         if station['train1_index'] <= from_index_train1 or station['train2_index'] >= to_index_train2:
@@ -131,11 +131,77 @@ def find_best_interchange_station(common_stations, from_index_train1, to_index_t
         
         time_diff = time_difference(arrival_time, departure_time)
         
-        if time_diff is not None and time_diff >= 0 and time_diff > max_time_diff:
-            max_time_diff = time_diff
+        if time_diff is not None and time_diff >= 0 and time_diff < min_time_diff:
+            min_time_diff = time_diff
             best_station = station
     
-    return best_station, max_time_diff
+    return best_station, min_time_diff if best_station is not None else -1
+
+
+def _get_total_journey_time(route_info, key, tid_to_stations) -> float:
+    """Calculate total journey time in minutes for a route (handles overnight crossings)."""
+    train1_id, train2_id, interchange_id = route_info
+    from_sid, to_sid = key
+
+    train1_stations = tid_to_stations.get(train1_id, [])
+    train2_stations = tid_to_stations.get(train2_id, [])
+
+    train1_departure = None  # Departure from origin on train1
+    train1_arrival = None    # Arrival at interchange on train1
+    train2_departure = None  # Departure from interchange on train2
+    train2_arrival = None    # Arrival at destination on train2
+
+    for station in train1_stations:
+        if station[0] == from_sid and len(station) > 2:
+            train1_departure = parse_time(station[2])
+        elif station[0] == interchange_id and len(station) > 2:
+            train1_arrival = parse_time(station[2])
+
+    for station in train2_stations:
+        if station[0] == interchange_id and len(station) > 2:
+            train2_departure = parse_time(station[2])
+        elif station[0] == to_sid and len(station) > 2:
+            train2_arrival = parse_time(station[2])
+
+    if train1_departure is None or train2_arrival is None:
+        return float('inf')
+
+    # Track day offsets through the journey segments
+    days = 0
+
+    # Check if train1 arrives next day at interchange
+    if train1_arrival is not None and train1_arrival < train1_departure:
+        days += 1
+
+    # Check if train2 departs next day from interchange (relative to train1 arrival)
+    if train1_arrival is not None and train2_departure is not None:
+        effective_arrival = train1_arrival + days * 24 * 60
+        effective_departure = train2_departure
+        if effective_departure < train1_arrival:
+            days += 1  # Train2 departs next day from interchange
+
+    # Check if train2 arrives next day relative to its own departure
+    if train2_departure is not None and train2_arrival < train2_departure:
+        days += 1
+    elif train2_departure is None and train2_arrival < train1_departure:
+        days += 1
+
+    total_time = (train2_arrival - train1_departure) + (days * 24 * 60)
+    if total_time < 0:
+        total_time += 24 * 60  # Safety fallback
+
+    return total_time
+
+
+def _get_train1_departure(route_info, key, tid_to_stations) -> float:
+    """Return train1 departure time (minutes since midnight) from the origin station."""
+    train1_id = route_info[0]
+    from_sid = key[0]
+    for station in tid_to_stations.get(train1_id, []):
+        if station[0] == from_sid and len(station) > 2:
+            t = parse_time(station[2])
+            return t if t is not None else float('inf')
+    return float('inf')
 
 
 def precalculate_two_train_routes(data: Dict[str, Any], current_revision: int) -> Dict:
@@ -150,6 +216,7 @@ def precalculate_two_train_routes(data: Dict[str, Any], current_revision: int) -
                 routes = {}
                 for key, value in cached_data.get("routes", {}).items():
                     from_sid, to_sid = key.split("|||")
+                    # File is already sorted by departure time (pre-sorted at save time)
                     routes[(from_sid, to_sid)] = [
                         (r["train1"], r["train2"], r["interchange"])
                         for r in value
@@ -224,12 +291,13 @@ def precalculate_two_train_routes(data: Dict[str, Any], current_revision: int) -
                         if route_info not in routes[route_key]:
                             routes[route_key].append(route_info)
     
+    # Keep top 8 by total travel time (shortest journeys first)
     for key in routes:
-        routes[key] = routes[key][:5]
+        routes[key] = sorted(routes[key], key=lambda r: _get_total_journey_time(r, key, tid_to_stations))[:8]
     
     print(f"✓ Precalculation complete. Found {len(routes)} station pairs with two-train routes.")
     
-    # Save to file
+    # Save to file — routes are pre-sorted by departure time; no dep field needed (saves space)
     try:
         with open('two_train_routes.json', 'w') as f:
             json_routes = {

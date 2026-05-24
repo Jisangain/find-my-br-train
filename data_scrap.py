@@ -8,12 +8,12 @@ def load_data():
     try:
         with open('data.json', 'r') as f:
             data = json.load(f)
-            return data['DATA'], data['CURRENT_REVISION']
+            return data, data['Revision']
     except FileNotFoundError:
         print("Warning: data.json not found, using fallback data")
         # Fallback data in case JSON file is missing
         return {
-            "CURRENT_REVISION": 0,
+            "Revision": 0,
             "ONLINE_USER_UPDATE_DELAY": 10,
             "UPDATE_DELAY": 20,
             "DATA": {

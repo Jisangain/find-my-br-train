@@ -1,5 +1,5 @@
 {
-    "Revision": 146,
+    "Revision": 147,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "seat_cache_time": 300,
@@ -1161,6 +1161,14 @@
         "Kushtia": [
             23.90263640607785,
             89.14538358291689
+        ],
+        "Muksudpur": [
+            23.32976907456776,
+            89.85214970957692
+        ],
+        "Sreenagar": [
+            23.53754339077192,
+            90.29135976634133
         ]
     },
     "sid_to_sname": {
@@ -1449,7 +1457,9 @@
         "Pangsa": "Pangsa",
         "Machpara": "Machpara",
         "Khoksa": "Khoksa",
-        "Kushtia": "Kushtia"
+        "Kushtia": "Kushtia",
+        "Muksudpur": "Muksudpur",
+        "Sreenagar": "Sreenagar"
     },
     "train_names": {
         "712": "UPAKUL EXPRESS (712)",
@@ -2306,6 +2316,11 @@
                 "Mawa",
                 1,
                 "13:16"
+            ],
+            [
+                "Sreenagar",
+                1,
+                "13:18"
             ],
             [
                 "Dhaka",
@@ -3581,6 +3596,11 @@
                 "Gafargaon",
                 1,
                 "09:47"
+            ],
+            [
+                "Sreepur",
+                1,
+                "10:37"
             ],
             [
                 "Biman_Bandar",
@@ -5159,6 +5179,11 @@
                 "11:50"
             ],
             [
+                "Muksudpur",
+                1,
+                "12:09"
+            ],
+            [
                 "Kashiani",
                 1,
                 "12:22"
@@ -5415,6 +5440,11 @@
                 "Joydebpur",
                 1,
                 "19:18"
+            ],
+            [
+                "Sreepur",
+                1,
+                "19:46"
             ],
             [
                 "Gafargaon",
@@ -6112,6 +6142,11 @@
                 "23:40"
             ],
             [
+                "Darshana_Halt",
+                1,
+                "00:07"
+            ],
+            [
                 "Chuadanga",
                 1,
                 "00:24"
@@ -6139,7 +6174,7 @@
             [
                 "Rajbari",
                 1,
-                "02:40"
+                "02:45"
             ],
             [
                 "Faridpur",
@@ -6174,9 +6209,14 @@
                 "16:20"
             ],
             [
+                "Madhnagar",
+                1,
+                "16:35"
+            ],
+            [
                 "Ahsanganj",
                 1,
-                "16:44"
+                "16:46"
             ],
             [
                 "Santahar",
@@ -6330,6 +6370,11 @@
                 "15:00"
             ],
             [
+                "Sreenagar",
+                1,
+                "15:33"
+            ],
+            [
                 "Mawa",
                 1,
                 "15:38"
@@ -6460,6 +6505,11 @@
                 "Arani",
                 1,
                 "08:01"
+            ],
+            [
+                "Nandangachi",
+                1,
+                "08:25"
             ],
             [
                 "Sardah_Road",
@@ -7613,7 +7663,7 @@
             [
                 "Sonatola",
                 1,
-                "12:50"
+                "12:52"
             ],
             [
                 "Mahimaganj",
@@ -8128,44 +8178,49 @@
                 "02:00"
             ],
             [
+                "Kalukhali",
+                1,
+                "02:25"
+            ],
+            [
                 "Khoksha",
                 1,
-                "02:38"
+                "02:46"
             ],
             [
                 "Kushtia_Court",
                 1,
-                "03:04"
+                "03:12"
             ],
             [
                 "Poradaha",
                 1,
-                "03:18"
+                "03:25"
             ],
             [
                 "Alamdanga",
                 1,
-                "03:36"
+                "03:43"
             ],
             [
                 "Chuadanga",
                 1,
-                "03:55"
+                "04:04"
             ],
             [
                 "Darshana_Halt",
                 1,
-                "04:19"
+                "04:28"
             ],
             [
                 "Kotchandpur",
                 1,
-                "04:46"
+                "04:54"
             ],
             [
                 "Mubarakganj",
                 1,
-                "05:00"
+                "05:10"
             ],
             [
                 "Jashore",
@@ -8396,7 +8451,7 @@
             [
                 "Bhairab_Bazar",
                 1,
-                "09:22"
+                "09:19"
             ],
             [
                 "Brahmanbaria",
@@ -8844,6 +8899,11 @@
                 "Khoksha",
                 1,
                 "16:51"
+            ],
+            [
+                "Kalukhali",
+                1,
+                "17:12"
             ],
             [
                 "Rajbari",
@@ -9322,6 +9382,11 @@
                 "15:00"
             ],
             [
+                "Methikanda",
+                1,
+                "15:15"
+            ],
+            [
                 "Narsingdi",
                 1,
                 "15:31"
@@ -9682,6 +9747,11 @@
                 "08:35"
             ],
             [
+                "Akkelpur",
+                1,
+                "08:48"
+            ],
+            [
                 "Santahar",
                 1,
                 "09:20"
@@ -9831,6 +9901,11 @@
                 "19:27"
             ],
             [
+                "Nandangachi",
+                1,
+                "19:35"
+            ],
+            [
                 "Arani",
                 1,
                 "19:43"
@@ -9876,6 +9951,11 @@
                 "Kashiani",
                 1,
                 "17:11"
+            ],
+            [
+                "Muksudpur",
+                1,
+                "17:27"
             ],
             [
                 "Bhanga_Junction",
@@ -10434,6 +10514,11 @@
                 "09:10"
             ],
             [
+                "Madhnagar",
+                1,
+                "09:21"
+            ],
+            [
                 "Natore",
                 1,
                 "09:35"
@@ -10719,6 +10804,11 @@
                 "Narsingdi",
                 1,
                 "08:24"
+            ],
+            [
+                "Methikanda",
+                1,
+                "08:40"
             ],
             [
                 "Bhairab_Bazar",

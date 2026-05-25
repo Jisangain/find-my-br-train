@@ -12,26 +12,36 @@ def load_data_file(filepath: str, version: int = 0) -> Dict[str, Any]:
     """Load and return data from JSON file"""
     import os
     try:
-        with open(filepath, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        result_data = data.get('DATA', data)
-        
-        if version >= 28:
+        result_data = None
+        if version >= 29:
             folder_path = os.path.join("train_routes", f"version{version}")
-            if not os.path.exists(folder_path):
-                folder_path = os.path.join("train_routes", "version28")
-                
             if os.path.exists(folder_path):
+                v_data_path = os.path.join(folder_path, "data.json")
+                if os.path.exists(v_data_path):
+                    print(f"📂 Loading base data.json from {v_data_path} for version {version}")
+                    with open(v_data_path, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                else:
+                    with open(filepath, 'r', encoding='utf-8') as f:
+                        data = json.load(f)
+                result_data = data.get('DATA', data)
+                
                 print(f"📂 Loading tid_to_stations from {folder_path} for version {version}")
                 tid_to_stations = {}
                 for filename in os.listdir(folder_path):
-                    if filename.endswith(".json"):
+                    if filename.endswith(".json") and filename != "data.json":
                         tid = filename[:-5]
                         with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as file:
                             tid_to_stations[tid] = json.load(file)
                 result_data["tid_to_stations"] = tid_to_stations
                 
+        if result_data is None:
+            with open(filepath, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            result_data = data.get('DATA', data)
+            
         return result_data
+
     except FileNotFoundError:
         print(f"❌ Error: File '{filepath}' not found")
         sys.exit(1)

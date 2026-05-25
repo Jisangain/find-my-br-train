@@ -7,25 +7,34 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--version", type=int, default=0)
 args = parser.parse_args()
 
-with open('data.json', 'r', encoding='utf-8') as f:
-    payload = json.load(f)
-
-data = payload.get('DATA', payload)
-
-if args.version >= 28:
+data = None
+if args.version >= 29:
     folder_path = os.path.join("train_routes", f"version{args.version}")
-    if not os.path.exists(folder_path):
-        folder_path = os.path.join("train_routes", "version28")
-        
     if os.path.exists(folder_path):
+        v_data_path = os.path.join(folder_path, "data.json")
+        if os.path.exists(v_data_path):
+            print(f"📂 Loading base data.json from {v_data_path} for version {args.version}")
+            with open(v_data_path, 'r', encoding='utf-8') as f:
+                payload = json.load(f)
+        else:
+            with open('data.json', 'r', encoding='utf-8') as f:
+                payload = json.load(f)
+        data = payload.get('DATA', payload)
+        
         print(f"📂 Loading tid_to_stations from {folder_path} for version {args.version}")
         tid_to_stations = {}
         for filename in os.listdir(folder_path):
-            if filename.endswith(".json"):
+            if filename.endswith(".json") and filename != "data.json":
                 tid = filename[:-5]
                 with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as file:
                     tid_to_stations[tid] = json.load(file)
         data["tid_to_stations"] = tid_to_stations
+
+if data is None:
+    with open('data.json', 'r', encoding='utf-8') as f:
+        payload = json.load(f)
+    data = payload.get('DATA', payload)
+
 
 sid_to_sloc    = data.get('sid_to_sloc', {})
 sid_to_sname   = data.get('sid_to_sname', {})

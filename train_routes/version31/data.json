@@ -1,0 +1,3274 @@
+{
+  "Revision": 148,
+  "online_user_update_delay": 10,
+  "update_delay": 20,
+  "seat_cache_time": 300,
+  "persistence_notice": {
+    "all": "",
+    "less": [
+      27,
+      "A new version is available in the playstore. Please Update."
+    ],
+    "greater": [
+      21,
+      ""
+    ]
+  },
+  "first_open_notice": "",
+  "app_update_notice": "",
+  "data_update_notice": "",
+  "sid_to_sloc": {
+    "Dhaka": [
+      23.73424596143561,
+      90.4264201316412
+    ],
+    "Biman_Bandar": [
+      23.8520672672048,
+      90.40806533450319
+    ],
+    "Narsingdi": [
+      23.93082,
+      90.7210359
+    ],
+    "Bhairab_Bazar": [
+      24.0502591,
+      90.9781951
+    ],
+    "Ashuganj": [
+      24.0382393,
+      91.0016427
+    ],
+    "Brahmanbaria": [
+      23.9667271178471,
+      91.10850398002376
+    ],
+    "Akhaura": [
+      23.8692316,
+      91.2060188
+    ],
+    "Quasba": [
+      23.74030966985749,
+      91.15578577775126
+    ],
+    "Cumilla": [
+      23.4636412,
+      91.1667328
+    ],
+    "Laksam": [
+      23.25481507252231,
+      91.12392489118857
+    ],
+    "Natherpetua": [
+      23.1132013,
+      91.1154083
+    ],
+    "Sonaimuri": [
+      23.0440112,
+      91.0986423
+    ],
+    "Bajra": [
+      22.9920794,
+      91.1006125
+    ],
+    "Choumuhani": [
+      22.944007614585974,
+      91.12063190337875
+    ],
+    "Maijdi Court": [
+      22.86109413592518,
+      91.10500846059887
+    ],
+    "Noakhali": [
+      22.8906756,
+      91.0988689
+    ],
+    "Ibrahimabad": [
+      24.3895108,
+      89.8200921
+    ],
+    "Chatmohar": [
+      24.1887526,
+      89.2755732
+    ],
+    "Natore": [
+      24.4108131,
+      88.9665897
+    ],
+    "Santahar": [
+      24.8059735,
+      88.9860399
+    ],
+    "Talora": [
+      24.8237871,
+      89.1785781
+    ],
+    "Bogura": [
+      24.8485692,
+      89.3666678
+    ],
+    "Sonatola": [
+      25.0442708,
+      89.4909159
+    ],
+    "Bonar_Para": [
+      25.164700222990746,
+      89.52311462939501
+    ],
+    "Gaibandha": [
+      25.3323091,
+      89.542466
+    ],
+    "Bamondanga": [
+      25.53265877369314,
+      89.44599500198979
+    ],
+    "Pirgacha": [
+      25.6593276,
+      89.407802
+    ],
+    "Kaunia": [
+      25.7777897,
+      89.4236255
+    ],
+    "Kurigram": [
+      25.8075574,
+      89.6212955
+    ],
+    "Rangpur": [
+      25.7284973,
+      89.2634621
+    ],
+    "Joypurhat": [
+      25.098996,
+      89.0260363
+    ],
+    "Parbatipur": [
+      25.6532156,
+      88.915503
+    ],
+    "Dinajpur": [
+      25.6249608,
+      88.632424
+    ],
+    "Pirganj": [
+      25.859262,
+      88.3578266
+    ],
+    "Thakurgaon_Road": [
+      26.0391632,
+      88.4267702
+    ],
+    "Panchagarh": [
+      26.3300841,
+      88.5404477
+    ],
+    "Joydebpur": [
+      23.9980388,
+      90.420312
+    ],
+    "Tangail": [
+      24.2738513,
+      89.9375911
+    ],
+    "SH M Monsur Ali": [
+      24.397476351632204,
+      89.69010845897105
+    ],
+    "Ullapara": [
+      24.3133121,
+      89.5696836
+    ],
+    "Ishwardi Bypass": [
+      24.1550637,
+      89.0574975
+    ],
+    "Akkelpur": [
+      24.9645943,
+      89.0157574
+    ],
+    "Panchbibi": [
+      25.1885176,
+      89.0215654
+    ],
+    "Birampur": [
+      25.3979257,
+      88.9940017
+    ],
+    "Fulbari": [
+      25.4954304,
+      88.968885
+    ],
+    "Chirirbandar": [
+      25.6458795,
+      88.7758409
+    ],
+    "Setabganj": [
+      25.801655,
+      88.4594777
+    ],
+    "Ruhia": [
+      26.158179,
+      88.3975246
+    ],
+    "Kismat": [
+      26.22219129801528,
+      88.44718787799798
+    ],
+    "Khulna": [
+      22.8203865,
+      89.557929
+    ],
+    "Noapara": [
+      23.0332329,
+      89.3952433
+    ],
+    "Rupdia": [
+      23.12552024628552,
+      89.28661995302008
+    ],
+    "Jashore": [
+      23.154804311496118,
+      89.20714636357062
+    ],
+    "Jashore_cant": [
+      23.189192737529925,
+      89.1839015088407
+    ],
+    "Mubarakganj": [
+      23.400397,
+      89.1246708
+    ],
+    "Kotchandpur": [
+      23.415426681749395,
+      89.01412101977941
+    ],
+    "Uthali": [
+      23.492568709942656,
+      88.84483715824165
+    ],
+    "Darshana_Halt": [
+      23.529228029361104,
+      88.80976592509195
+    ],
+    "Joyrampur": [
+      23.570607312293006,
+      88.80975979418706
+    ],
+    "Chuadanga": [
+      23.639669583693383,
+      88.8563449837646
+    ],
+    "Alamdanga": [
+      23.7614107,
+      88.93651
+    ],
+    "Munshiganj": [
+      23.71671731378412,
+      88.89412733679595
+    ],
+    "Halsa": [
+      23.815307819953993,
+      88.9914876517109
+    ],
+    "Poradaha": [
+      23.8646803,
+      89.032612
+    ],
+    "Bheramara": [
+      24.0232047,
+      88.9918668
+    ],
+    "Paksey": [
+      24.071485,
+      89.0512096
+    ],
+    "Ishwardi": [
+      24.1302365,
+      89.0627406
+    ],
+    "Ahsanganj": [
+      24.614010155800973,
+      88.97515893855396
+    ],
+    "Saidpur": [
+      25.7870289,
+      88.8931484
+    ],
+    "Nilphamari": [
+      25.9490764,
+      88.8358417
+    ],
+    "Nilphamari_College": [
+      25.931338347607134,
+      88.8386488536745
+    ],
+    "Domar": [
+      26.1046376,
+      88.8199769
+    ],
+    "Chilahati": [
+      26.2431402,
+      88.7963052
+    ],
+    "Jamtail": [
+      24.361317590805086,
+      89.66026717687342
+    ],
+    "Boral_Bridge": [
+      24.214992636992942,
+      89.38037446665864
+    ],
+    "Abdulpur": [
+      24.2598727,
+      88.971789
+    ],
+    "Arani": [
+      24.2897643,
+      88.8825729
+    ],
+    "Rajshahi": [
+      24.3750323,
+      88.6085414
+    ],
+    "Daulatpur": [
+      22.8766319,
+      89.522307
+    ],
+    "Gobra": [
+      22.9477984,
+      89.8289198
+    ],
+    "Borashi": [
+      22.9949044,
+      89.8426335
+    ],
+    "Gopalganj": [
+      23.03408,
+      89.8401059
+    ],
+    "Chandradighalia": [
+      23.073516333457103,
+      89.77681143572742
+    ],
+    "Choto Bahirbag": [
+      23.140978650189908,
+      89.78160180925369
+    ],
+    "Chapta": [
+      23.1978933,
+      89.7520757
+    ],
+    "Kashiani": [
+      23.2334792,
+      89.7250801
+    ],
+    "Boalmari_Bazar": [
+      23.389993702322094,
+      89.6877158153988
+    ],
+    "Madhukhali": [
+      23.5467521,
+      89.6307076
+    ],
+    "Baharpur": [
+      23.6863795,
+      89.5615165
+    ],
+    "Kalukhali": [
+      23.7681463,
+      89.4804096
+    ],
+    "Pangsha": [
+      23.7861527,
+      89.4171519
+    ],
+    "Khoksha": [
+      23.8308846,
+      89.3029737
+    ],
+    "Kumarkhali": [
+      23.8605756,
+      89.2410244
+    ],
+    "Kushtia_Court": [
+      23.9070671,
+      89.1282874
+    ],
+    "Naliagram": [
+      23.599263978085087,
+      89.6072960878167
+    ],
+    "Sardah_Road": [
+      24.3049445,
+      88.7231431
+    ],
+    "Mirzapur": [
+      24.1055318,
+      90.1014131
+    ],
+    "Sirajganj_Bazar": [
+      24.4510411,
+      89.7023278
+    ],
+    "Sirajganjraipur": [
+      24.437712857358665,
+      89.7004327130244
+    ],
+    "SOYDABAD": [
+      24.396119,
+      89.7334733
+    ],
+    "Hi-Tech City": [
+      24.06284651573583,
+      90.2202150865956
+    ],
+    "Azim Nagar": [
+      24.2065543,
+      89.0059185
+    ],
+    "Teesta_Junction": [
+      25.808460907041766,
+      89.44075227217184
+    ],
+    "Lalmonirhat": [
+      25.9115157,
+      89.4446723
+    ],
+    "Madhnagar": [
+      24.5408446,
+      88.962597
+    ],
+    "Badarganj": [
+      25.6720255,
+      89.058069
+    ],
+    "Mawa": [
+      23.473116798451446,
+      90.2650192734256
+    ],
+    "Padma": [
+      23.398007856348478,
+      90.21878026223055
+    ],
+    "Shibchar": [
+      23.386279486764867,
+      90.13017477996202
+    ],
+    "Bhanga": [
+      23.4004807,
+      89.9844964
+    ],
+    "Pukuria": [
+      23.4424507,
+      89.9573489
+    ],
+    "Talma": [
+      23.4902665,
+      89.8766674
+    ],
+    "Faridpur": [
+      23.6108764,
+      89.8426903
+    ],
+    "Amirabad": [
+      23.6397378426322,
+      89.74429691536025
+    ],
+    "Pachuria": [
+      23.7475385,
+      89.7117147
+    ],
+    "Rajbari": [
+      23.7629811928982,
+      89.64513508560415
+    ],
+    "Mirpur": [
+      23.9415758,
+      88.9945018
+    ],
+    "Muladhuli": [
+      24.16459368494686,
+      89.14656122779141
+    ],
+    "Safdarpur": [
+      23.4624102,
+      88.9614488
+    ],
+    "Ansarbaria": [
+      23.492287391096752,
+      88.88551555117883
+    ],
+    "Benapole": [
+      23.0430994,
+      88.9027779
+    ],
+    "Jhikargacha": [
+      23.099785,
+      89.0968402
+    ],
+    "Jamalganj": [
+      25.0305229,
+      89.0219499
+    ],
+    "Hili": [
+      25.277513,
+      89.0069924
+    ],
+    "Shibganj": [
+      25.998062333343796,
+      88.40342835038533
+    ],
+    "Dhalarchar": [
+      23.840783732997863,
+      89.6681735450269
+    ],
+    "Badherhat": [
+      23.89730103631986,
+      89.63685681205752
+    ],
+    "Kashinathpur": [
+      23.9576288,
+      89.6068659
+    ],
+    "Sathia_Rajapur": [
+      23.97282853665101,
+      89.48689240956963
+    ],
+    "Tantibandha": [
+      23.97461282017363,
+      89.4085509434683
+    ],
+    "Dublia": [
+      23.977642655070387,
+      89.37114441987457
+    ],
+    "Raghabpur": [
+      23.99519403007578,
+      89.30498281776522
+    ],
+    "Pabna": [
+      24.0159984,
+      89.2561065
+    ],
+    "Tebunia": [
+      24.0740651,
+      89.2061351
+    ],
+    "Dashuria": [
+      24.1126858,
+      89.130372
+    ],
+    "Majhgram": [
+      24.1627166,
+      89.0940227
+    ],
+    "Mahimaganj": [
+      25.10415230998013,
+      89.49379298880163
+    ],
+    "Aditmari": [
+      25.9241917,
+      89.3487255
+    ],
+    "Kankina": [
+      25.95546419478271,
+      89.24336493251707
+    ],
+    "Tushbhandar": [
+      25.967294898604578,
+      89.20277105225966
+    ],
+    "Hatibandha": [
+      26.1283725,
+      89.1384363
+    ],
+    "Barkhata": [
+      26.20256625956171,
+      89.11125908603421
+    ],
+    "Baura": [
+      26.244515593369663,
+      89.08531586125699
+    ],
+    "Patgram": [
+      26.3437585,
+      89.0213325
+    ],
+    "Burimari": [
+      26.3961399,
+      88.9351197
+    ],
+    "Bhomradah": [
+      25.933310434142523,
+      88.36720059734637
+    ],
+    "Kholahati": [
+      25.6564494,
+      88.9749473
+    ],
+    "Badiakhali": [
+      25.235207351483485,
+      89.54254072248023
+    ],
+    "Chapainawabganj": [
+      24.598992509968088,
+      88.28046831650123
+    ],
+    "Chattogram": [
+      22.3340209,
+      91.8295576
+    ],
+    "Feni": [
+      23.0131035,
+      91.4031816
+    ],
+    "Gunabati": [
+      23.08773757183419,
+      91.2974691872046
+    ],
+    "Gafargaon": [
+      24.4536308,
+      90.5478513
+    ],
+    "Mymensingh": [
+      24.7532728,
+      90.4101031
+    ],
+    "Piyarpur": [
+      24.8790798,
+      90.1966031
+    ],
+    "Jamalpur_Town": [
+      24.914805733900828,
+      89.9546869774768
+    ],
+    "Melandah_Bazar": [
+      24.9782311,
+      89.8534805
+    ],
+    "Islampur_Bazar": [
+      25.0778008,
+      89.7916227
+    ],
+    "Dewanganj_Bazar": [
+      25.157106292403988,
+      89.75629367446497
+    ],
+    "Azampur": [
+      23.8926482,
+      91.2207974
+    ],
+    "Nayapara": [
+      24.1558543,
+      91.334192
+    ],
+    "Shaistaganj": [
+      24.2783644,
+      91.4503826
+    ],
+    "Sreemangal": [
+      24.3066132,
+      91.7348248
+    ],
+    "Bhanugach": [
+      24.3518279,
+      91.8415358
+    ],
+    "Kulaura": [
+      24.4394962,
+      91.9550264
+    ],
+    "Maijgaon": [
+      24.6862621,
+      91.951669
+    ],
+    "Sylhet": [
+      24.8817611,
+      91.8679883
+    ],
+    "Mukundapur": [
+      23.963992,
+      91.2626017
+    ],
+    "Harashpur": [
+      24.0166274,
+      91.3098775
+    ],
+    "Montola": [
+      24.077762,
+      91.288887
+    ],
+    "Shahaji_Bazar": [
+      24.2527846,
+      91.3819186
+    ],
+    "Nangolkot": [
+      23.1677702,
+      91.198695
+    ],
+    "Shamshernagar": [
+      24.382933,
+      91.9003337
+    ],
+    "Baramchal": [
+      24.587583,
+      91.9788533
+    ],
+    "Kumira": [
+      22.5051698,
+      91.7158141
+    ],
+    "Narundi": [
+      24.8650076,
+      90.1199339
+    ],
+    "Kendua_Bazar": [
+      24.857525111232135,
+      89.90745572836785
+    ],
+    "Sarishabari": [
+      24.7608313,
+      89.8400644
+    ],
+    "Tarakandi": [
+      24.6857189,
+      89.8243306
+    ],
+    "Kuliarchar": [
+      24.1510023,
+      90.9286747
+    ],
+    "Bajitpur": [
+      24.1997228,
+      90.9130239
+    ],
+    "Sararchar": [
+      24.2184798,
+      90.9008662
+    ],
+    "Manikkhali": [
+      24.297453606182827,
+      90.84664460118788
+    ],
+    "Gachihata": [
+      24.3419288,
+      90.8245692
+    ],
+    "Kishorganj": [
+      24.426419,
+      90.7886273
+    ],
+    "Methikanda": [
+      23.9925823,
+      90.8670217
+    ],
+    "Nandina": [
+      24.8677052,
+      90.035903
+    ],
+    "Sreepur": [
+      24.1989858,
+      90.4795567
+    ],
+    "Kaoraid": [
+      24.3083152,
+      90.5124472
+    ],
+    "Bidyaganj": [
+      24.824226537574447,
+      90.25939552885043
+    ],
+    "Bhatiary": [
+      22.4299733,
+      91.7488463
+    ],
+    "Atharabari": [
+      24.64111747401718,
+      90.71318865769399
+    ],
+    "Gouripur_Myn": [
+      24.763857344769608,
+      90.56548944878764
+    ],
+    "Shyamgonj": [
+      24.8430817,
+      90.5814923
+    ],
+    "Netrakona": [
+      24.88878870141787,
+      90.72058845672116
+    ],
+    "Barhatta": [
+      24.897844574813444,
+      90.88154261226707
+    ],
+    "Mohanganj": [
+      24.8708225,
+      90.9730349
+    ],
+    "Thakrokona": [
+      24.9073389,
+      90.8178202
+    ],
+    "Jaforshahi": [
+      24.81313838621897,
+      89.85859200101201
+    ],
+    "Jagannathgonj_Bazar": [
+      24.660271,
+      89.8177247
+    ],
+    "Hemnagar": [
+      24.5679749,
+      89.8596709
+    ],
+    "Bhuapur": [
+      24.4673034,
+      89.8666727
+    ],
+    "Hasanpur": [
+      23.135506,
+      91.2372613
+    ],
+    "Shashidal": [
+      23.6452467,
+      91.1413321
+    ],
+    "Chitoshi_Road": [
+      23.235846877705814,
+      91.02932635903136
+    ],
+    "Meher": [
+      23.2451995,
+      90.9433168
+    ],
+    "Hajiganj": [
+      23.2581807,
+      90.8482297
+    ],
+    "Modhu_Road": [
+      23.24435922466097,
+      90.75599132722654
+    ],
+    "Chandpur_Court": [
+      23.2255213,
+      90.655019
+    ],
+    "Chandpur": [
+      23.2309202,
+      90.6430506
+    ],
+    "Lokmanpur": [
+      24.281237693309876,
+      88.93355903536194
+    ],
+    "Rajshahi_Court": [
+      24.3789741,
+      88.5655119
+    ],
+    "Kakonhat": [
+      24.507003943740266,
+      88.47159810034415
+    ],
+    "Lolitnagar": [
+      24.562819142178345,
+      88.43497361753032
+    ],
+    "Amnura": [
+      24.625857678961225,
+      88.39873879913426
+    ],
+    "Nachole": [
+      24.7249610224093,
+      88.40237114477237
+    ],
+    "Rohanpur": [
+      24.8204543,
+      88.3194605
+    ],
+    "Cox's Bazar": [
+      21.4293611,
+      92.0150366
+    ],
+    "Manmathapur": [
+      25.65894241835976,
+      88.85245601887765
+    ],
+    "Kawgaon": [
+      25.618885442605524,
+      88.70612525730196
+    ],
+    "Kanchan_Junction": [
+      25.623661977394995,
+      88.5998118083702
+    ],
+    "Mongalpur": [
+      25.7191936209172,
+      88.53538827112256
+    ],
+    "Sultanpur": [
+      25.82283881351556,
+      88.40395506905597
+    ],
+    "Akhanagar": [
+      26.09894734884958,
+      88.39135691537997
+    ],
+    "Nayaniburuj": [
+      26.27836980870651,
+      88.49703762821379
+    ],
+    "Singia": [
+      23.1214252,
+      89.3469142
+    ],
+    "Narail": [
+      23.1736867,
+      89.5015181
+    ],
+    "Lohagora": [
+      23.1881892,
+      89.6499065
+    ],
+    "Bhanga_Junction": [
+      23.37475311162537,
+      90.02243333083642
+    ],
+    "Ramu": [
+      21.4454899,
+      92.0996282
+    ],
+    "Dulahazara": [
+      21.675196097568247,
+      92.07355783080433
+    ],
+    "Chakaria": [
+      21.75616180001796,
+      92.04275219264426
+    ],
+    "HARBANG": [
+      21.850237454960833,
+      92.04810603420667
+    ],
+    "Satkania": [
+      22.0921189,
+      92.0619738
+    ],
+    "Dohazari": [
+      22.1633514,
+      92.069168
+    ],
+    "Patiya": [
+      22.2978905,
+      91.9820023
+    ],
+    "Janali_Hat": [
+      22.5322655,
+      91.8919471
+    ],
+    "GOMDANDI": [
+      22.378175,
+      91.9171693
+    ],
+    "Sholoshohor": [
+      22.3689667,
+      91.8197081
+    ],
+    "LOHAGARA": [
+      22.0442598,
+      92.1079198
+    ],
+    "Amnura_Bypass": [
+      24.61509457914627,
+      88.39596101908117
+    ],
+    "Narayanganj": [
+      23.617983,
+      90.505575
+    ],
+    "Bhotmari": [
+      26.0248342,
+      89.1628587
+    ],
+    "Birol": [
+      25.6352594,
+      88.5391185
+    ],
+    "Mahendranagar": [
+      25.8772948,
+      89.4478174
+    ],
+    "Khatra": [
+      22.99498305459237,
+      89.84252420514962
+    ],
+    "Shyampur": [
+      25.6943138,
+      89.1488449
+    ],
+    "ISLAMABAD": [
+      21.563290197379,
+      92.05352084177663
+    ],
+    "Mirbagh": [
+      25.765073654795113,
+      89.3519602548328
+    ],
+    "Basudebpur": [
+      24.47031460633293,
+      88.96267196401625
+    ],
+    "Bhabanipur": [
+      25.57881156832761,
+      88.94294384950005
+    ],
+    "Birkutsha": [
+      24.559270232835473,
+      88.96451020083155
+    ],
+    "Jafarpur": [
+      24.922075778455326,
+      89.01513043559555
+    ],
+    "Malonchi": [
+      24.30520894119535,
+      88.96353600894005
+    ],
+    "Naldanga Hat": [
+      24.50239393866031,
+      88.95922198670277
+    ],
+    "Raninagar": [
+      24.741457664594403,
+      88.96949901688185
+    ],
+    "Shahagola": [
+      24.67920814351056,
+      88.97551229543421
+    ],
+    "Tilakpur": [
+      24.87694112426508,
+      89.0018030243963
+    ],
+    "Yasinpur": [
+      24.36213558499509,
+      88.96390269454632
+    ],
+    "Mirjaganj": [
+      26.17471416258287,
+      88.80072176335408
+    ],
+    "Toronibari": [
+      26.023642664775274,
+      88.82411106151126
+    ],
+    "Darowani": [
+      25.88326543752069,
+      88.84036694076879
+    ],
+    "Khairatnagar": [
+      25.85388525892416,
+      88.85140839071195
+    ],
+    "Belaichondi": [
+      25.726097976473,
+      88.90650809738312
+    ],
+    "Phultala": [
+      22.97830418633768,
+      89.44686089757482
+    ],
+    "Bejerdanga": [
+      22.99279244048667,
+      89.43232655837863
+    ],
+    "Chengutia": [
+      23.076239245855223,
+      89.36532819518966
+    ],
+    "Meherullah_Nagar": [
+      23.216658423746,
+      89.16397376312656
+    ],
+    "Barobazar": [
+      23.306174550472438,
+      89.15013609965366
+    ],
+    "Mominpur": [
+      23.684168908465995,
+      88.8787707297169
+    ],
+    "Nandangachi": [
+      24.315323421707273,
+      88.80140074013076
+    ],
+    "Sarda_Road": [
+      24.33728423062436,
+      88.75242299971393
+    ],
+    "Harian": [
+      24.375543390839276,
+      88.68586818750389
+    ],
+    "Rajshahi_Univ": [
+      24.37557074751178,
+      88.64316293160917
+    ],
+    "Sitlai": [
+      24.421624039696297,
+      88.52677008520273
+    ],
+    "Chabbishnagar": [
+      24.471956197569764,
+      88.49410819288292
+    ],
+    "Nijampur": [
+      24.71686161512258,
+      88.4073279082645
+    ],
+    "Golabari": [
+      24.777678029898652,
+      88.3689033616538
+    ],
+    "Gendaria": [
+      23.70163506437815,
+      90.42894926027456
+    ],
+    "Pukhuria": [
+      23.443178761057563,
+      89.95726022168321
+    ],
+    "Khankhanapur": [
+      23.701289741427157,
+      89.71348370402347
+    ],
+    "Belgachi": [
+      23.780914789207305,
+      89.54130949119892
+    ],
+    "Pangsa": [
+      23.786083963585806,
+      89.41714033915021
+    ],
+    "Machpara": [
+      23.80454366502877,
+      89.35736708559045
+    ],
+    "Khoksa": [
+      23.83019212579452,
+      89.30406965823224
+    ],
+    "Kushtia": [
+      23.90263640607785,
+      89.14538358291689
+    ],
+    "Muksudpur": [
+      23.32976907456776,
+      89.85214970957692
+    ],
+    "Sreenagar": [
+      23.53754339077192,
+      90.29135976634133
+    ]
+  },
+  "sid_to_sname": {
+    "Dhaka": [
+      "Dhaka/Komolapur",
+      "ঢাকা/কমলাপুর"
+    ],
+    "Biman_Bandar": [
+      "Dhaka/Biman_Bandar",
+      "ঢাকা/বিমান_বন্দর"
+    ],
+    "Narsingdi": [
+      "Narsingdi",
+      "নরসিংদী"
+    ],
+    "Bhairab_Bazar": [
+      "Bhairab Bazar",
+      "ভৈরব বাজার"
+    ],
+    "Ashuganj": [
+      "Ashuganj",
+      "আশুগঞ্জ"
+    ],
+    "Brahmanbaria": [
+      "Brahmanbaria",
+      "ব্রাহ্মণবাড়িয়া"
+    ],
+    "Akhaura": [
+      "Akhaura",
+      "আখাউড়া"
+    ],
+    "Quasba": [
+      "Quasba",
+      "কসবা"
+    ],
+    "Cumilla": [
+      "Cumilla",
+      "কুমিল্লা"
+    ],
+    "Laksam": [
+      "Laksam",
+      "লাকসাম"
+    ],
+    "Natherpetua": [
+      "Natherpetua",
+      "নাথারপেটুয়া"
+    ],
+    "Sonaimuri": [
+      "Sonaimuri",
+      "সোনাইমুড়ী"
+    ],
+    "Bajra": [
+      "Bajra",
+      "বজরা"
+    ],
+    "Choumuhani": [
+      "Choumuhani",
+      "চৌমুহনী"
+    ],
+    "Maijdi Court": [
+      "Maijdi Court",
+      "মাইজদী কোর্ট"
+    ],
+    "Noakhali": [
+      "Noakhali",
+      "নোয়াখালী"
+    ],
+    "Ibrahimabad": [
+      "Ibrahimabad",
+      "ইব্রাহিমবাদ"
+    ],
+    "Chatmohar": [
+      "Chatmohar",
+      "চাটমোহর"
+    ],
+    "Natore": [
+      "Natore",
+      "নাটোর"
+    ],
+    "Santahar": [
+      "Santahar",
+      "সান্তাহার"
+    ],
+    "Talora": [
+      "Talora",
+      "তালোড়া"
+    ],
+    "Bogura": [
+      "Bogura",
+      "বগুড়া"
+    ],
+    "Sonatola": [
+      "Sonatola",
+      "সোনাটোলা"
+    ],
+    "Bonar_Para": [
+      "Bonar Para",
+      "বোনার পাড়া"
+    ],
+    "Gaibandha": [
+      "Gaibandha",
+      "গাইবান্ধা"
+    ],
+    "Bamondanga": [
+      "Bamondanga",
+      "বামনডাঙ্গা"
+    ],
+    "Pirgacha": [
+      "Pirgacha",
+      "পীরগাছা"
+    ],
+    "Kaunia": [
+      "Kaunia",
+      "কাউনিয়া"
+    ],
+    "Kurigram": [
+      "Kurigram",
+      "কুড়িগ্রাম"
+    ],
+    "Rangpur": [
+      "Rangpur",
+      "রংপুর"
+    ],
+    "Joypurhat": [
+      "Joypurhat",
+      "জয়পুরহাট"
+    ],
+    "Parbatipur": [
+      "Parbatipur",
+      "পার্বতীপুর"
+    ],
+    "Dinajpur": [
+      "Dinajpur",
+      "দিনাজপুর"
+    ],
+    "Pirganj": [
+      "Pirganj",
+      "পীরগঞ্জ"
+    ],
+    "Thakurgaon_Road": [
+      "Thakurgaon_Road",
+      "ঠাকুরগাঁও_রোড"
+    ],
+    "Panchagarh": [
+      "Panchagarh",
+      "পঞ্চগড়"
+    ],
+    "Joydebpur": [
+      "Joydebpur",
+      "জয়দেবপুর"
+    ],
+    "Tangail": [
+      "Tangail",
+      "টাঙ্গাইল"
+    ],
+    "SH M Monsur Ali": [
+      "SH M Monsur Ali",
+      "এসএইচ এম মনসুর আলী"
+    ],
+    "Ullapara": [
+      "Ullapara",
+      "উল্লাপাড়া"
+    ],
+    "Ishwardi Bypass": [
+      "Ishwardi Bypass",
+      "ঈশ্বরদী বাইপাস"
+    ],
+    "Akkelpur": [
+      "Akkelpur",
+      "আক্কেলপুর"
+    ],
+    "Panchbibi": [
+      "Panchbibi",
+      "পাঁচবিবি"
+    ],
+    "Birampur": [
+      "Birampur",
+      "বিরামপুর"
+    ],
+    "Fulbari": [
+      "Fulbari",
+      "ফুলবাড়ি"
+    ],
+    "Chirirbandar": [
+      "Chirirbandar",
+      "চিরিরবন্দর"
+    ],
+    "Setabganj": [
+      "Setabganj",
+      "সেতাবগঞ্জ"
+    ],
+    "Ruhia": [
+      "Ruhia",
+      "রুহিয়া"
+    ],
+    "Kismat": [
+      "Kismat",
+      "কিসমত"
+    ],
+    "Khulna": [
+      "Khulna",
+      "খুলনা"
+    ],
+    "Noapara": [
+      "Noapara",
+      "নওাপাড়া"
+    ],
+    "Rupdia": [
+      "Rupdia",
+      "রূপদিয়া"
+    ],
+    "Jashore": [
+      "Jashore",
+      "যশোর"
+    ],
+    "Jashore_cant": [
+      "Jashore Cantonment",
+      "যশোর ক্যান্টনমেন্ট"
+    ],
+    "Mubarakganj": [
+      "Mubarakganj",
+      "মোবারকগঞ্জ"
+    ],
+    "Kotchandpur": [
+      "Kotchandpur",
+      "কোটচাঁদপুর"
+    ],
+    "Uthali": [
+      "Uthali",
+      "উথলী"
+    ],
+    "Darshana_Halt": [
+      "Darshana Halt",
+      "দর্শনা_হল্ট"
+    ],
+    "Joyrampur": [
+      "Joyrampur",
+      "জয়রামপুর"
+    ],
+    "Chuadanga": [
+      "Chuadanga",
+      "চুয়াডাঙ্গা"
+    ],
+    "Alamdanga": [
+      "Alamdanga",
+      "আলমডাঙ্গায়"
+    ],
+    "Munshiganj": [
+      "Munshiganj",
+      "মুন্সিগঞ্জ"
+    ],
+    "Halsa": [
+      "Halsa",
+      "হালসা"
+    ],
+    "Poradaha": [
+      "Poradaha",
+      "পোড়াদহ"
+    ],
+    "Bheramara": [
+      "Bheramara",
+      "ভেড়ামারা"
+    ],
+    "Paksey": [
+      "Paksey",
+      "পাকশী"
+    ],
+    "Ishwardi": [
+      "Ishwardi",
+      "ঈশ্বরদী"
+    ],
+    "Ahsanganj": [
+      "Ahsanganj",
+      "আহসানগঞ্জ"
+    ],
+    "Saidpur": [
+      "Saidpur",
+      "সৈয়দপুর"
+    ],
+    "Nilphamari": [
+      "Nilphamari",
+      "নীলফামারী"
+    ],
+    "Nilphamari_College": [
+      "Nilphamari College",
+      "নীলফামারী কলেজ"
+    ],
+    "Domar": [
+      "Domar",
+      "ডোমার"
+    ],
+    "Chilahati": [
+      "Chilahati",
+      "চিলাহাটি"
+    ],
+    "Jamtail": [
+      "Jamtail",
+      "জামতৈল"
+    ],
+    "Boral_Bridge": [
+      "Boral Bridge",
+      "বোড়াল রিজ"
+    ],
+    "Abdulpur": [
+      "Abdulpur",
+      "আব্দুলপুর"
+    ],
+    "Arani": [
+      "Arani",
+      "অরণী"
+    ],
+    "Rajshahi": [
+      "Rajshahi",
+      "রাজশাহী"
+    ],
+    "Daulatpur": [
+      "Daulatpur",
+      "দৌলতপুর"
+    ],
+    "Gobra": [
+      "Gobra",
+      "গোবরা"
+    ],
+    "Borashi": [
+      "Borashi",
+      "বোরাশী"
+    ],
+    "Gopalganj": [
+      "Gopalganj",
+      "গোপালগঞ্জ"
+    ],
+    "Chandradighalia": [
+      "Chandradighalia",
+      "চন্দ্র দিঘলিয়া"
+    ],
+    "Choto Bahirbag": [
+      "Choto Bahirbag",
+      "ছোট বহিরবাগ"
+    ],
+    "Chapta": [
+      "Chapta",
+      "চাপটা"
+    ],
+    "Kashiani": [
+      "Kashiani",
+      "কাশিয়ানী"
+    ],
+    "Boalmari_Bazar": [
+      "Boalmari Bazar",
+      "বোয়ালমারী বাজার"
+    ],
+    "Madhukhali": [
+      "Madhukhali",
+      "মধুখালী"
+    ],
+    "Baharpur": [
+      "Baharpur",
+      "বহরপুর"
+    ],
+    "Kalukhali": [
+      "Kalukhali",
+      "কালুখালি"
+    ],
+    "Pangsha": [
+      "Pangsha",
+      "পাংশা"
+    ],
+    "Khoksha": [
+      "Khoksha",
+      "খোকসা"
+    ],
+    "Kumarkhali": [
+      "Kumarkhali",
+      "কুমারকলি"
+    ],
+    "Kushtia_Court": [
+      "Kushtia Court",
+      "কুষ্টিয়া_কোর্ট"
+    ],
+    "Naliagram": [
+      "Naliagram",
+      "নালিয়াগ্রাম"
+    ],
+    "Sardah_Road": [
+      "Sardah Road",
+      "সারদাহ রোড"
+    ],
+    "Mirzapur": [
+      "Mirzapur",
+      "মির্জাপুর"
+    ],
+    "Sirajganj_Bazar": [
+      "Sirajganj Bazar",
+      "সিরাজগঞ্জ_বাজার"
+    ],
+    "Sirajganjraipur": [
+      "Sirajganjraipur",
+      "সিরাজগঞ্জরায়পুর"
+    ],
+    "SOYDABAD": [
+      "SOYDABAD",
+      "সয়েদাবাদ"
+    ],
+    "Hi-Tech City": [
+      "Hi-Tech City",
+      "হাই-টেক সিটি"
+    ],
+    "Azim Nagar": [
+      "Azim Nagar",
+      "আজিম নগর"
+    ],
+    "Teesta_Junction": [
+      "Teesta Junction",
+      "তিস্তা_জংশন"
+    ],
+    "Lalmonirhat": [
+      "Lalmonirhat",
+      "লালমনিরহাট"
+    ],
+    "Madhnagar": [
+      "Madhnagar",
+      "মধ্যনগর"
+    ],
+    "Badarganj": [
+      "Badarganj",
+      "বদরগঞ্জ"
+    ],
+    "Mawa": [
+      "Mawa",
+      "মাওয়া"
+    ],
+    "Padma": [
+      "Padma",
+      "পদ্মা"
+    ],
+    "Shibchar": [
+      "Shibchar",
+      "শিবচর"
+    ],
+    "Bhanga": [
+      "Bhanga",
+      "ভাঙ্গা"
+    ],
+    "Pukuria": [
+      "Pukuria",
+      "পুকুরিয়া"
+    ],
+    "Talma": [
+      "Talma",
+      "তালমা"
+    ],
+    "Faridpur": [
+      "Faridpur",
+      "ফরিদপুর"
+    ],
+    "Amirabad": [
+      "Amirabad",
+      "আমিরাবাদ"
+    ],
+    "Pachuria": [
+      "Pachuria",
+      "পাচুরিয়া"
+    ],
+    "Rajbari": [
+      "Rajbari",
+      "রাজবাড়ী"
+    ],
+    "Mirpur": [
+      "Mirpur",
+      "মিরপুর"
+    ],
+    "Muladhuli": [
+      "Muladhuli",
+      "মুলধুলি"
+    ],
+    "Safdarpur": [
+      "Safdarpur",
+      "সফদরপুর"
+    ],
+    "Ansarbaria": [
+      "Ansarbaria",
+      "আনসারবাড়িয়া"
+    ],
+    "Benapole": [
+      "Benapole",
+      "বেনাপোল"
+    ],
+    "Jhikargacha": [
+      "Jhikargacha",
+      "ঝিকরগাছা"
+    ],
+    "Jamalganj": [
+      "jamalganj",
+      "জামালগঞ্জ"
+    ],
+    "Hili": [
+      "Hili",
+      "হিলি"
+    ],
+    "Shibganj": [
+      "Shibganj",
+      "শিবগঞ্জ"
+    ],
+    "Dhalarchar": [
+      "Dhalarchar",
+      "ধলারচর"
+    ],
+    "Badherhat": [
+      "Badherhat",
+      "বাধেরহাট"
+    ],
+    "Kashinathpur": [
+      "Kashinathpur",
+      "কাশিনাথপুর"
+    ],
+    "Sathia_Rajapur": [
+      "Sathia_Rajapur",
+      "সাথিয়া_রাজাপুর"
+    ],
+    "Tantibandha": [
+      "Tantibandha",
+      "তাঁতীবান্ধা"
+    ],
+    "Dublia": [
+      "Dublia",
+      "দুবলিয়া"
+    ],
+    "Raghabpur": [
+      "Raghabpur",
+      "রাঘবপুর"
+    ],
+    "Pabna": [
+      "Pabna",
+      "পাবনা"
+    ],
+    "Tebunia": [
+      "Tebunia",
+      "টেবুনিয়া"
+    ],
+    "Dashuria": [
+      "Dashuria",
+      "দাশুরিয়া"
+    ],
+    "Majhgram": [
+      "Majhgram",
+      "মাঝগ্রাম"
+    ],
+    "Mahimaganj": [
+      "Mahimaganj",
+      "মহিমাগঞ্জ"
+    ],
+    "Aditmari": [
+      "Aditmari",
+      "আদিতমারী"
+    ],
+    "Kankina": [
+      "Kankina",
+      "কাঁকিনা"
+    ],
+    "Tushbhandar": [
+      "Tushbhandar",
+      "তুষভান্ডার"
+    ],
+    "Hatibandha": [
+      "Hatibandha",
+      "হাতীবান্ধা"
+    ],
+    "Barkhata": [
+      "Barkhata",
+      "বারখাতা"
+    ],
+    "Baura": [
+      "Baura",
+      "বাউরা"
+    ],
+    "Patgram": [
+      "Patgram",
+      "পাটগ্রাম"
+    ],
+    "Burimari": [
+      "Burimari",
+      "বুড়িমারী"
+    ],
+    "Bhomradah": [
+      "Bhomradah",
+      "ভোমরদহ"
+    ],
+    "Kholahati": [
+      "Kholahati",
+      "খোলাহাটী"
+    ],
+    "Badiakhali": [
+      "Badiakhali",
+      "বাদিয়াখালী"
+    ],
+    "Chapainawabganj": [
+      "Chapainawabganj",
+      "চাঁপাইনবাবগঞ্জ"
+    ],
+    "Chattogram": [
+      "Chattogram",
+      "চট্টগ্রাম"
+    ],
+    "Feni": [
+      "Feni",
+      "ফেনী"
+    ],
+    "Gunabati": [
+      "Gunabati",
+      "গুনবতী"
+    ],
+    "Gafargaon": [
+      "Gafargaon",
+      "গফরগাঁও"
+    ],
+    "Mymensingh": [
+      "Mymensingh",
+      "ময়মনসিংহ"
+    ],
+    "Piyarpur": [
+      "Piyarpur",
+      "পিয়ারপুর"
+    ],
+    "Jamalpur_Town": [
+      "Jamalpur Town",
+      "জামালপুর শহর"
+    ],
+    "Melandah_Bazar": [
+      "Melandah Bazar",
+      "মেলান্দহ_বাজার"
+    ],
+    "Islampur_Bazar": [
+      "Islampur Bazar",
+      "ইসলামপুর_বাজার"
+    ],
+    "Dewanganj_Bazar": [
+      "Dewanganj Bazar",
+      "দেওয়ানগঞ্জ বাজার"
+    ],
+    "Azampur": [
+      "Azampur",
+      "আজমপুর"
+    ],
+    "Nayapara": [
+      "Nayapara",
+      "নয়াপাড়া"
+    ],
+    "Shaistaganj": [
+      "Shaistaganj/Habiganj",
+      "শায়েস্তাগঞ্জ/হবিগঞ্জ"
+    ],
+    "Sreemangal": [
+      "Sreemangal",
+      "শ্রীমঙ্গল"
+    ],
+    "Bhanugach": [
+      "Bhanugach",
+      "ভানুগাছ"
+    ],
+    "Kulaura": [
+      "Kulaura",
+      "কুলাউড়া"
+    ],
+    "Maijgaon": [
+      "Maijgaon",
+      "মাইজগাঁও"
+    ],
+    "Sylhet": [
+      "Sylhet",
+      "সিলেট"
+    ],
+    "Mukundapur": [
+      "Mukundapur",
+      "মুকুন্দপুর"
+    ],
+    "Harashpur": [
+      "Harashpur",
+      "হরষপুর"
+    ],
+    "Montola": [
+      "Montola",
+      "মানতোলা"
+    ],
+    "Shahaji_Bazar": [
+      "Shahaji Bazar",
+      "শাহজী বাজার"
+    ],
+    "Nangolkot": [
+      "Nangolkot",
+      "নাঙ্গোলকোট"
+    ],
+    "Shamshernagar": [
+      "Shamshernagar",
+      "শমশেরনগর।"
+    ],
+    "Baramchal": [
+      "Baramchal",
+      "বরমচাল"
+    ],
+    "Kumira": [
+      "Kumira",
+      "কুমিরা"
+    ],
+    "Narundi": [
+      "Narundi",
+      "নরুন্দি"
+    ],
+    "Kendua_Bazar": [
+      "Kendua Bazar",
+      "কেন্দুয়া বাজার"
+    ],
+    "Sarishabari": [
+      "Sarishabari",
+      "সরিষাবাড়ী"
+    ],
+    "Tarakandi": [
+      "Tarakandi",
+      "তারাকান্দি"
+    ],
+    "Kuliarchar": [
+      "Kuliarchar",
+      "কুলিয়ারচর"
+    ],
+    "Bajitpur": [
+      "Bajitpur",
+      "বাজিতপুর"
+    ],
+    "Sararchar": [
+      "Sararchar",
+      "সরারচর"
+    ],
+    "Manikkhali": [
+      "Manikkhali",
+      "মানিকখালী"
+    ],
+    "Gachihata": [
+      "Gachihata",
+      "গাছিহাটা"
+    ],
+    "Kishorganj": [
+      "Kishorganj",
+      "কিশোরগঞ্জ"
+    ],
+    "Methikanda": [
+      "Methikanda",
+      "মেথিকান্দ"
+    ],
+    "Nandina": [
+      "Nandina",
+      "নান্দিনা"
+    ],
+    "Sreepur": [
+      "Sreepur",
+      "শ্রীপুর"
+    ],
+    "Kaoraid": [
+      "Kaoraid",
+      "কাওড়াইদ"
+    ],
+    "Bidyaganj": [
+      "Bidyaganj",
+      "বিদ্যাগঞ্জ"
+    ],
+    "Bhatiary": [
+      "Bhatiary",
+      "ভাটিয়ারী"
+    ],
+    "Atharabari": [
+      "Atharabari",
+      "আঠারবাড়ী"
+    ],
+    "Gouripur_Myn": [
+      "Gouripur_Myn",
+      "গৌরীপুর_মিন."
+    ],
+    "Shyamgonj": [
+      "Shyamgonj",
+      "শ্যামগঞ্জ"
+    ],
+    "Netrakona": [
+      "Netrakona",
+      "নেত্রকোনা"
+    ],
+    "Barhatta": [
+      "Barhatta",
+      "বারহাট্টা"
+    ],
+    "Mohanganj": [
+      "Mohanganj",
+      "মোহনগঞ্জ"
+    ],
+    "Thakrokona": [
+      "Thakrokona",
+      "থাক্রোকোনা"
+    ],
+    "Jaforshahi": [
+      "Jaforshahi",
+      "জাফরশাহী"
+    ],
+    "Jagannathgonj_Bazar": [
+      "Jagannathgonj Bazar",
+      "জগন্নাথগঞ্জ বাজার"
+    ],
+    "Hemnagar": [
+      "Hemnagar",
+      "হেমনগর"
+    ],
+    "Bhuapur": [
+      "Bhuapur",
+      "ভূয়াপুর"
+    ],
+    "Hasanpur": [
+      "Hasanpur",
+      "হাসানপুর"
+    ],
+    "Shashidal": [
+      "Shashidal",
+      "শশীদল"
+    ],
+    "Chitoshi_Road": [
+      "Chitoshi_Road",
+      "চিতোশী_রোড"
+    ],
+    "Meher": [
+      "Meher",
+      "মেহের"
+    ],
+    "Hajiganj": [
+      "Hajiganj",
+      "হাজীগঞ্জ"
+    ],
+    "Modhu_Road": [
+      "Modhu_Road",
+      "মধু_রোড"
+    ],
+    "Chandpur_Court": [
+      "Chandpur_Court",
+      "চাঁদপুর_আদালত"
+    ],
+    "Chandpur": [
+      "Chandpur",
+      "চাঁদপুর"
+    ],
+    "Lokmanpur": [
+      "Lokmanpur",
+      "লোকমানপুর"
+    ],
+    "Rajshahi_Court": [
+      "Rajshahi_Court",
+      "রাজশাহী_আদালত"
+    ],
+    "Kakonhat": [
+      "Kakonhat",
+      "কাকোনহাট"
+    ],
+    "Lolitnagar": [
+      "Lolitnagar",
+      "ললিতনগর"
+    ],
+    "Amnura": [
+      "Amnura",
+      "আমনুরা"
+    ],
+    "Nachole": [
+      "Nachole",
+      "নাচোলে"
+    ],
+    "Rohanpur": [
+      "Rohanpur",
+      "রোহনপুর"
+    ],
+    "Cox's Bazar": [
+      "coxs_bazar",
+      "কক্সবাজার"
+    ],
+    "Manmathapur": [
+      "Manmathapur",
+      "মন্মথপুর"
+    ],
+    "Kawgaon": [
+      "Kawgaon",
+      "কাওগাঁও"
+    ],
+    "Kanchan_Junction": [
+      "Kanchan_Junction",
+      "কাঞ্চন_জংশন"
+    ],
+    "Mongalpur": [
+      "Mongalpur",
+      "মঙ্গলপুর"
+    ],
+    "Sultanpur": [
+      "Sultanpur",
+      "সুলতানপুর"
+    ],
+    "Akhanagar": [
+      "Akhanagar",
+      "আখানগর"
+    ],
+    "Nayaniburuj": [
+      "Nayaniburuj",
+      "নয়নীবুরুজ"
+    ],
+    "Singia": [
+      "Singia",
+      "সিঙ্গিয়া"
+    ],
+    "Narail": [
+      "Narail",
+      "নারাইল"
+    ],
+    "Lohagora": [
+      "Lohagora",
+      "লোহাগড়া"
+    ],
+    "Bhanga_Junction": [
+      "Bhanga_Junction",
+      "ভাঙ্গা_জংশন"
+    ],
+    "Ramu": [
+      "Ramu",
+      "রামু"
+    ],
+    "Dulahazara": [
+      "Dulahazara",
+      "দুলহাজারা"
+    ],
+    "Chakaria": [
+      "Chakaria",
+      "চকরিয়া"
+    ],
+    "HARBANG": [
+      "HARBANG",
+      "হারবাং"
+    ],
+    "Satkania": [
+      "Satkania",
+      "সাতকানিয়া"
+    ],
+    "Dohazari": [
+      "Dohazari",
+      "দোহাজারী"
+    ],
+    "Patiya": [
+      "Patiya",
+      "পটিয়া"
+    ],
+    "Janali_Hat": [
+      "Janali_Hat",
+      "জানালী_হাট"
+    ],
+    "GOMDANDI": [
+      "GOMDANDI",
+      "গোমদন্ডী"
+    ],
+    "Sholoshohor": [
+      "Sholoshohor",
+      "ষোলশহর"
+    ],
+    "LOHAGARA": [
+      "LOHAGARA",
+      "লোহগাড়া"
+    ],
+    "Amnura_Bypass": [
+      "Amnura_Bypass",
+      "আমনুরা_বাইপাস"
+    ],
+    "Narayanganj": [
+      "Narayanganj",
+      "নারায়ণগঞ্জ"
+    ],
+    "Bhotmari": [
+      "Bhotmari",
+      "ভোটমারী"
+    ],
+    "Birol": [
+      "Birol",
+      "বিরল"
+    ],
+    "Mahendranagar": [
+      "Mahendranagar",
+      "মহেন্দ্রনগর"
+    ],
+    "Khatra": [
+      "Khatra",
+      "খাত্রা"
+    ],
+    "Shyampur": [
+      "Shyampur",
+      "শ্যামপুর"
+    ],
+    "ISLAMABAD": [
+      "ISLAMABAD",
+      "ইসলামাবাদ"
+    ],
+    "Mirbagh": [
+      "Mirbagh",
+      "মীরবাগ"
+    ],
+    "Basudebpur": [
+      "Basudebpur",
+      "বাসুদেবপুর"
+    ],
+    "Birkutsha": [
+      "Birkutsha",
+      "বিরকুটশা"
+    ],
+    "Bhabanipur": [
+      "Bhabanipur",
+      "ভবানীপুর"
+    ],
+    "Jafarpur": [
+      "Jafarpur",
+      "জাফরপুর"
+    ],
+    "Malonchi": [
+      "Malonchi",
+      "মালঞ্চি"
+    ],
+    "Naldanga Hat": [
+      "Naldanga Hat",
+      "নলডাঙ্গা হাট"
+    ],
+    "Raninagar": [
+      "Raninagar",
+      "রাণীনগর"
+    ],
+    "Shahagola": [
+      "Shahagola",
+      "শেহগোলা"
+    ],
+    "Tilakpur": [
+      "Tilakpur",
+      "তিলকপুর"
+    ],
+    "Yasinpur": [
+      "Yasinpur",
+      "ইয়াসিনপুর"
+    ],
+    "Mirjaganj": [
+      "Mirjaganj",
+      "মির্জাগঞ্জ"
+    ],
+    "Toronibari": [
+      "Toronibari",
+      "তোরনিবাড়ী"
+    ],
+    "Darowani": [
+      "Darowani",
+      "দারোয়ানী"
+    ],
+    "Khairatnagar": [
+      "Khairat Nagar",
+      "খয়রাত নগর"
+    ],
+    "Belaichondi": [
+      "Belaichondi",
+      "বেলাইচন্ডি"
+    ],
+    "Phultala": [
+      "Phultala",
+      "ফুলতলা"
+    ],
+    "Bejerdanga": [
+      "Bejerdanga",
+      "বেজেরডাঙ্গা"
+    ],
+    "Chengutia": [
+      "Chengutia",
+      "চেঙ্গুটিয়া"
+    ],
+    "Meherullah_Nagar": [
+      "Meherullah Nagar",
+      "মেহেরুল্লাহ নগর"
+    ],
+    "Barobazar": [
+      "Barobazar",
+      "বারোবাজার"
+    ],
+    "Mominpur": [
+      "Mominpur",
+      "মমিনপুর"
+    ],
+    "Nandangachi": [
+      "Nandangachi",
+      "নন্দনগাছি"
+    ],
+    "Sarda_Road": [
+      "Sarda Road",
+      "সারদা রোড"
+    ],
+    "Harian": [
+      "Harian",
+      "হারিয়ান"
+    ],
+    "Rajshahi_Univ": [
+      "Rajshahi University",
+      "রাজশাহী বিশ্ববিদ্যালয়"
+    ],
+    "Sitlai": [
+      "Sitlai",
+      "সিতলাই"
+    ],
+    "Chabbishnagar": [
+      "Chabbishnagar",
+      "চবিশনগর"
+    ],
+    "Nijampur": [
+      "Nijampur",
+      "নিজামপুর"
+    ],
+    "Golabari": [
+      "Golabari",
+      "গোলাবাড়ী"
+    ],
+    "Gendaria": [
+      "Gendaria",
+      "গেন্ডারিয়া"
+    ],
+    "Pukhuria": [
+      "Pukhuria",
+      "পুখুরিয়া"
+    ],
+    "Khankhanapur": [
+      "Khankhanapur",
+      "খানখানপুর"
+    ],
+    "Belgachi": [
+      "Belgachi",
+      "বেলগাঞ্চি"
+    ],
+    "Pangsa": [
+      "Pangsa",
+      "পাঙ্গাস"
+    ],
+    "Machpara": [
+      "Machpara",
+      "মাছপাড়া"
+    ],
+    "Khoksa": [
+      "Khoksa",
+      "খোকসা"
+    ],
+    "Kushtia": [
+      "Kushtia",
+      "কুষ্টিয়া"
+    ],
+    "Muksudpur": [
+      "Muksudpur",
+      "মুকসুদপুর"
+    ],
+    "Sreenagar": [
+      "Sreenagar",
+      "শ্রীনগর"
+    ]
+  },
+  "train_names": {
+    "712": [
+      "UPAKUL EXPRESS (712)",
+      "উপকূল এক্সপ্রেস (৭১২)"
+    ],
+    "705": [
+      "EKOTA EXPRESS (705)",
+      "একতা এক্সপ্রেস (৭০৫)"
+    ],
+    "805": [
+      "CHILAHATI EXPRESS (805)",
+      "চিলাহাটি এক্সপ্রেস (৮০৫)"
+    ],
+    "756": [
+      "MADHUMATI EXPRESS (756)",
+      "মধুমতি এক্সপ্রেস (৭৫৬)"
+    ],
+    "774": [
+      "KALNI EXPRESS (774)",
+      "কালনী এক্সপ্রেস (৭৭৪)"
+    ],
+    "768": [
+      "DOLONCHAPA EXPRESS (768)",
+      "দোলনচাঁপা এক্সপ্রেস (৭৬৮)"
+    ],
+    "742": [
+      "TURNA (742)",
+      "তুর্না (৭৪২)"
+    ],
+    "729": [
+      "MEGHNA EXPRESS (729)",
+      "মেঘনা এক্সপ্রেস (৭২৯)"
+    ],
+    "718": [
+      "JAYENTIKA EXPRESS (718)",
+      "জয়ন্তিকা এক্সপ্রেস (৭১৮)"
+    ],
+    "748": [
+      "SIMANTA EXPRESS (748)",
+      "সীমান্ত এক্সপ্রেস (৭৪৮)"
+    ],
+    "736": [
+      "AGHNIBINA EXPRESS (736)",
+      "অগ্নিবীণা এক্সপ্রেস (৭৩৬)"
+    ],
+    "719": [
+      "PAHARIKA EXPRESS (719)",
+      "পাহাড়িকা এক্সপ্রেস (৭১৯)"
+    ],
+    "804": [
+      "BANGLABANDHA EXPRESS (804)",
+      "বাংলাবান্ধা এক্সপ্রেস (৮০৪)"
+    ],
+    "740": [
+      "UPABAN EXPRESS (740)",
+      "উপবন এক্সপ্রেস (৭৪০)"
+    ],
+    "813": [
+      "COXS BAZAR EXPRESS (813)",
+      "কক্সবাজার এক্সপ্রেস (৮১৩)"
+    ],
+    "701": [
+      "SUBORNO EXPRESS (701)",
+      "সুবর্ণ এক্সপ্রেস (৭০১)"
+    ],
+    "746": [
+      "JAMUNA EXPRESS (746)",
+      "যমুনা (৭৬৪ এক্সপ্রেস)"
+    ],
+    "773": [
+      "KALNI EXPRESS (773)",
+      "যমুনা এক্সপ্রেস(৭৭৩)"
+    ],
+    "791": [
+      "BANALATA EXPRESS (791)",
+      "বনলতা এক্সপ্রেস (৭৯১)"
+    ],
+    "793": [
+      "PANCHAGARH EXPRESS (793)",
+      "পঞ্চগড় এক্সপ্রেস (৭৯৩)"
+    ],
+    "745": [
+      "JAMUNA EXPRESS (745)",
+      "যমুনা এক্সপ্রেস (৭৪৫)"
+    ],
+    "776": [
+      "SIRAJGANJ EXPRESS (776)",
+      "সিরাজগঞ্জ এক্সপ্রেস (৭৭৬)"
+    ],
+    "716": [
+      "KAPOTAKSHA EXPRESS (716)",
+      "কপোতাক্ষ এক্সপ্রেস (৭১৬)"
+    ],
+    "744": [
+      "BHRAMMAPUTRA EXPRESS (744)",
+      "ব্রহ্মপুত্র এক্সপ্রেস (৭৪৪)"
+    ],
+    "720": [
+      "PAHARIKA EXPRESS (720)",
+      "পাহাড়িকা এক্সপ্রেস (৭২০)"
+    ],
+    "109": [
+      "CHAPAINAWABGANJ SHUTTLE (109)",
+      "চাঁপাইনবাবগঞ্জ শাটল (১০৯)"
+    ],
+    "790": [
+      "MOHONGANJ EXPRESS (790)",
+      "মোহনগঞ্জ এক্সপ্রেস (৭৯০)"
+    ],
+    "727": [
+      "RUPSHA EXPRESS (727)",
+      "রূপসা এক্সপ্রেস (৭২৭)"
+    ],
+    "735": [
+      "AGHNIBINA EXPRESS (735)",
+      "অগ্নিবীণা এক্সপ্রেস (৭৩৫)"
+    ],
+    "823": [
+      "PROBAL EXPRESS (823)",
+      "প্রবাল এক্সপ্রেস (৮২৩)"
+    ],
+    "762": [
+      "SAGARDARI EXPRESS (762)",
+      "সাগরদাঁড়ি এক্সপ্রেস (৭৬২)"
+    ],
+    "722": [
+      "MOHANAGAR EXPRESS (722)",
+      "মহানগর এক্সপ্রেস (৭২২)"
+    ],
+    "787": [
+      "SONAR BANGLA EXPRESS (787)",
+      "সোনার বাংলা এক্সপ্রেস (৭৮৭)"
+    ],
+    "766": [
+      "NILSAGAR EXPRESS (766)",
+      "নীলসাগর এক্সপ্রেস (৭৬৬)"
+    ],
+    "726": [
+      "SUNDARBAN EXPRESS (726)",
+      "সুন্দরবন এক্সপ্রেস (৭২৬)"
+    ],
+    "721": [
+      "MOHANAGAR EXPRESS (721)",
+      "মহানগর এক্সপ্রেস (৭২১)"
+    ],
+    "801": [
+      "CHATTALA EXPRESS (801)",
+      "চট্টলা এক্সপ্রেস (৮০১)"
+    ],
+    "42": [
+      "KANCHON INTERCITY COMMUTER (42)",
+      "কাঞ্চন ইন্টারসিটি কমিউটার (৪২)"
+    ],
+    "758": [
+      "DRUTOJAN EXPRESS (758)",
+      "দ্রুতযান এক্সপ্রেস (৭৫৮)"
+    ],
+    "777": [
+      "HAWR EXPRESS (777)",
+      "হাওর এক্সপ্রেস (৭৭৭)"
+    ],
+    "798": [
+      "KURIGRAM EXPRESS (798)",
+      "কুড়িগ্রাম এক্সপ্রেস (৭৯৮)"
+    ],
+    "708": [
+      "TISTA EXPRESS (708)",
+      "তিস্তা এক্সপ্রেস (৭০৮)"
+    ],
+    "785": [
+      "BIJOY EXPRESS (785)",
+      "বিজয় এক্সপ্রেস (৭৮৫)"
+    ],
+    "747": [
+      "SIMANTA EXPRESS (747)",
+      "সীমান্ত এক্সপ্রেস (৭৪৭)"
+    ],
+    "792": [
+      "BANALATA EXPRESS (792)",
+      "বনলতা এক্সপ্রেস (৭৯২)"
+    ],
+    "714": [
+      "KOROTOA EXPRESS (714)",
+      "করতোয়া এক্সপ্রেস (৭১৪)"
+    ],
+    "828": [
+      "RUPOSHI BANGLA EXPRESS (828)",
+      "রূপসী বাংলা এক্সপ্রেস (৮২৮)"
+    ],
+    "826": [
+      "JAHANABAD EXPRESS (826)",
+      "জাহানাবাদ এক্সপ্রেস (৮২৬)"
+    ],
+    "810": [
+      "BURIMARI EXPRESS (810)",
+      "বুড়িমারী এক্সপ্রেস (৮১০)"
+    ],
+    "751": [
+      "LALMONI EXPRESS (751)",
+      "লালমনি এক্সপ্রেস (৭৫১)"
+    ],
+    "743": [
+      "BHRAMMAPUTRA EXPRESS (743)",
+      "ব্রহ্মপুত্র এক্সপ্রেস (৭৪৩)"
+    ],
+    "783": [
+      "TUNGIPARA EXPRESS (783)",
+      "টুঙ্গিপাড়া এক্সপ্রেস (৭৮৩)"
+    ],
+    "741": [
+      "TURNA (741)",
+      "ঢালা (৭৪১)"
+    ],
+    "41": [
+      "KANCHON INTERCITY COMMUTER (41)",
+      "কাঞ্চন ইন্টারসিটি কমিউটার (৪১)"
+    ],
+    "764": [
+      "CHITRA EXPRESS (764)",
+      "চিত্রা এক্সপ্রেস (৭৬৪)"
+    ],
+    "707": [
+      "TISTA EXPRESS (707)",
+      "তিস্তা এক্সপ্রেস (৭০৭)"
+    ],
+    "703": [
+      "MAHANAGAR GODHULI (703)",
+      "মেট্রোপলিটন টোয়াইলাইট (৭০৩)"
+    ],
+    "730": [
+      "MEGHNA EXPRESS (730)",
+      "মেঘনা এক্সপ্রেস (৭৩০)"
+    ],
+    "770": [
+      "DHUMKETU EXPRESS (770)",
+      "ধূমকেতু এক্সপ্রেস (৭৭০)"
+    ],
+    "799": [
+      "JAMALPUR EXPRESS (799)",
+      "জামালপুর এক্সপ্রেস (৭৯৯)"
+    ],
+    "725": [
+      "SUNDARBAN EXPRESS (725)",
+      "সুন্দরবন এক্সপ্রেস (৭২৫)"
+    ],
+    "731": [
+      "BARENDRA EXPRESS (731)",
+      "বারেন্দ্র এক্সপ্রেস (৭৩১)"
+    ],
+    "77": [
+      "RAJSHAHI COMMUTER (77)",
+      "রাজশাহী কমিউটার (৭৭)"
+    ],
+    "738": [
+      "EGAROSINDHUR PROVATI (738)",
+      "এগারোসিন্ধুর ট্রাইড (৭৩৮)"
+    ],
+    "755": [
+      "MADHUMATI EXPRESS (755)",
+      "মধুমতি এক্সপ্রেস (৭৫৫)"
+    ],
+    "57": [
+      "RAJSHAHI COMMUTER (57)",
+      "রাজশাহী কমিউটার (৫৭)"
+    ],
+    "709": [
+      "PARABAT EXPRESS (709)",
+      "পারাবত এক্সপ্রেস (৭০৯)"
+    ],
+    "782": [
+      "KISHORGANJ EXPRESS (782)",
+      "কিশোরগঞ্জ এক্সপ্রেস (৭৮২)"
+    ],
+    "78": [
+      "RAJSHAHI COMMUTER (78)",
+      "রাজশাহী কমিউটার (৭৮)"
+    ],
+    "711": [
+      "UPAKUL EXPRESS (711)",
+      "উপকুল এক্সপ্রেস (৭১১)"
+    ],
+    "724": [
+      "UDAYAN EXPRESS (724)",
+      "উদয়ন এক্সপ্রেস (৭২৪)"
+    ],
+    "814": [
+      "COXS BAZAR EXPRESS (814)",
+      "কক্সবাজার এক্সপ্রেস (৮১৪)"
+    ],
+    "779": [
+      "DHALARCHAR EXPRESS (779)",
+      "ঢালারচর এক্সপ্রেস (৭৭৯)"
+    ],
+    "752": [
+      "LALMONI EXPRESS (752)",
+      "লালমনি এক্সপ্রেস (৭৫২)"
+    ],
+    "757": [
+      "DRUTOJAN EXPRESS (757)",
+      "দ্রুটোজান এক্সপ্রেস (৭৫৭)"
+    ],
+    "749": [
+      "EGAROSINDHUR GODHULI (749)",
+      "এগ্রাসিন্ধুর গোধূলি (৭৪৯)"
+    ],
+    "759": [
+      "PADMA EXPRESS (759)",
+      "পদ্মা এক্সপ্রেস (৭৫৯)"
+    ],
+    "781": [
+      "KISHORGANJ EXPRESS (781)",
+      "কিশোরগঞ্জ এক্সপ্রেস (৭৮১)"
+    ],
+    "734": [
+      "TITUMIR EXPRESS (734)",
+      "তিতুমীর এক্সপ্রেস (৭৩৪)"
+    ],
+    "753": [
+      "SILKCITY EXPRESS (753)",
+      "সিল্কসিটি এক্সপ্রেস (৭৫৩)"
+    ],
+    "754": [
+      "SILKCITY EXPRESS (754)",
+      "সিল্কসিটি এক্সপ্রেস (৭৫৪)"
+    ],
+    "710": [
+      "PARABAT EXPRESS (710)",
+      "পারাবত এক্সপ্রেস (৭১০)"
+    ],
+    "767": [
+      "DOLONCHAPA EXPRESS (767)",
+      "দোলনচাপা এক্সপ্রেস (৭৬৭)"
+    ],
+    "763": [
+      "CHITRA EXPRESS (763)",
+      "চিত্র এক্সপ্রেস (৭৬৩)"
+    ],
+    "717": [
+      "JAYENTIKA EXPRESS (717)",
+      "জয়ন্তিকা এক্সপ্রেস (৭১৭)"
+    ],
+    "765": [
+      "NILSAGAR EXPRESS (765)",
+      "নীলসাগর এক্সপ্রেস (৭৬৫)"
+    ],
+    "713": [
+      "KOROTOA EXPRESS (713)",
+      "কোরোতোয়া এক্সপ্রেস (৭২০)"
+    ],
+    "702": [
+      "SUBORNO EXPRESS (702)",
+      "বেনাপোল এক্সপ্রেস (৭৯৬)"
+    ],
+    "796": [
+      "BENAPOLE EXPRESS (796)",
+      "ধলারচর এক্সপ্রেস (৭৮০)"
+    ],
+    "780": [
+      "DHALARCHAR EXPRESS (780)",
+      "ঢালারচর এক্সপ্রেস (৭৮০)"
+    ],
+    "706": [
+      "EKOTA EXPRESS (706)",
+      "একোটা এক্সপ্রেস (৭০৬)"
+    ],
+    "704": [
+      "MAHANAGAR PROVATI (704)",
+      "মহানগর প্রভাতি (৭০৪)"
+    ],
+    "778": [
+      "HAWR EXPRESS (778)",
+      "হাওর এক্সপ্রেস (৭৭৮)"
+    ],
+    "802": [
+      "CHATTALA EXPRESS (802)",
+      "চট্টলা এক্সপ্রেস (৮০২)"
+    ],
+    "824": [
+      "SHAIKAT EXPRESS (824)",
+      "শৈকত এক্সপ্রেস (৮২৪)"
+    ],
+    "786": [
+      "BIJOY EXPRESS (786)",
+      "বিজয় এক্সপ্রেস (৭৮৬)"
+    ],
+    "733": [
+      "TITUMIR EXPRESS (733)",
+      "তিতুমীর এক্সপ্রেস (৭৩৩)"
+    ],
+    "795": [
+      "BENAPOLE EXPRESS (795)",
+      "বেনাপোল এক্সপ্রেস (৭৯৫)"
+    ],
+    "739": [
+      "UPABAN EXPRESS (739)",
+      "উপবন এক্সপ্রেস (৭৩৯)"
+    ],
+    "775": [
+      "SIRAJGANJ EXPRESS (775)",
+      "সিরাজগঞ্জ এক্সপ্রেস (৭৭৫)"
+    ],
+    "760": [
+      "PADMA EXPRESS (760)",
+      "পদ্মা এক্সপ্রেস (৭৬০)"
+    ],
+    "825": [
+      "JAHANABAD EXPRESS (825)",
+      "জেহানাবাদ এক্সপ্রেস (৮২৫)"
+    ],
+    "769": [
+      "DHUMKETU EXPRESS (769)",
+      "ধূমকেতু এক্সপ্রেস (৭৬৯)"
+    ],
+    "794": [
+      "PANCHAGARH EXPRESS (794)",
+      "পঞ্চগড় এক্সপ্রেস (৭৯৪)"
+    ],
+    "800": [
+      "JAMALPUR EXPRESS (800)",
+      "জামালপুর এক্সপ্রেস (৮০০)"
+    ],
+    "750": [
+      "EGAROSINDHUR GODHULI (750)",
+      "এগ্রাসিন্ধুর গোধূলি (৭৫০)"
+    ],
+    "728": [
+      "RUPSHA EXPRESS (728)",
+      "রূপসা এক্সপ্রেস (৭২৮)"
+    ],
+    "822": [
+      "PROBAL EXPRESS (822)",
+      "সম্ভাব্য এক্সপ্রেস (৮২২)"
+    ],
+    "797": [
+      "KURIGRAM EXPRESS (797)",
+      "কুড়িগ্রাম এক্সপ্রেস (৭৯৭)"
+    ],
+    "723": [
+      "UDAYAN EXPRESS (723)",
+      "উদয়ন এক্সপ্রেস (৭২৩)"
+    ],
+    "806": [
+      "CHILAHATI EXPRESS (806)",
+      "চিলাহাটি এক্সপ্রেস (৮০৬)"
+    ],
+    "715": [
+      "KAPOTAKSHA EXPRESS (715)",
+      "কপোতাক্ষ এক্সপ্রেস (৭১৫)"
+    ],
+    "58": [
+      "RAJSHAHI COMMUTER (58)",
+      "রাজশাহী কমিউটার (৫৮)"
+    ],
+    "827": [
+      "RUPOSHI BANGLA EXPRESS (827)",
+      "রূপসী বাংলা এক্সপ্রেস (৮২৭)"
+    ],
+    "803": [
+      "BANGLABANDHA EXPRESS (803)",
+      "বাংলাবান্ধা এক্সপ্রেস (৮০৩)"
+    ],
+    "789": [
+      "MOHONGANJ EXPRESS (789)",
+      "মোহনগঞ্জ এক্সপ্রেস (৭৮৯)"
+    ],
+    "110": [
+      "CHAPAINAWABGANJ SHUTTLE (110)",
+      "চাঁপাইনবাবগঞ্জ শাটল (১১০)"
+    ],
+    "815": [
+      "PARJOTAK EXPRESS (815)",
+      "পরজোটক এক্সপ্রেস (৮১৫)"
+    ],
+    "771": [
+      "RANGPUR EXPRESS (771)",
+      "রংপুর এক্সপ্রেস (৭৭১)"
+    ],
+    "784": [
+      "TUNGIPARA EXPRESS (784)",
+      "টুঙ্গিপাড়া এক্সপ্রেস (৭৮৪)"
+    ],
+    "809": [
+      "BURIMARI EXPRESS (809)",
+      "বুড়িমারি এক্সপ্রেস (৮০৯)"
+    ],
+    "732": [
+      "BARENDRA EXPRESS (732)",
+      "বরেন্দ্র এক্সপ্রেস (৭৩২)"
+    ],
+    "816": [
+      "PARJOTAK EXPRESS (816)",
+      "পরজোটক এক্সপ্রেস (৮১৬)"
+    ],
+    "821": [
+      "SHAIKAT EXPRESS (821)",
+      "শৈকত এক্সপ্রেস (৮২১)"
+    ],
+    "788": [
+      "SONAR BANGLA EXPRESS (788)",
+      "সোনার বাংলা এক্সপ্রেস (৭৮৮)"
+    ],
+    "761": [
+      "SAGARDARI EXPRESS (761)",
+      "অ্যাপল এক্সপ্রেস (৭৬১)"
+    ],
+    "772": [
+      "RANGPUR EXPRESS (772)",
+      "রংপুর এক্সপ্রেস (৭৭২)"
+    ],
+    "737": [
+      "EGAROSINDHUR PROVATI (737)",
+      "এগারোসিন্ধুর চেষ্টা করা হয়েছে (৭৩৭)"
+    ],
+    "1001": [
+      "NARAYANGANJ COMMUTER 1 (1001)",
+      "নারায়ণগঞ্জ কমিউটার ১ (১০০১)"
+    ],
+    "1002": [
+      "NARAYANGANJ COMMUTER 2 (1002)",
+      "নারায়ণগঞ্জ কমিউটার ২ (১০০২)"
+    ],
+    "1003": [
+      "NARAYANGANJ COMMUTER 3 (1003)",
+      "নারায়ণগঞ্জ কমিউটার ৩ (১০০৩)"
+    ],
+    "1004": [
+      "NARAYANGANJ COMMUTER 4 (1004)",
+      "নারায়ণগঞ্জ কমিউটার ৪ (১০০৪)"
+    ],
+    "1005": [
+      "NARAYANGANJ COMMUTER 5 (1005)",
+      "নারায়ণগঞ্জ কমিউটার ৫ (১০০৫)"
+    ],
+    "1006": [
+      "NARAYANGANJ COMMUTER 6 (1006)",
+      "নারায়ণগঞ্জ কমিউটার ৬ (১০০৬)"
+    ],
+    "1007": [
+      "NARAYANGANJ COMMUTER 7 (1007)",
+      "নারায়ণগঞ্জ কমিউটার ৭ (১০০৭)"
+    ],
+    "1008": [
+      "NARAYANGANJ COMMUTER 8 (1008)",
+      "নারায়ণগঞ্জ কমিউটার ৮ (১০০৮)"
+    ],
+    "1009": [
+      "NARAYANGANJ COMMUTER 9 (1009)",
+      "নারায়ণগঞ্জ কমিউটার ৯ (১০০৯)"
+    ],
+    "1010": [
+      "NARAYANGANJ COMMUTER 10 (1010)",
+      "নারায়ণগঞ্জ কমিউটার ১০ (১০১০)"
+    ],
+    "1011": [
+      "NARAYANGANJ COMMUTER 11 (1011)",
+      "নারায়ণগঞ্জ কমিউটার১১ (১০১১)"
+    ],
+    "1012": [
+      "NARAYANGANJ COMMUTER 12 (1012)",
+      "নারায়ণগঞ্জ কমিউটার ১২ (১০১২)"
+    ],
+    "1013": [
+      "NARAYANGANJ COMMUTER 13 (1013)",
+      "নারায়ণগঞ্জ কমিউটার ১৩ (১০১৩)"
+    ],
+    "1014": [
+      "NARAYANGANJ COMMUTER 14 (1014)",
+      "নারায়ণগঞ্জ কমিউটার ১৪ (১০১৪)"
+    ],
+    "1015": [
+      "NARAYANGANJ COMMUTER 15 (1015)",
+      "নারায়ণগঞ্জ কমিউটার ১৫ (১০১৫)"
+    ],
+    "1016": [
+      "NARAYANGANJ COMMUTER 16 (1016)",
+      "নারায়ণগঞ্জ কমিউটার ১৬ (১০১৬)"
+    ],
+    "61": [
+      "LALMONI COMMUTER (61)",
+      "লালমনি কমিউটার (৬১)"
+    ],
+    "62": [
+      "LALMONI COMMUTER (62)",
+      "লালমনি কমিউটার (৬২)"
+    ],
+    "65": [
+      "BURIMARI COMMUTER (65)",
+      "বুড়িমারী কমিউটার (৬৫)"
+    ],
+    "66": [
+      "BURIMARI COMMUTER (66)",
+      "বুড়িমারী কমিউটার (৬৬)"
+    ],
+    "2": [
+      "CHITTAGONG MAIL (2)",
+      "চট্টগ্রাম মেইল ​​(২)"
+    ],
+    "23": [
+      "Rocket Mail (23)",
+      "রকেট মেইল ​​(২৩)"
+    ],
+    "24": [
+      "Rocket Mail (24)",
+      "রকেট মেইল ​​(২৪)"
+    ],
+    "27": [
+      "Ghaghot Mail (27)",
+      "ঘাঘট মেইল ​​(২৭)"
+    ],
+    "28": [
+      "Ghaghot Mail (28)",
+      "ঘাঘট মেইল ​​(২৮)"
+    ],
+    "15": [
+      "MOHANANDA MAIL (15)",
+      "মহানন্দা মেইল ​​(১৫)"
+    ],
+    "16": [
+      "MOHANANDA MAIL (16)",
+      "মহানন্দা মেইল ​​(১৬)"
+    ],
+    "25": [
+      "NAKSHIKANTHA COMMUTER (25)",
+      "নকশিকাঁথা কমিউটার (২৫)"
+    ],
+    "26": [
+      "NAKSHIKANTHA COMMUTER (26)",
+      "নকশিকাঁথা কমিউটার (২৬)"
+    ]
+  },
+  "offday": {
+    "712": [
+      "Wed"
+    ],
+    "805": [
+      "Sat"
+    ],
+    "756": [
+      "Sat"
+    ],
+    "774": [
+      "Fri"
+    ],
+    "718": [
+      "Thu"
+    ],
+    "748": [
+      "Mon"
+    ],
+    "719": [
+      "Mon"
+    ],
+    "804": [
+      "Sat"
+    ],
+    "740": [
+      "Mon"
+    ],
+    "813": [
+      "Tue"
+    ],
+    "701": [
+      "Mon"
+    ],
+    "773": [
+      "Fri"
+    ],
+    "791": [
+      "Fri"
+    ],
+    "776": [
+      "Sat"
+    ],
+    "716": [
+      "Fri"
+    ],
+    "720": [
+      "Wed"
+    ],
+    "109": [
+      "Thu"
+    ],
+    "790": [
+      "Wed"
+    ],
+    "727": [
+      "Thu"
+    ],
+    "823": [
+      "Mon"
+    ],
+    "762": [
+      "Mon"
+    ],
+    "722": [
+      "Sun"
+    ],
+    "787": [
+      "Tue"
+    ],
+    "766": [
+      "Tue"
+    ],
+    "726": [
+      "Wed"
+    ],
+    "721": [
+      "Sun"
+    ],
+    "801": [
+      "Fri"
+    ],
+    "777": [
+      "Fri"
+    ],
+    "798": [
+      "Tue"
+    ],
+    "708": [
+      "Mon"
+    ],
+    "785": [
+      "Tue"
+    ],
+    "747": [
+      "Mon"
+    ],
+    "792": [
+      "Fri"
+    ],
+    "714": [
+      "Wed"
+    ],
+    "828": [
+      "Mon"
+    ],
+    "826": [
+      "Mon"
+    ],
+    "810": [
+      "Tue"
+    ],
+    "751": [
+      "Fri"
+    ],
+    "783": [
+      "Tue"
+    ],
+    "764": [
+      "Sun"
+    ],
+    "707": [
+      "Mon"
+    ],
+    "770": [
+      "Wed"
+    ],
+    "799": [
+      "Sun"
+    ],
+    "725": [
+      "Tue"
+    ],
+    "731": [
+      "Sun"
+    ],
+    "77": [
+      "Wed"
+    ],
+    "755": [
+      "Sat"
+    ],
+    "57": [
+      "Wed"
+    ],
+    "709": [
+      "Mon"
+    ],
+    "782": [
+      "Tue"
+    ],
+    "78": [
+      "Wed"
+    ],
+    "711": [
+      "Thu"
+    ],
+    "724": [
+      "Sun"
+    ],
+    "814": [
+      "Mon"
+    ],
+    "779": [
+      "Thu"
+    ],
+    "752": [
+      "Fri"
+    ],
+    "759": [
+      "Tue"
+    ],
+    "781": [
+      "Tue"
+    ],
+    "734": [
+      "Wed"
+    ],
+    "753": [
+      "Sun"
+    ],
+    "754": [
+      "Sun"
+    ],
+    "710": [
+      "Mon"
+    ],
+    "763": [
+      "Sun"
+    ],
+    "717": [
+      "Tue"
+    ],
+    "765": [
+      "Wed"
+    ],
+    "713": [
+      "Wed"
+    ],
+    "702": [
+      "Mon"
+    ],
+    "796": [
+      "Wed"
+    ],
+    "780": [
+      "Wed"
+    ],
+    "778": [
+      "Sat"
+    ],
+    "802": [
+      "Fri"
+    ],
+    "824": [
+      "Mon"
+    ],
+    "786": [
+      "Tue"
+    ],
+    "733": [
+      "Wed"
+    ],
+    "795": [
+      "Wed"
+    ],
+    "739": [
+      "Wed"
+    ],
+    "775": [
+      "Sat"
+    ],
+    "760": [
+      "Tue"
+    ],
+    "825": [
+      "Mon"
+    ],
+    "769": [
+      "Thu"
+    ],
+    "800": [
+      "Sun"
+    ],
+    "750": [
+      "Wed"
+    ],
+    "728": [
+      "Thu"
+    ],
+    "822": [
+      "Mon"
+    ],
+    "797": [
+      "Tue"
+    ],
+    "723": [
+      "Wed"
+    ],
+    "806": [
+      "Sat"
+    ],
+    "715": [
+      "Fri"
+    ],
+    "58": [
+      "Wed"
+    ],
+    "827": [
+      "Mon"
+    ],
+    "803": [
+      "Fri"
+    ],
+    "789": [
+      "Wed"
+    ],
+    "110": [
+      "Thu"
+    ],
+    "815": [
+      "Wed"
+    ],
+    "771": [
+      "Mon"
+    ],
+    "784": [
+      "Mon"
+    ],
+    "809": [
+      "Wed"
+    ],
+    "732": [
+      "Sun"
+    ],
+    "816": [
+      "Wed"
+    ],
+    "821": [
+      "Mon"
+    ],
+    "788": [
+      "Wed"
+    ],
+    "761": [
+      "Mon"
+    ],
+    "772": [
+      "Sun"
+    ],
+    "737": [
+      "Wed"
+    ]
+  },
+  "tid_to_stations": {
+  }
+}

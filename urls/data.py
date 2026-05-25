@@ -30,9 +30,7 @@ def get_revision(current_revision: int, data_hashes: Dict[int, str] = None, vers
 
 def get_all_trains(data: Dict[str, Any], version: int = 0) -> Dict[str, Any]:
     """Return complete train database"""
-    if version >= 28:
-        response_data = data.copy()
-        
+    if version >= 29:
         folder_path = None
         if os.path.exists("train_routes"):
             available_versions = []
@@ -40,7 +38,8 @@ def get_all_trains(data: Dict[str, Any], version: int = 0) -> Dict[str, Any]:
                 if folder.startswith("version"):
                     try:
                         v = int(folder.replace("version", ""))
-                        available_versions.append(v)
+                        if v >= 29:
+                            available_versions.append(v)
                     except ValueError:
                         pass
             
@@ -49,19 +48,23 @@ def get_all_trains(data: Dict[str, Any], version: int = 0) -> Dict[str, Any]:
                 best_y = max(valid_versions)
                 folder_path = os.path.join("train_routes", f"version{best_y}")
         
-        # Fallback to version 28 if no valid version directory is found or train_routes doesn't exist
-        if folder_path is None or not os.path.exists(folder_path):
-            folder_path = os.path.join("train_routes", "version28")
-            
-        if os.path.exists(folder_path):
+        if folder_path is not None and os.path.exists(folder_path):
+            # Check if a version-specific data.json exists
+            v_data_path = os.path.join(folder_path, "data.json")
+            if os.path.exists(v_data_path):
+                with open(v_data_path, "r", encoding="utf-8") as f:
+                    response_data = json.load(f)
+            else:
+                response_data = data.copy()
+                
             tid_to_stations = {}
             for filename in os.listdir(folder_path):
-                if filename.endswith(".json"):
+                if filename.endswith(".json") and filename != "data.json":
                     tid = filename[:-5]
                     with open(os.path.join(folder_path, filename), "r", encoding="utf-8") as f:
                         tid_to_stations[tid] = json.load(f)
             response_data["tid_to_stations"] = tid_to_stations
+            return response_data
             
-        return response_data
-        
     return data
+

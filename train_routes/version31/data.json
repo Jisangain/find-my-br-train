@@ -17,6 +17,7 @@
   "first_open_notice": "",
   "app_update_notice": "",
   "data_update_notice": "",
+  "location_improver": true,
   "sid_to_sloc": {
     "Dhaka": [
       23.73424596143561,
@@ -2392,11 +2393,11 @@
     ],
     "746": [
       "JAMUNA EXPRESS (746)",
-      "যমুনা (৭৬৪ এক্সপ্রেস)"
+      "যমুনা এক্সপ্রেস (৭৬৪)"
     ],
     "773": [
       "KALNI EXPRESS (773)",
-      "যমুনা এক্সপ্রেস(৭৭৩)"
+      "যমুনা এক্সপ্রেস (৭৭৩)"
     ],
     "791": [
       "BANALATA EXPRESS (791)",

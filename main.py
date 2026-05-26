@@ -240,11 +240,193 @@ async def root():
             "/nearbyroute": "POST - Find alternative routes",
             "/health": "GET - Server health check",
             "/live": "GET - View live trains",
+            "/location-improver": "GET/POST - Location Improver dashboard and receiver",
             "/docs": "GET - Interactive API documentation",
         },
         "github": "https://github.com/jisangain/find-my-br-train",
         "contribute": "Visit our GitHub repository to contribute!"
     }
+
+
+from collections import deque
+from fastapi.responses import HTMLResponse
+import datetime
+
+IMPROVER_LOCATIONS = deque(maxlen=500)
+
+@app.post("/location-improver")
+async def post_location_improver(request: Request, train_id: Optional[str] = None):
+    try:
+        body = await request.json()
+        x = body.get("x")
+        y = body.get("y")
+        user_id = body.get("user_id", "unknown")
+        req_train_id = body.get("train_id")
+        if req_train_id is None:
+            req_train_id = train_id or "unknown"
+            
+        if x is not None and y is not None:
+            timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            IMPROVER_LOCATIONS.appendleft({
+                "x": x,
+                "y": y,
+                "user_id": user_id,
+                "train_id": req_train_id,
+                "timestamp": timestamp
+            })
+            return {"status": "success", "message": "Location recorded"}
+        else:
+            return {"status": "error", "message": "Missing x or y coordinate"}
+    except Exception as e:
+        return {"status": "error", "message": f"Server error: {str(e)}"}
+
+@app.get("/location-improver", response_class=HTMLResponse)
+async def get_location_improver_dashboard():
+    rows_html = ""
+    for idx, item in enumerate(IMPROVER_LOCATIONS, 1):
+        x = item['x']
+        y = item['y']
+        user_id = item['user_id']
+        t_id = item['train_id']
+        ts = item['timestamp']
+        osm_url = f"https://www.openstreetmap.org/?mlat={x}&mlon={y}#map=16/{x}/{y}"
+        gmaps_url = f"https://maps.google.com/?q={x},{y}"
+        
+        rows_html += f"""
+        <tr class="border-b border-white/10 hover:bg-white/5 transition duration-150">
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-medium">{idx}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100"><span class="bg-indigo-500/20 text-indigo-300 px-2 py-1 rounded text-xs font-mono font-bold">{user_id}</span></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-100"><span class="bg-purple-500/20 text-purple-300 px-2 py-1 rounded text-xs font-mono font-bold">{t_id}</span></td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 font-mono">{x}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-300 font-mono">{y}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400 font-mono">{ts}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm space-x-2">
+                <a href="{osm_url}" target="_blank" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-indigo-200 bg-indigo-900/50 hover:bg-indigo-900 transition duration-150">🌐 OSM</a>
+                <a href="{gmaps_url}" target="_blank" class="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-emerald-200 bg-emerald-900/50 hover:bg-emerald-900 transition duration-150">📍 Maps</a>
+            </td>
+        </tr>
+        """
+        
+    if not IMPROVER_LOCATIONS:
+        rows_html = """
+        <tr>
+            <td colspan="7" class="px-6 py-12 text-center text-gray-500 text-sm font-medium">
+                📭 No location reports captured in memory yet.
+            </td>
+        </tr>
+        """
+
+    progress_percent = (len(IMPROVER_LOCATIONS) / 500) * 100
+    html_content = f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Bangladesh Railway - Location Improver Dashboard</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <style>
+            body {{
+                font-family: 'Outfit', sans-serif;
+                background-color: #0b0f19;
+                background-image: 
+                    radial-gradient(at 0% 0%, rgba(30, 27, 75, 0.4) 0, transparent 50%),
+                    radial-gradient(at 50% 0%, rgba(17, 24, 39, 0.4) 0, transparent 50%),
+                    radial-gradient(at 100% 0%, rgba(4, 120, 87, 0.1) 0, transparent 50%);
+                background-attachment: fixed;
+            }}
+            .glass {{
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(12px);
+                border: 1px border-white/10;
+            }}
+        </style>
+    </head>
+    <body class="text-white min-h-screen">
+        <div class="max-w-6xl mx-auto px-4 py-8">
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between mb-8 pb-6 border-b border-white/10">
+                <div>
+                    <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-400 via-purple-400 to-emerald-400 bg-clip-text text-transparent">🇧🇩 Bangladesh Railway</h1>
+                    <p class="text-gray-400 mt-1 text-sm font-medium">Location Improver Dashboard (RAM Cache)</p>
+                </div>
+                <div class="mt-4 md:mt-0 flex items-center space-x-4">
+                    <button onclick="window.location.reload()" class="px-4 py-2 bg-white/5 border border-white/10 rounded-lg text-sm font-medium hover:bg-white/10 transition duration-150">🔄 Refresh</button>
+                    <span class="px-3 py-1 bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-full text-xs font-semibold animate-pulse flex items-center space-x-1">
+                        <span class="h-2 w-2 bg-emerald-400 rounded-full inline-block"></span>
+                        <span>Live</span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="glass p-6 rounded-2xl border border-white/10 shadow-xl flex flex-col justify-between">
+                    <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider">Reports Stored</h3>
+                    <div class="mt-2 flex items-baseline">
+                        <span class="text-4xl font-bold font-mono">{len(IMPROVER_LOCATIONS)}</span>
+                        <span class="text-gray-500 text-lg font-medium ml-1">/ 500 max</span>
+                    </div>
+                    <div class="w-full bg-white/10 h-1.5 rounded-full mt-4 overflow-hidden">
+                        <div class="bg-gradient-to-r from-indigo-500 to-purple-500 h-1.5 rounded-full" style="width: {progress_percent}%"></div>
+                    </div>
+                </div>
+                
+                <div class="glass p-6 rounded-2xl border border-white/10 shadow-xl flex flex-col justify-between">
+                    <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider">Feature Status</h3>
+                    <div class="mt-2">
+                        <span class="text-lg font-semibold inline-flex items-center text-indigo-300">
+                            ✨ Capturing All Reports
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">Storing incoming coordinate reports in temporary memory.</p>
+                </div>
+                
+                <div class="glass p-6 rounded-2xl border border-white/10 shadow-xl flex flex-col justify-between">
+                    <h3 class="text-gray-400 text-sm font-semibold uppercase tracking-wider">System Target</h3>
+                    <div class="mt-2">
+                        <span class="text-lg font-semibold inline-flex items-center text-emerald-400">
+                            🛠️ Missing Stations Audit
+                        </span>
+                    </div>
+                    <p class="text-xs text-gray-500 mt-4">Cross-references raw coords with geocoding tools to build/correct schedules.</p>
+                </div>
+            </div>
+
+            <!-- Data Table -->
+            <div class="glass rounded-2xl border border-white/10 shadow-2xl overflow-hidden">
+                <div class="px-6 py-5 border-b border-white/10">
+                    <h3 class="text-lg font-semibold">📍 Captured Coordinates Stream</h3>
+                    <p class="text-gray-400 text-xs">Displays the 500 most recent coordinate anomalies sent by apps in real-time.</p>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-white/10">
+                        <thead class="bg-white/5">
+                            <tr>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">#</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">User ID</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Train ID</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Latitude (X)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Longitude (Y)</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Timestamp</th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-semibold text-gray-300 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/10 bg-transparent">
+                            {rows_html}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    """
+    return HTMLResponse(content=html_content)
+
 
 
 if __name__ == '__main__':

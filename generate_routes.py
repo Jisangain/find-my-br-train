@@ -19,10 +19,11 @@ def is_backward(t1, t2):
     except Exception:
         return False
 
-def get_intermediates(X, Y, all_routes, active_pairs):
-    if (X, Y) in active_pairs:
+def get_intermediates(X, Y, all_routes, active_pairs, base_station_names=None):
+    if (X, Y) in active_pairs or (Y, X) in active_pairs:
         return []
     active_pairs.add((X, Y))
+    active_pairs.add((Y, X))
     
     candidates = []
     for tid, route in all_routes.items():
@@ -32,10 +33,19 @@ def get_intermediates(X, Y, all_routes, active_pairs):
             if ix < iy:
                 intermediates = route[ix+1:iy]
                 if len(intermediates) > 0:
+                    if base_station_names and any(station in base_station_names for station in intermediates):
+                        continue
+                    candidates.append(intermediates)
+            else:
+                intermediates = list(reversed(route[iy+1:ix]))
+                if len(intermediates) > 0:
+                    if base_station_names and any(station in base_station_names for station in intermediates):
+                        continue
                     candidates.append(intermediates)
                     
     if not candidates:
         active_pairs.remove((X, Y))
+        active_pairs.remove((Y, X))
         return []
         
     longest_intermediates = max(candidates, key=len)
@@ -43,13 +53,15 @@ def get_intermediates(X, Y, all_routes, active_pairs):
     full_sequence = []
     current = X
     for next_station in longest_intermediates:
-        full_sequence.extend(get_intermediates(current, next_station, all_routes, active_pairs))
+        full_sequence.extend(get_intermediates(current, next_station, all_routes, active_pairs, base_station_names))
         full_sequence.append(next_station)
         current = next_station
-    full_sequence.extend(get_intermediates(current, Y, all_routes, active_pairs))
+    full_sequence.extend(get_intermediates(current, Y, all_routes, active_pairs, base_station_names))
     
     active_pairs.remove((X, Y))
+    active_pairs.remove((Y, X))
     return full_sequence
+
 
 def generate_route(train_stops, all_routes):
     base_station_names = {stop[0] for stop in train_stops}
@@ -69,7 +81,7 @@ def generate_route(train_stops, all_routes):
             skip = False
             
         if not skip:
-            intermediates = get_intermediates(X, Y, all_routes, set())
+            intermediates = get_intermediates(X, Y, all_routes, set(), base_station_names)
             filtered_intermediates = [z for z in intermediates if z not in base_station_names]
             for station in filtered_intermediates:
                 result.append([station, 0, -1])

@@ -95,12 +95,12 @@ def find_common_stations(train1_stations, train2_stations):
     common = []
     for i, station1 in enumerate(train1_stations):
         sid1, stype1, time1 = station1[0], station1[1], station1[2] if len(station1) > 2 else None
-        if stype1 not in [1, -1]:
+        if stype1 != 1:
             continue
         
         for j, station2 in enumerate(train2_stations):
             sid2, stype2, time2 = station2[0], station2[1], station2[2] if len(station2) > 2 else None
-            if stype2 not in [1, -1]:
+            if stype2 != 1:
                 continue
             
             if sid1 == sid2:
@@ -253,24 +253,24 @@ def precalculate_two_train_routes(data: Dict[str, Any], current_revision: int) -
             
             for from_idx, from_station in enumerate(train1_stations):
                 from_sid, from_stype = from_station[0], from_station[1]
-                if from_stype not in [1, -1]:
+                if from_stype != 1:
                     continue
                 
                 for to_idx, to_station in enumerate(train2_stations):
                     to_sid, to_stype = to_station[0], to_station[1]
-                    if to_stype not in [1, -1]:
+                    if to_stype != 1:
                         continue
                     
                     if from_sid == to_sid:
                         continue
                     
                     has_direct_train1 = any(
-                        st[0] == to_sid and st[1] in [1, -1] and idx > from_idx
+                        st[0] == to_sid and st[1] == 1 and idx > from_idx
                         for idx, st in enumerate(train1_stations)
                     )
                     
                     has_direct_train2 = any(
-                        st[0] == from_sid and st[1] in [1, -1] and idx < to_idx
+                        st[0] == from_sid and st[1] == 1 and idx < to_idx
                         for idx, st in enumerate(train2_stations)
                     )
                     

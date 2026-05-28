@@ -81,5 +81,57 @@ for tid, stops in tid_to_stations.items():
 
 folium.LayerControl(collapsed=False).add_to(m)
 
+# HTML and JavaScript for the search box
+search_html = """
+<div style="position: fixed; 
+            top: 10px; left: 70px; z-index: 1000; 
+            background-color: white; border: 2px solid grey; 
+            padding: 10px; border-radius: 5px;">
+    <input type="text" id="latlon" placeholder="e.g., 23.99, 90.36" style="width: 150px;"/>
+    <button onclick="searchLocation()">Search</button>
+</div>
+
+<script>
+function searchLocation() {
+    var latlonStr = document.getElementById('latlon').value;
+    if (!latlonStr) {
+        alert("Please enter coordinates.");
+        return;
+    }
+    var parts = latlonStr.split(',');
+    if (parts.length !== 2) {
+        alert("Invalid format. Please use 'latitude,longitude'.");
+        return;
+    }
+    var lat = parseFloat(parts[0].trim());
+    var lon = parseFloat(parts[1].trim());
+
+    if (isNaN(lat) || isNaN(lon)) {
+        alert("Invalid coordinates.");
+        return;
+    }
+
+    var customMarker = L.marker([lat, lon], {
+        icon: L.icon({
+            iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+            shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.7/images/marker-shadow.png',
+            iconSize: [25, 41],
+            iconAnchor: [12, 41],
+            popupAnchor: [1, -34],
+            shadowSize: [41, 41]
+        })
+    }).addTo(this.map);
+    
+    customMarker.bindPopup(`<b>Custom Location</b><br>Lat: ${lat}<br>Lon: ${lon}`).openPopup();
+    this.map.setView([lat, lon], 13);
+}
+</script>
+"""
+
+# Add the search box to the map
+m.get_root().html.add_child(folium.Element(search_html.replace("this.map", m.get_name())))
+
+folium.LayerControl(collapsed=False).add_to(m)
+
 m.save("tid_to_stations_map.html")
 print("✅ Map saved as 'tid_to_stations_map.html'")

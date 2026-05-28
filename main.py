@@ -109,6 +109,23 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Add Apitally middleware (reads from environment variables)
+from apitally.fastapi import ApitallyMiddleware
+apitally_client_id = os.getenv("APITALLY_CLIENT_ID")
+apitally_env = os.getenv("APITALLY_ENV", "prod")
+
+app.add_middleware(
+    ApitallyMiddleware,
+    client_id=apitally_client_id,
+    env=apitally_env,
+    enable_request_logging=True,
+    log_request_headers=True,
+    log_request_body=True,
+    log_response_body=True,
+    capture_logs=True,
+)
+
+
 
 # Mount static files
 import os

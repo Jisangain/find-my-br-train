@@ -75,14 +75,14 @@ class RedisTrainTracker:
                 continue
             
             time_str = station[2]
-            if time_str == "--:--":
+            if not isinstance(time_str, str) or time_str == "--:--":
                 continue
             
             try:
                 parts = time_str.split(':')
                 station_minutes = int(parts[0]) * 60 + int(parts[1])
                 station_times.append((i, station_minutes))
-            except (ValueError, IndexError):
+            except (ValueError, IndexError, AttributeError):
                 continue
         
         if not station_times:

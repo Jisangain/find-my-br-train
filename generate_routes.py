@@ -63,7 +63,7 @@ def get_intermediates(X, Y, all_routes, active_pairs, base_station_names=None):
     return full_sequence
 
 
-def generate_route(train_stops, all_routes):
+def generate_route(train_stops, all_routes, extra_stations):
     base_station_names = {stop[0] for stop in train_stops}
     result = []
     
@@ -73,7 +73,11 @@ def generate_route(train_stops, all_routes):
         tX = train_stops[i][2]
         tY = train_stops[i+1][2]
         
-        result.append(train_stops[i])
+        stop_data = list(train_stops[i])
+        if stop_data[0] in extra_stations:
+            stop_data[1] = -1
+            stop_data[2] = -1
+        result.append(stop_data)
         
         # Rule 1: Skip if the segment itself is a backward time jump, with exception for Bidyaganj -> Narundi
         skip = is_backward(tX, tY)
@@ -84,9 +88,14 @@ def generate_route(train_stops, all_routes):
             intermediates = get_intermediates(X, Y, all_routes, set(), base_station_names)
             filtered_intermediates = [z for z in intermediates if z not in base_station_names]
             for station in filtered_intermediates:
-                result.append([station, 0, -1])
+                stype = -1 if station in extra_stations else 0
+                result.append([station, stype, -1])
             
-    result.append(train_stops[-1])
+    last_stop = list(train_stops[-1])
+    if last_stop[0] in extra_stations:
+        last_stop[1] = -1
+        last_stop[2] = -1
+    result.append(last_stop)
     return result
 
 def main():
@@ -132,10 +141,11 @@ def main():
             f.write(v_data_content)
             
     # 3. Generate routes
+    extra_stations = set(data.get('xsid_to_sloc', {}).keys())
     print(f"⚙️ Generating version {version} routes for {len(base_routes)} trains...")
     generated_count = 0
     for tid, base_stops in base_routes.items():
-        expanded_route = generate_route(base_stops, all_routes)
+        expanded_route = generate_route(base_stops, all_routes, extra_stations)
         
         file_path = os.path.join(version_dir, f"{tid}.json")
         with open(file_path, 'w', encoding='utf-8') as f:

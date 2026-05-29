@@ -57,6 +57,7 @@ def analyze_data_consistency(data: Dict[str, Any]) -> bool:
     
     # Extract data structures
     sid_to_sloc = data.get('sid_to_sloc', {})
+    xsid_to_sloc = data.get('xsid_to_sloc', {})
     sid_to_sname = data.get('sid_to_sname', {})
     train_names = data.get('train_names', {})
     offday = data.get('offday', {})
@@ -64,6 +65,7 @@ def analyze_data_consistency(data: Dict[str, Any]) -> bool:
     
     # Convert to sets for analysis
     sid_sloc_keys = set(sid_to_sloc.keys())
+    xsid_sloc_keys = set(xsid_to_sloc.keys())
     sid_sname_keys = set(sid_to_sname.keys())
     train_names_keys = set(train_names.keys())
     offday_keys = set(offday.keys())
@@ -71,6 +73,7 @@ def analyze_data_consistency(data: Dict[str, Any]) -> bool:
     
     print(f"📊 Data Structure Sizes:")
     print(f"   • sid_to_sloc:    {len(sid_sloc_keys):4d} entries")
+    print(f"   • xsid_to_sloc:   {len(xsid_sloc_keys):4d} entries")
     print(f"   • sid_to_sname:   {len(sid_sname_keys):4d} entries")
     print(f"   • train_names:    {len(train_names_keys):4d} entries")
     print(f"   • offday:         {len(offday_keys):4d} entries")
@@ -136,8 +139,8 @@ def analyze_data_consistency(data: Dict[str, Any]) -> bool:
         all_checks_passed = False
     print()
     
-    # Check 4: All station names in tid_to_stations ⊆ sid_to_sname keys
-    print("🔍 Check 4: Station references consistency (station codes in routes ⊆ station data)")
+    # Check 4: All station names in tid_to_stations ⊆ (sid_to_sname keys ∪ xsid_to_sloc keys)
+    print("🔍 Check 4: Station references consistency (station codes in routes ⊆ regular station or extra station data)")
     
     # Collect all station codes used in train routes
     all_route_stations = set()
@@ -152,13 +155,14 @@ def analyze_data_consistency(data: Dict[str, Any]) -> bool:
                 train_stations.add(station_code)
         train_station_usage[train_id] = train_stations
     
-    if all_route_stations.issubset(sid_sname_keys):
-        print("   ✅ PASSED: All station codes in routes exist in station data")
-        print(f"   📈 {len(all_route_stations)} unique stations referenced in {len(tid_to_stations)} train routes")
+    valid_station_codes = sid_sname_keys.union(xsid_sloc_keys)
+    if all_route_stations.issubset(valid_station_codes):
+        print("   ✅ PASSED: All station codes in routes exist in regular or extra station data")
+        print(f"   📈 {len(all_route_stations)} unique stations/points referenced in {len(tid_to_stations)} train routes")
     else:
-        print("   ❌ FAILED: Some station codes in routes don't exist in station data")
+        print("   ❌ FAILED: Some station codes in routes don't exist in regular or extra station data")
         
-        missing_stations = all_route_stations - sid_sname_keys
+        missing_stations = all_route_stations - valid_station_codes
         print(f"   🚫 {len(missing_stations)} station codes are referenced but don't exist:")
         
         # Show which trains reference missing stations

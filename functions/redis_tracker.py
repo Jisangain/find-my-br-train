@@ -67,23 +67,25 @@ class RedisTrainTracker:
         
         current_minutes = now.hour * 60 + now.minute
         
-        # Parse all station times first
-        station_times = []  # List of (index, raw_minutes)
+        # Parse all station times first (using type-1 station indices)
+        station_times = []  # List of (type1_index, raw_minutes)
         
-        for i, station in enumerate(stations):
-            if len(station) < 3 or station[2] is None:
-                continue
+        type1_idx = 0
+        for station in stations:
+            is_type1 = (len(station) > 1 and station[1] == 1)
             
-            time_str = station[2]
-            if not isinstance(time_str, str) or time_str == "--:--":
-                continue
-            
-            try:
-                parts = time_str.split(':')
-                station_minutes = int(parts[0]) * 60 + int(parts[1])
-                station_times.append((i, station_minutes))
-            except (ValueError, IndexError, AttributeError):
-                continue
+            if is_type1 and len(station) >= 3 and station[2] is not None:
+                time_str = station[2]
+                if isinstance(time_str, str) and time_str != "--:--":
+                    try:
+                        parts = time_str.split(':')
+                        station_minutes = int(parts[0]) * 60 + int(parts[1])
+                        station_times.append((type1_idx, station_minutes))
+                    except (ValueError, IndexError, AttributeError):
+                        pass
+                        
+            if is_type1:
+                type1_idx += 1
         
         if not station_times:
             return None
@@ -173,6 +175,16 @@ class RedisTrainTracker:
         if timestamp > current_time + max_future_tolerance:
             future_diff = timestamp - current_time
             return False, f"Timestamp rejected: {future_diff}s in the future (clock drift?)"
+            
+        # Reject illegal position values exceeding maximum possible type-1 index
+        if self.train_data:
+            tid_to_stations = self.train_data.get("tid_to_stations", {})
+            stations = tid_to_stations.get(str(train_id))
+            if stations:
+                type1_count = sum(1 for s in stations if len(s) > 1 and s[1] == 1)
+                max_pos = max(0, type1_count - 1)
+                if position > max_pos + 0.99:
+                    return False, f"Illegal position {position} exceeds maximum valid position {max_pos} for train {train_id}"
         
         is_bot = user_id.lower().startswith("bot")
         

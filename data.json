@@ -17,7 +17,7 @@
     "first_open_notice": "",
     "app_update_notice": "",
     "data_update_notice": "",
-    "location_improver": true,
+    "location_improver": false,
     "xsid_to_sloc": {
         "gazipur_left_1": [
             24.035072781238597,

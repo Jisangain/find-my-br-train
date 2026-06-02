@@ -22,13 +22,17 @@ def get_two_train_routes(from_station: str, to_station: str, two_train_routes: D
         
         routes = []
         for train1_id, train2_id, interchange_id in two_train_routes[route_key]:
+            interchange_name = sid_to_sname.get(interchange_id, interchange_id)
+            if isinstance(interchange_name, list):
+                interchange_name = interchange_name[0] if len(interchange_name) > 0 else interchange_id
+                
             routes.append({
                 "train1_id": train1_id,
                 "train1_name": train_names.get(train1_id, train1_id),
                 "train2_id": train2_id,
                 "train2_name": train_names.get(train2_id, train2_id),
                 "interchange_station_id": interchange_id,
-                "interchange_station_name": sid_to_sname.get(interchange_id, interchange_id)
+                "interchange_station_name": interchange_name
             })
         
         return {
@@ -42,8 +46,8 @@ def get_two_train_routes(from_station: str, to_station: str, two_train_routes: D
             "to_station": to_sid,
             "routes": []
         }
-
-
+ 
+ 
 def get_all_two_train_routes(two_train_routes: Dict, data: Dict[str, Any]) -> Dict:
     """Return all precalculated two-train routes"""
     sid_to_sname = data.get("sid_to_sname", {})
@@ -52,17 +56,22 @@ def get_all_two_train_routes(two_train_routes: Dict, data: Dict[str, Any]) -> Di
     json_routes = {}
     for (from_sid, to_sid), route_list in two_train_routes.items():
         route_key = f"{from_sid}_{to_sid}"
-        json_routes[route_key] = [
-            {
+        
+        expanded_routes = []
+        for train1_id, train2_id, interchange_id in route_list:
+            interchange_name = sid_to_sname.get(interchange_id, interchange_id)
+            if isinstance(interchange_name, list):
+                interchange_name = interchange_name[0] if len(interchange_name) > 0 else interchange_id
+                
+            expanded_routes.append({
                 "train1_id": train1_id,
                 "train1_name": train_names.get(train1_id, train1_id),
                 "train2_id": train2_id,
                 "train2_name": train_names.get(train2_id, train2_id),
                 "interchange_station_id": interchange_id,
-                "interchange_station_name": sid_to_sname.get(interchange_id, interchange_id)
-            }
-            for train1_id, train2_id, interchange_id in route_list
-        ]
+                "interchange_station_name": interchange_name
+            })
+        json_routes[route_key] = expanded_routes
     
     return {
         "total_routes": len(two_train_routes),

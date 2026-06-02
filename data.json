@@ -1,5 +1,5 @@
 {
-    "Revision": 148,
+    "Revision": 149,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "seat_cache_time": 300,
@@ -1245,7 +1245,7 @@
         ],
         "Ibrahimabad": [
             "Ibrahimabad",
-            "ইব্রাহিমবাদ"
+            "ইব্রাহিমাবাদ"
         ],
         "Chatmohar": [
             "Chatmohar",
@@ -1421,7 +1421,7 @@
         ],
         "Alamdanga": [
             "Alamdanga",
-            "আলমডাঙ্গায়"
+            "আলমডাঙ্গা"
         ],
         "Munshiganj": [
             "Munshiganj",
@@ -1477,7 +1477,7 @@
         ],
         "Boral_Bridge": [
             "Boral Bridge",
-            "বোড়াল রিজ"
+            "বড়াল ব্রিজ"
         ],
         "Abdulpur": [
             "Abdulpur",
@@ -1485,7 +1485,7 @@
         ],
         "Arani": [
             "Arani",
-            "অরণী"
+            "আড়ানী"
         ],
         "Rajshahi": [
             "Rajshahi",
@@ -1549,7 +1549,7 @@
         ],
         "Kumarkhali": [
             "Kumarkhali",
-            "কুমারকলি"
+            "কুমারখালী"
         ],
         "Kushtia_Court": [
             "Kushtia Court",
@@ -1561,7 +1561,7 @@
         ],
         "Sardah_Road": [
             "Sardah Road",
-            "সারদাহ রোড"
+            "সারদা রোড"
         ],
         "Mirzapur": [
             "Mirzapur",
@@ -1573,7 +1573,7 @@
         ],
         "Sirajganjraipur": [
             "Sirajganjraipur",
-            "সিরাজগঞ্জরায়পুর"
+            "সিরাজগঞ্জ রায়পুর"
         ],
         "SOYDABAD": [
             "SOYDABAD",
@@ -1585,7 +1585,7 @@
         ],
         "Azim Nagar": [
             "Azim Nagar",
-            "আজিম নগর"
+            "আজিমনগর"
         ],
         "Teesta_Junction": [
             "Teesta Junction",
@@ -1597,7 +1597,7 @@
         ],
         "Madhnagar": [
             "Madhnagar",
-            "মধ্যনগর"
+            "মাধনগর"
         ],
         "Badarganj": [
             "Badarganj",
@@ -1649,7 +1649,7 @@
         ],
         "Muladhuli": [
             "Muladhuli",
-            "মুলধুলি"
+            "মুলাডুলি"
         ],
         "Safdarpur": [
             "Safdarpur",
@@ -1681,11 +1681,11 @@
         ],
         "Dhalarchar": [
             "Dhalarchar",
-            "ধলারচর"
+            "ঢালারচর"
         ],
         "Badherhat": [
             "Badherhat",
-            "বাধেরহাট"
+            "বাঁধেরহাট"
         ],
         "Kashinathpur": [
             "Kashinathpur",
@@ -1693,7 +1693,7 @@
         ],
         "Sathia_Rajapur": [
             "Sathia_Rajapur",
-            "সাথিয়া_রাজাপুর"
+            "সাঁথিয়া রাজাপুর"
         ],
         "Tantibandha": [
             "Tantibandha",
@@ -1745,7 +1745,7 @@
         ],
         "Barkhata": [
             "Barkhata",
-            "বারখাতা"
+            "বড়খাতা"
         ],
         "Baura": [
             "Baura",
@@ -1761,7 +1761,7 @@
         ],
         "Bhomradah": [
             "Bhomradah",
-            "ভোমরদহ"
+            "ভোমরাদহ"
         ],
         "Kholahati": [
             "Kholahati",
@@ -1857,19 +1857,19 @@
         ],
         "Montola": [
             "Montola",
-            "মানতোলা"
+            "মনতলা"
         ],
         "Shahaji_Bazar": [
             "Shahaji Bazar",
-            "শাহজী বাজার"
+            "শাহজিবাজার"
         ],
         "Nangolkot": [
             "Nangolkot",
-            "নাঙ্গোলকোট"
+            "নাঙ্গলকোট"
         ],
         "Shamshernagar": [
             "Shamshernagar",
-            "শমশেরনগর।"
+            "শমশেরনগর"
         ],
         "Baramchal": [
             "Baramchal",
@@ -1921,7 +1921,7 @@
         ],
         "Methikanda": [
             "Methikanda",
-            "মেথিকান্দ"
+            "মেথিকান্দা"
         ],
         "Nandina": [
             "Nandina",
@@ -1949,7 +1949,7 @@
         ],
         "Gouripur_Myn": [
             "Gouripur_Myn",
-            "গৌরীপুর_মিন."
+            "গৌরীপুর ময়মনসিংহ."
         ],
         "Shyamgonj": [
             "Shyamgonj",
@@ -1969,7 +1969,7 @@
         ],
         "Thakrokona": [
             "Thakrokona",
-            "থাক্রোকোনা"
+            "ঠাকুরাকোনা"
         ],
         "Jaforshahi": [
             "Jaforshahi",
@@ -1985,7 +1985,7 @@
         ],
         "Bhuapur": [
             "Bhuapur",
-            "ভূয়াপুর"
+            "ভূঞাপুর"
         ],
         "Hasanpur": [
             "Hasanpur",
@@ -2013,7 +2013,7 @@
         ],
         "Chandpur_Court": [
             "Chandpur_Court",
-            "চাঁদপুর_আদালত"
+            "চাঁদপুর_কোর্ট"
         ],
         "Chandpur": [
             "Chandpur",
@@ -2025,11 +2025,11 @@
         ],
         "Rajshahi_Court": [
             "Rajshahi_Court",
-            "রাজশাহী_আদালত"
+            "রাজশাহী কোর্ট"
         ],
         "Kakonhat": [
             "Kakonhat",
-            "কাকোনহাট"
+            "কাকনহাট"
         ],
         "Lolitnagar": [
             "Lolitnagar",
@@ -2041,7 +2041,7 @@
         ],
         "Nachole": [
             "Nachole",
-            "নাচোলে"
+            "নাচোল"
         ],
         "Rohanpur": [
             "Rohanpur",
@@ -2085,7 +2085,7 @@
         ],
         "Narail": [
             "Narail",
-            "নারাইল"
+            "নড়াইল"
         ],
         "Lohagora": [
             "Lohagora",
@@ -2101,7 +2101,7 @@
         ],
         "Dulahazara": [
             "Dulahazara",
-            "দুলহাজারা"
+            "ডুলাহাজারা"
         ],
         "Chakaria": [
             "Chakaria",
@@ -2137,7 +2137,7 @@
         ],
         "LOHAGARA": [
             "LOHAGARA",
-            "লোহগাড়া"
+            "লোহাগাড়া"
         ],
         "Amnura_Bypass": [
             "Amnura_Bypass",
@@ -2181,7 +2181,7 @@
         ],
         "Birkutsha": [
             "Birkutsha",
-            "বিরকুটশা"
+            "বীরকুৎশা"
         ],
         "Bhabanipur": [
             "Bhabanipur",
@@ -2205,7 +2205,7 @@
         ],
         "Shahagola": [
             "Shahagola",
-            "শেহগোলা"
+            "শাহাগোলা"
         ],
         "Tilakpur": [
             "Tilakpur",
@@ -2221,7 +2221,7 @@
         ],
         "Toronibari": [
             "Toronibari",
-            "তোরনিবাড়ী"
+            "তরণীবাড়ী"
         ],
         "Darowani": [
             "Darowani",
@@ -2281,7 +2281,7 @@
         ],
         "Chabbishnagar": [
             "Chabbishnagar",
-            "চবিশনগর"
+            "ছাব্বিশনগর"
         ],
         "Nijampur": [
             "Nijampur",
@@ -2301,15 +2301,15 @@
         ],
         "Khankhanapur": [
             "Khankhanapur",
-            "খানখানপুর"
+            "খানখানাপুর"
         ],
         "Belgachi": [
             "Belgachi",
-            "বেলগাঞ্চি"
+            "বেলগাছি"
         ],
         "Pangsa": [
             "Pangsa",
-            "পাঙ্গাস"
+            "পাংশা"
         ],
         "Machpara": [
             "Machpara",
@@ -2399,11 +2399,11 @@
         ],
         "746": [
             "JAMUNA EXPRESS (746)",
-            "যমুনা এক্সপ্রেস (৭৬৪)"
+            "যমুনা এক্সপ্রেস (৭৪৬)"
         ],
         "773": [
             "KALNI EXPRESS (773)",
-            "যমুনা এক্সপ্রেস (৭৭৩)"
+            "কালনী এক্সপ্রেস (৭৭৩)"
         ],
         "791": [
             "BANALATA EXPRESS (791)",
@@ -2543,7 +2543,7 @@
         ],
         "741": [
             "TURNA (741)",
-            "ঢালা (৭৪১)"
+            "তুর্না (৭৪১)"
         ],
         "41": [
             "KANCHON INTERCITY COMMUTER (41)",
@@ -2559,7 +2559,7 @@
         ],
         "703": [
             "MAHANAGAR GODHULI (703)",
-            "মেট্রোপলিটন টোয়াইলাইট (৭০৩)"
+            "মহানগর গোধূলি (৭০৩)"
         ],
         "730": [
             "MEGHNA EXPRESS (730)",
@@ -2587,7 +2587,7 @@
         ],
         "738": [
             "EGAROSINDHUR PROVATI (738)",
-            "এগারোসিন্ধুর ট্রাইড (৭৩৮)"
+            "এগারোসিন্ধুর প্রভাতী (৭৩৮)"
         ],
         "755": [
             "MADHUMATI EXPRESS (755)",
@@ -2611,7 +2611,7 @@
         ],
         "711": [
             "UPAKUL EXPRESS (711)",
-            "উপকুল এক্সপ্রেস (৭১১)"
+            "উপকূল এক্সপ্রেস (৭১১)"
         ],
         "724": [
             "UDAYAN EXPRESS (724)",
@@ -2631,11 +2631,11 @@
         ],
         "757": [
             "DRUTOJAN EXPRESS (757)",
-            "দ্রুটোজান এক্সপ্রেস (৭৫৭)"
+            "দ্রুতযান এক্সপ্রেস (৭৫৭)"
         ],
         "749": [
             "EGAROSINDHUR GODHULI (749)",
-            "এগ্রাসিন্ধুর গোধূলি (৭৪৯)"
+            "এগারোসিন্ধুর গোধূলি (৭৪৯)"
         ],
         "759": [
             "PADMA EXPRESS (759)",
@@ -2679,15 +2679,15 @@
         ],
         "713": [
             "KOROTOA EXPRESS (713)",
-            "কোরোতোয়া এক্সপ্রেস (৭২০)"
+            "করতোয়া এক্সপ্রেস (৭১৩)"
         ],
         "702": [
             "SUBORNO EXPRESS (702)",
-            "বেনাপোল এক্সপ্রেস (৭৯৬)"
+            "সুবর্ণ এক্সপ্রেস (৭০২)"
         ],
         "796": [
             "BENAPOLE EXPRESS (796)",
-            "ধলারচর এক্সপ্রেস (৭৮০)"
+            "বেনাপোল এক্সপ্রেস (৭৯৬)"
         ],
         "780": [
             "DHALARCHAR EXPRESS (780)",
@@ -2695,7 +2695,7 @@
         ],
         "706": [
             "EKOTA EXPRESS (706)",
-            "একোটা এক্সপ্রেস (৭০৬)"
+            "একতা এক্সপ্রেস (৭০৬)"
         ],
         "704": [
             "MAHANAGAR PROVATI (704)",
@@ -2755,7 +2755,7 @@
         ],
         "750": [
             "EGAROSINDHUR GODHULI (750)",
-            "এগ্রাসিন্ধুর গোধূলি (৭৫০)"
+            "এগারোসিন্ধুর গোধূলি (৭৫০)"
         ],
         "728": [
             "RUPSHA EXPRESS (728)",
@@ -2763,7 +2763,7 @@
         ],
         "822": [
             "PROBAL EXPRESS (822)",
-            "সম্ভাব্য এক্সপ্রেস (৮২২)"
+            "প্রবাল এক্সপ্রেস (৮২২)"
         ],
         "797": [
             "KURIGRAM EXPRESS (797)",
@@ -2835,7 +2835,7 @@
         ],
         "761": [
             "SAGARDARI EXPRESS (761)",
-            "অ্যাপল এক্সপ্রেস (৭৬১)"
+            "সাগরদাঁড়ি এক্সপ্রেস (৭৬১)"
         ],
         "772": [
             "RANGPUR EXPRESS (772)",
@@ -2843,7 +2843,7 @@
         ],
         "737": [
             "EGAROSINDHUR PROVATI (737)",
-            "এগারোসিন্ধুর চেষ্টা করা হয়েছে (৭৩৭)"
+            "এগারোসিন্ধুর প্রভাতী (৭৩৭)"
         ],
         "1001": [
             "NARAYANGANJ COMMUTER 1 (1001)",
@@ -2887,7 +2887,7 @@
         ],
         "1011": [
             "NARAYANGANJ COMMUTER 11 (1011)",
-            "নারায়ণগঞ্জ কমিউটার১১ (১০১১)"
+            "নারায়ণগঞ্জ কমিউটার ১১ (১০১১)"
         ],
         "1012": [
             "NARAYANGANJ COMMUTER 12 (1012)",

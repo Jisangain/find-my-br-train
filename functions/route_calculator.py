@@ -222,6 +222,16 @@ def precalculate_two_train_routes(data: Dict[str, Any], current_revision: int) -
                         for r in value
                     ]
                 return routes
+            else:
+                print(f"⚠ Warning: Cache revision mismatch (cache: {cached_data.get('revision')}, current: {current_revision}). Loading cache as fallback to avoid blocking startup.")
+                routes = {}
+                for key, value in cached_data.get("routes", {}).items():
+                    from_sid, to_sid = key.split("|||")
+                    routes[(from_sid, to_sid)] = [
+                        (r["train1"], r["train2"], r["interchange"])
+                        for r in value
+                    ]
+                return routes
     except (FileNotFoundError, json.JSONDecodeError, KeyError):
         pass
     

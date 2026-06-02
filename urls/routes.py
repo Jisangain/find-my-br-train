@@ -7,11 +7,17 @@ from typing import Dict, Any, List
 
 def get_two_train_routes(from_station: str, to_station: str, two_train_routes: Dict, data: Dict[str, Any]) -> Dict:
     """Get two-train route options between stations"""
-    route_key = (from_station, to_station)
+    # Case-insensitive station lookup
+    sid_to_sname = data.get("sid_to_sname", {})
+    station_lookup = {station.lower().strip(): station for station in sid_to_sname.keys()}
+    
+    from_sid = station_lookup.get(from_station.strip().lower(), from_station.strip())
+    to_sid = station_lookup.get(to_station.strip().lower(), to_station.strip())
+    
+    route_key = (from_sid, to_sid)
     
     if route_key in two_train_routes:
         # Expand the compact data with names for the response
-        sid_to_sname = data.get("sid_to_sname", {})
         train_names = data.get("train_names", {})
         
         routes = []
@@ -26,14 +32,14 @@ def get_two_train_routes(from_station: str, to_station: str, two_train_routes: D
             })
         
         return {
-            "from_station": from_station,
-            "to_station": to_station,
+            "from_station": from_sid,
+            "to_station": to_sid,
             "routes": routes
         }
     else:
         return {
-            "from_station": from_station,
-            "to_station": to_station,
+            "from_station": from_sid,
+            "to_station": to_sid,
             "routes": []
         }
 

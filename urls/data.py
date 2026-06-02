@@ -28,8 +28,24 @@ def get_revision(current_revision: int, data_hashes: Dict[int, str] = None, vers
     return response
 
 
+import copy
+
+LEGACY_DATA = None
+
 def get_all_trains(data: Dict[str, Any], version: int = 0) -> Dict[str, Any]:
     """Return complete train database"""
+    global LEGACY_DATA
+    if version is None or version <= 0:
+        if LEGACY_DATA is None:
+            LEGACY_DATA = copy.deepcopy(data)
+            if "tid_to_stations" in LEGACY_DATA:
+                new_tid_to_stations = {}
+                for tid, stations in LEGACY_DATA["tid_to_stations"].items():
+                    filtered_stations = [s for s in stations if s[1] not in (0, -1)]
+                    new_tid_to_stations[tid] = filtered_stations
+                LEGACY_DATA["tid_to_stations"] = new_tid_to_stations
+        return LEGACY_DATA
+
     if version >= 29:
         folder_path = None
         if os.path.exists("train_routes"):
@@ -67,4 +83,5 @@ def get_all_trains(data: Dict[str, Any], version: int = 0) -> Dict[str, Any]:
             return response_data
             
     return data
+
 

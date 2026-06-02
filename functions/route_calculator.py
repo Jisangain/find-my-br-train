@@ -227,7 +227,11 @@ def precalculate_two_train_routes(data: Dict[str, Any], current_revision: int) -
     
     print("Starting precalculation of two-train routes...")
     
-    tid_to_stations = data.get("tid_to_stations", {})
+    # Filter to only use type 1 stations
+    tid_to_stations = {
+        tid: [s for s in stations if len(s) >= 2 and s[1] == 1]
+        for tid, stations in data.get("tid_to_stations", {}).items()
+    }
     routes = {}
     train_ids = list(tid_to_stations.keys())
     total_train_pairs = len(train_ids) * (len(train_ids) - 1)

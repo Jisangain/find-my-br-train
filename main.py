@@ -152,15 +152,15 @@ async def get_revision(version: Optional[int] = None):
 
 
 @app.get("/alltrains")
-async def get_all_trains(request: Request, version: int = 0):
+async def get_all_trains(request: Request, version: int = 0, is_sql: bool = False):
     from fastapi.responses import Response, FileResponse
     import gzip
     import json
     import os
 
-    # Serve SQLite database for version 33 or higher if it exists
+    # Serve SQLite database for version 33 or higher if requested and it exists
     db_path = os.path.join("sqlite_db", f"version{version}.db")
-    if version >= 33 and os.path.exists(db_path):
+    if version >= 33 and is_sql and os.path.exists(db_path):
         if "gzip" in request.headers.get("accept-encoding", ""):
             with open(db_path, "rb") as f:
                 db_data = f.read()

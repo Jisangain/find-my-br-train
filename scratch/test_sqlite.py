@@ -119,18 +119,34 @@ def run_tests():
         assert "Revision" in data32, "Missing 'Revision' in JSON response"
         print("   ✅ /alltrains?version=32 returns valid JSON")
         
-        # Test version 33 uncompressed
-        print("   Testing GET /alltrains?version=33 without gzip (expecting SQLite DB)...")
+        # Test version 33 default behavior (no is_sql parameter, should return JSON)
+        print("   Testing GET /alltrains?version=33 (expecting JSON)...")
+        r33_default = client.get("/alltrains?version=33")
+        assert r33_default.status_code == 200, f"Expected 200, got {r33_default.status_code}"
+        assert r33_default.headers["content-type"].startswith("application/json"), f"Expected JSON, got {r33_default.headers['content-type']}"
+        data33_default = r33_default.json()
+        assert "Revision" in data33_default, "Missing 'Revision' in JSON response"
+        print("   ✅ /alltrains?version=33 (default) returns valid JSON")
+        
+        # Test version 33 with is_sql=false (should return JSON)
+        print("   Testing GET /alltrains?version=33&is_sql=false (expecting JSON)...")
+        r33_sql_false = client.get("/alltrains?version=33&is_sql=false")
+        assert r33_sql_false.status_code == 200, f"Expected 200, got {r33_sql_false.status_code}"
+        assert r33_sql_false.headers["content-type"].startswith("application/json"), f"Expected JSON, got {r33_sql_false.headers['content-type']}"
+        print("   ✅ /alltrains?version=33&is_sql=false returns valid JSON")
+
+        # Test version 33 with is_sql=true uncompressed
+        print("   Testing GET /alltrains?version=33&is_sql=true without gzip (expecting SQLite DB)...")
         # Explicitly omit gzip from accept-encoding
-        r33_raw = client.get("/alltrains?version=33", headers={"accept-encoding": "identity"})
+        r33_raw = client.get("/alltrains?version=33&is_sql=true", headers={"accept-encoding": "identity"})
         assert r33_raw.status_code == 200, f"Expected 200, got {r33_raw.status_code}"
         assert r33_raw.headers.get("content-encoding") is None, "Did not expect content-encoding headers"
         print(f"     • Response Content-Type: {r33_raw.headers.get('content-type')}")
         assert "sqlite3" in r33_raw.headers.get("content-type", "") or "octet-stream" in r33_raw.headers.get("content-type", ""), "Expected SQLite/binary content-type"
         
-        # Test version 33 compressed
-        print("   Testing GET /alltrains?version=33 with gzip (expecting gzipped SQLite DB)...")
-        r33_gzip = client.get("/alltrains?version=33", headers={"accept-encoding": "gzip"})
+        # Test version 33 with is_sql=true compressed
+        print("   Testing GET /alltrains?version=33&is_sql=true with gzip (expecting gzipped SQLite DB)...")
+        r33_gzip = client.get("/alltrains?version=33&is_sql=true", headers={"accept-encoding": "gzip"})
         assert r33_gzip.status_code == 200, f"Expected 200, got {r33_gzip.gzip.status_code if hasattr(r33_gzip, 'gzip') else r33_gzip.status_code}"
         assert r33_gzip.headers.get("content-encoding") == "gzip", f"Expected content-encoding gzip, got {r33_gzip.headers.get('content-encoding')}"
         
@@ -153,10 +169,10 @@ def run_tests():
         os.remove(temp_db)
         
         assert int(val) == int(metadata["Revision"]), f"Downloaded DB revision {val} doesn't match expected {metadata['Revision']}"
-        print("   ✅ /alltrains?version=33 returns valid SQLite DB file with matching Revision under both gzip and identity!")
+        print("   ✅ /alltrains?version=33&is_sql=true returns valid SQLite DB file with matching Revision under both gzip and identity!")
         
         # Test version 33 fallback when DB file does not exist
-        print("   Testing GET /alltrains?version=33 fallback when DB file is missing (expecting JSON)...")
+        print("   Testing GET /alltrains?version=33&is_sql=true fallback when DB file is missing (expecting JSON)...")
         real_db_path = "sqlite_db/version33.db"
         backup_db_path = "sqlite_db/version33_backup.db"
         db_existed = os.path.exists(real_db_path)
@@ -165,12 +181,12 @@ def run_tests():
             os.rename(real_db_path, backup_db_path)
             
         try:
-            r33_fallback = client.get("/alltrains?version=33")
+            r33_fallback = client.get("/alltrains?version=33&is_sql=true")
             assert r33_fallback.status_code == 200, f"Expected 200, got {r33_fallback.status_code}"
             assert r33_fallback.headers["content-type"].startswith("application/json"), f"Expected JSON, got {r33_fallback.headers['content-type']}"
             data33_fallback = r33_fallback.json()
             assert "Revision" in data33_fallback, "Missing 'Revision' in JSON response fallback"
-            print("   ✅ /alltrains?version=33 fallback returned valid JSON successfully!")
+            print("   ✅ /alltrains?version=33&is_sql=true fallback returned valid JSON successfully!")
         finally:
             if db_existed:
                 if os.path.exists(real_db_path):

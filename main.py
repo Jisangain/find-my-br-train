@@ -109,21 +109,48 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Add Apitally middleware (reads from environment variables)
-from apitally.fastapi import ApitallyMiddleware
-apitally_client_id = os.getenv("APITALLY_CLIENT_ID")
-apitally_env = os.getenv("APITALLY_ENV", "prod")
+# Add Moesif middleware
+from moesifasgi import MoesifMiddleware
 
-app.add_middleware(
-    ApitallyMiddleware,
-    client_id=apitally_client_id,
-    env=apitally_env,
-    enable_request_logging=True,
-    log_request_headers=True,
-    log_request_body=True,
-    log_response_body=True,
-    capture_logs=True,
-)
+def identify_user(request, response):
+    # Extract User ID from header
+    user_id = request.headers.get("x-user-id") or request.headers.get("X-User-Id")
+    if user_id:
+        return str(user_id)
+        
+    # Extract User ID from Authorization header
+    auth = request.headers.get("authorization") or request.headers.get("Authorization")
+    if auth:
+        return str(auth)
+        
+    # Extract User ID from query parameters
+    try:
+        user_id = request.query_params.get("user_id") or request.query_params.get("user")
+        if user_id:
+            return str(user_id)
+    except Exception:
+        pass
+        
+    # Extract User ID from cached body (e.g. for /sendupdate or /location-improver)
+    try:
+        if hasattr(request, "_body") and request._body:
+            import json
+            body_json = json.loads(request._body.decode("utf-8"))
+            uid = body_json.get("user_id") or body_json.get("id")
+            if uid:
+                return str(uid)
+    except Exception:
+        pass
+        
+    return None
+
+moesif_settings = {
+    'APPLICATION_ID': os.getenv("MOESIF_APPLICATION_ID", ""),
+    'LOG_BODY': True,
+    'IDENTIFY_USER': identify_user,
+}
+
+app.add_middleware(MoesifMiddleware, settings=moesif_settings)
 
 
 

@@ -106,9 +106,37 @@ def run_tests():
     print("\n🌐 Testing FastAPI Endpoint integration...")
     try:
         from fastapi.testclient import TestClient
+            
         from main import app
         
         client = TestClient(app)
+        
+        # Unit test the identify_user function directly
+        print("   Unit testing identify_user function...")
+        from main import identify_user
+        from starlette.requests import Request
+        
+        # Test 1: X-User-ID header
+        req_header = Request(scope={"type": "http", "headers": [(b"x-user-id", b"header_user_123")], "query_string": b""})
+        assert identify_user(req_header, None) == "header_user_123", "Failed to extract user ID from x-user-id header"
+        
+        # Test 2: Authorization header
+        req_auth = Request(scope={"type": "http", "headers": [(b"authorization", b"Bearer auth_token_xyz")], "query_string": b""})
+        assert identify_user(req_auth, None) == "Bearer auth_token_xyz", "Failed to extract user ID from authorization header"
+        
+        # Test 3: Query parameters
+        req_query = Request(scope={"type": "http", "headers": [], "query_string": b"user_id=query_user_555"})
+        assert identify_user(req_query, None) == "query_user_555", "Failed to extract user ID from query parameter"
+        
+        # Test 4: Cached JSON body
+        req_body = Request(scope={"type": "http", "headers": [(b"content-type", b"application/json")], "query_string": b""})
+        req_body._body = b'{"user_id": "body_user_777"}'
+        assert identify_user(req_body, None) == "body_user_777", "Failed to extract user ID from cached JSON body"
+        
+        # Test 5: Fallback when none exists
+        req_none = Request(scope={"type": "http", "headers": [], "query_string": b""})
+        assert identify_user(req_none, None) is None, "Expected None user ID"
+        print("   ✅ Unit tests for identify_user passed successfully!")
         
         # Test version 32 (should return JSON)
         print("   Testing GET /alltrains?version=32 (expecting JSON)...")

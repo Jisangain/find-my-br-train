@@ -267,15 +267,43 @@ class RedisTrainTracker:
         if not pings:
             return
         
-        # Calculate median position
-        positions = [p["pos"] for p in pings]
-        median_position = statistics.median(positions)
+        # Calculate final position using weighted priority based on update age
+        sum_pos_weight = 0.0
+        sum_weights = 0.0
+        
+        for p in pings:
+            time_diff_min = (current_time - p["ts"]) / 60.0
+            
+            # Determine priority weight based on age of the update
+            if time_diff_min < 1.0:
+                weight = 0.75
+            elif time_diff_min < 2.0:
+                weight = 0.40
+            elif time_diff_min < 3.0:
+                weight = 0.25
+            elif time_diff_min < 5.0:
+                weight = 0.15
+            elif time_diff_min < 7.0:
+                weight = 0.10
+            elif time_diff_min <= 10.0:
+                weight = 0.05  # Decaying priority (Assumed 0.05 since 0.5 would break decay pattern)
+            else:
+                weight = 0.0
+                
+            sum_pos_weight += p["pos"] * weight
+            sum_weights += weight
+            
+        if sum_weights > 0.0:
+            final_position = sum_pos_weight / sum_weights
+        else:
+            final_position = statistics.median([p["pos"] for p in pings])
+            
         max_timestamp = max(p["ts"] for p in pings)
         
         # Store as cached live position (short TTL, refreshed on each update)
         live_cache_key = f"train:{train_id}:cached_live"
         live_data = {
-            "position": median_position,
+            "position": final_position,
             "timestamp": max_timestamp,
             "active_user": len(pings),
             "cached_at": current_time
@@ -284,7 +312,7 @@ class RedisTrainTracker:
         # Store as last known position with 10-hour TTL (fallback)
         last_known_key = f"train:{train_id}:last_known"
         last_known_data = {
-            "position": median_position,
+            "position": final_position,
             "timestamp": max_timestamp
         }
         

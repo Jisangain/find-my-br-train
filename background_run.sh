@@ -11,6 +11,9 @@ if [ -n "$PORT_IN_USE" ]; then
 fi
 pip install -r requirements.txt
 echo "Starting Gunicorn..."
+export OTEL_SERVICE_NAME="${OTEL_SERVICE_NAME:-find-my-br-train}"
+export OTEL_EXPORTER_OTLP_ENDPOINT="${OTEL_EXPORTER_OTLP_ENDPOINT:-http://127.0.0.1:4317}"
+export OTEL_EXPORTER_OTLP_PROTOCOL="${OTEL_EXPORTER_OTLP_PROTOCOL:-grpc}"
 nohup gunicorn main:app -k uvicorn.workers.UvicornWorker --bind 127.0.0.1:8000 > output.log 2>&1 &
 
 echo "FastAPI app restarted."

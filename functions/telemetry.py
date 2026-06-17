@@ -35,7 +35,14 @@ def setup_telemetry(app):
     if is_http:
         # Use HTTP protobuf exporter
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-        exporter = OTLPSpanExporter(endpoint=otlp_endpoint)
+        # Ensure the OTLP/HTTP endpoint ends with '/v1/traces' as required by OTel Python OTLPSpanExporter
+        http_endpoint = otlp_endpoint
+        if not http_endpoint.endswith("/v1/traces") and not http_endpoint.endswith("/v1/traces/"):
+            if http_endpoint.endswith("/"):
+                http_endpoint += "v1/traces"
+            else:
+                http_endpoint += "/v1/traces"
+        exporter = OTLPSpanExporter(endpoint=http_endpoint)
     else:
         # Use gRPC exporter
         from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter

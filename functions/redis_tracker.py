@@ -274,21 +274,28 @@ class RedisTrainTracker:
         for p in pings:
             time_diff_min = (current_time - p["ts"]) / 60.0
             
-            # Determine priority weight based on age of the update
-            if time_diff_min < 1.0:
-                weight = 0.75
-            elif time_diff_min < 2.0:
-                weight = 0.40
-            elif time_diff_min < 3.0:
-                weight = 0.25
-            elif time_diff_min < 5.0:
-                weight = 0.15
-            elif time_diff_min < 7.0:
+            # Check proximity to a type 1 station (integer index)
+            dist_to_station = abs(p["pos"] - round(p["pos"]))
+            if dist_to_station <= 0.01:
+                weight = 0.05
+            elif dist_to_station <= 0.02:
                 weight = 0.10
-            elif time_diff_min <= 10.0:
-                weight = 0.05  # Decaying priority (Assumed 0.05 since 0.5 would break decay pattern)
             else:
-                weight = 0.0
+                # Determine priority weight based on age of the update
+                if time_diff_min < 1.0:
+                    weight = 0.75
+                elif time_diff_min < 2.0:
+                    weight = 0.40
+                elif time_diff_min < 3.0:
+                    weight = 0.25
+                elif time_diff_min < 5.0:
+                    weight = 0.15
+                elif time_diff_min < 7.0:
+                    weight = 0.10
+                elif time_diff_min <= 10.0:
+                    weight = 0.05  # Decaying priority
+                else:
+                    weight = 0.0
                 
             sum_pos_weight += p["pos"] * weight
             sum_weights += weight

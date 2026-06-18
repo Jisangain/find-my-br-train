@@ -95,9 +95,19 @@ def setup_telemetry(app):
     log_processor = BatchLogRecordProcessor(log_exporter)
     logger_provider.add_log_record_processor(log_processor)
     
+    # Set the root logger level to INFO so INFO logs (including print statements) are not ignored
+    logging.getLogger().setLevel(logging.INFO)
+
     # Attach the OTel LoggingHandler to the root logger so all logs are collected
     handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
     logging.getLogger().addHandler(handler)
+
+    # Attach a console handler to the root logger so logs also print to raw stderr (output.log)
+    console_handler = logging.StreamHandler(sys.__stderr__)
+    console_handler.setLevel(logging.INFO)
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(name)s: %(message)s')
+    console_handler.setFormatter(formatter)
+    logging.getLogger().addHandler(console_handler)
     
     # 6. Prevent recursion and redirect stdout/stderr to logger
     raw_stdout = sys.__stdout__

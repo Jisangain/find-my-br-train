@@ -1,13 +1,19 @@
 import os
+import logging
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.sdk.resources import Resource
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
+# Log SDK imports
+from opentelemetry._logs import set_logger_provider
+from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
+from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+
 def setup_telemetry(app):
     """
-    Sets up OpenTelemetry tracing and exports data to SigNoz OTel Collector.
+    Sets up OpenTelemetry tracing and logging to export data to OTel Collector or New Relic.
     Configurable via standard environment variables:
     - OTEL_SERVICE_NAME: Name of the service (default: "find-my-br-train")
     - OTEL_EXPORTER_OTLP_ENDPOINT: Endpoint of the OTel Collector (default: "http://localhost:4317")
@@ -25,7 +31,6 @@ def setup_telemetry(app):
     otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://localhost:4317")
     otlp_protocol = os.getenv("OTEL_EXPORTER_OTLP_PROTOCOL", "grpc").lower()
     
-    # SigNoz normally receives gRPC at port 4317 and HTTP at port 4318
     is_http = (
         otlp_protocol == "http/protobuf" or 
         ":4318" in otlp_endpoint or 
@@ -33,9 +38,9 @@ def setup_telemetry(app):
     )
     
     if is_http:
-        # Use HTTP protobuf exporter
+        # Use HTTP protobuf trace exporter
         from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-        # Ensure the OTLP/HTTP endpoint ends with '/v1/traces' as required by OTel Python OTLPSpanExporter
+        # Ensure the OTLP/HTTP endpoint ends with '/v1/traces'
         http_endpoint = otlp_endpoint
         if not http_endpoint.endswith("/v1/traces") and not http_endpoint.endswith("/v1/traces/"):
             if http_endpoint.endswith("/"):
@@ -43,16 +48,42 @@ def setup_telemetry(app):
             else:
                 http_endpoint += "/v1/traces"
         exporter = OTLPSpanExporter(endpoint=http_endpoint)
+        
+        # Use HTTP protobuf log exporter
+        from opentelemetry.exporter.otlp.proto.http._log_exporter import OTLPLogExporter
+        # Ensure the OTLP/HTTP log endpoint ends with '/v1/logs'
+        log_endpoint = otlp_endpoint
+        if not log_endpoint.endswith("/v1/logs") and not log_endpoint.endswith("/v1/logs/"):
+            if log_endpoint.endswith("/"):
+                log_endpoint += "v1/logs"
+            else:
+                log_endpoint += "/v1/logs"
+        log_exporter = OTLPLogExporter(endpoint=log_endpoint)
     else:
-        # Use gRPC exporter
+        # Use gRPC trace exporter
         from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
         exporter = OTLPSpanExporter(endpoint=otlp_endpoint, insecure=True)
         
-    # 4. Span Processor
+        # Use gRPC log exporter
+        from opentelemetry.exporter.otlp.proto.grpc._log_exporter import OTLPLogExporter
+        log_exporter = OTLPLogExporter(endpoint=otlp_endpoint, insecure=True)
+        
+    # 4. Span Processor Setup
     processor = BatchSpanProcessor(exporter)
     provider.add_span_processor(processor)
     
-    # 5. Define request hook for user tracking
+    # 5. Log Provider Setup
+    logger_provider = LoggerProvider(resource=resource)
+    set_logger_provider(logger_provider)
+    
+    log_processor = BatchLogRecordProcessor(log_exporter)
+    logger_provider.add_log_record_processor(log_processor)
+    
+    # Attach the OTel LoggingHandler to the root logger so all logs are collected
+    handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
+    logging.getLogger().addHandler(handler)
+    
+    # 6. Define request hook for user tracking
     def server_request_hook(span, scope):
         if span and span.is_recording():
             # Get headers from ASGI scope
@@ -82,7 +113,7 @@ def setup_telemetry(app):
                 span.set_attribute("user.id", str(user_id))
                 span.set_attribute("enduser.id", str(user_id))
 
-    # 6. Instrument FastAPI
+    # 7. Instrument FastAPI
     FastAPIInstrumentor.instrument_app(
         app,
         server_request_hook=server_request_hook,

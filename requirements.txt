@@ -5,8 +5,5 @@ fastapi==0.104.1
 uvicorn[standard]==0.24.0
 pydantic==2.5.0
 redis==5.0.0
+moesifasgi
 httpx<0.28
-opentelemetry-api==1.22.0
-opentelemetry-sdk==1.22.0
-opentelemetry-instrumentation-fastapi==0.43b0
-opentelemetry-exporter-otlp==1.22.0

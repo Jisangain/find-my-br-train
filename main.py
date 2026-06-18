@@ -109,9 +109,48 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Set up SigNoz / OpenTelemetry tracing
-from functions.telemetry import setup_telemetry
-setup_telemetry(app)
+# Add Moesif middleware
+from moesifasgi import MoesifMiddleware
+
+def identify_user(request, response):
+    # Extract User ID from header
+    user_id = request.headers.get("x-user-id") or request.headers.get("X-User-Id")
+    if user_id:
+        return str(user_id)
+        
+    # Extract User ID from Authorization header
+    auth = request.headers.get("authorization") or request.headers.get("Authorization")
+    if auth:
+        return str(auth)
+        
+    # Extract User ID from query parameters
+    try:
+        user_id = request.query_params.get("user_id") or request.query_params.get("user")
+        if user_id:
+            return str(user_id)
+    except Exception:
+        pass
+        
+    # Extract User ID from cached body (e.g. for /sendupdate or /location-improver)
+    try:
+        if hasattr(request, "_body") and request._body:
+            import json
+            body_json = json.loads(request._body.decode("utf-8"))
+            uid = body_json.get("user_id") or body_json.get("id")
+            if uid:
+                return str(uid)
+    except Exception:
+        pass
+        
+    return None
+
+moesif_settings = {
+    'APPLICATION_ID': os.getenv("MOESIF_APPLICATION_ID", ""),
+    'LOG_BODY': True,
+    'IDENTIFY_USER': identify_user,
+}
+
+app.add_middleware(MoesifMiddleware, settings=moesif_settings)
 
 # Register WebSocket Chat endpoint
 from functions.chat_manager import register_chat_endpoint

@@ -11,12 +11,11 @@ else
     echo "No running gunicorn process found."
 fi
 
-# We commented out git reset/pull to allow local modifications on the server
 # Remove untracked files that would be overwritten
-# git clean -fd
+git clean -fd
 
 # Reset and pull latest code
-# git reset --hard origin/master
-# git pull origin master
+git reset --hard origin/master
+git pull origin master
 
 bash background_run.sh

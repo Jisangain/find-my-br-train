@@ -1,4 +1,5 @@
 import os
+import sys
 import logging
 from opentelemetry import trace
 from opentelemetry.sdk.trace import TracerProvider
@@ -10,6 +11,21 @@ from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry._logs import set_logger_provider
 from opentelemetry.sdk._logs import LoggerProvider, LoggingHandler
 from opentelemetry.sdk._logs.export import BatchLogRecordProcessor
+
+class LoggerWriter:
+    """
+    Redirects stdout/stderr write calls to standard logging.
+    """
+    def __init__(self, logger, level):
+        self.logger = logger
+        self.level = level
+
+    def write(self, message):
+        if message and message.strip():
+            self.logger.log(self.level, message.rstrip())
+
+    def flush(self):
+        pass
 
 def setup_telemetry(app):
     """
@@ -83,7 +99,33 @@ def setup_telemetry(app):
     handler = LoggingHandler(level=logging.INFO, logger_provider=logger_provider)
     logging.getLogger().addHandler(handler)
     
-    # 6. Define request hook for user tracking
+    # 6. Prevent recursion and redirect stdout/stderr to logger
+    raw_stdout = sys.__stdout__
+    raw_stderr = sys.__stderr__
+
+    def fix_handler_streams(logger_instance):
+        for h in logger_instance.handlers:
+            if isinstance(h, logging.StreamHandler):
+                if h.stream in (sys.stdout, sys.stderr):
+                    h.stream = raw_stderr
+
+    # Fix root logger handlers
+    fix_handler_streams(logging.getLogger())
+    
+    # Fix all other active loggers
+    for name in logging.root.manager.loggerDict:
+        fix_handler_streams(logging.getLogger(name))
+
+    # Redirect sys.stdout and sys.stderr
+    stdout_logger = logging.getLogger("stdout")
+    stdout_logger.setLevel(logging.INFO)
+    sys.stdout = LoggerWriter(stdout_logger, logging.INFO)
+
+    stderr_logger = logging.getLogger("stderr")
+    stderr_logger.setLevel(logging.ERROR)
+    sys.stderr = LoggerWriter(stderr_logger, logging.ERROR)
+    
+    # 7. Define request hook for user tracking
     def server_request_hook(span, scope):
         if span and span.is_recording():
             # Get headers from ASGI scope
@@ -113,7 +155,7 @@ def setup_telemetry(app):
                 span.set_attribute("user.id", str(user_id))
                 span.set_attribute("enduser.id", str(user_id))
 
-    # 7. Instrument FastAPI
+    # 8. Instrument FastAPI
     FastAPIInstrumentor.instrument_app(
         app,
         server_request_hook=server_request_hook,

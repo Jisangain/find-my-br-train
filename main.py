@@ -156,6 +156,10 @@ app.add_middleware(MoesifMiddleware, settings=moesif_settings)
 from functions.chat_manager import register_chat_endpoint
 register_chat_endpoint(app, tracker)
 
+# Register Chat User Report endpoints
+from functions.user_report_manager import register_user_report_endpoints
+register_user_report_endpoints(app)
+
 
 # Mount static files
 import os

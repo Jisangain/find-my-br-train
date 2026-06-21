@@ -1,10 +1,0 @@
---2026-06-18 03:22:07--  http://127.0.0.1:8000/alltrains?version=34
-Connecting to 127.0.0.1:8000... connected.
-HTTP request sent, awaiting response... 200 OK
-Length: 134000 (131K) [application/json]
-Saving to: ‘alltrains?version=34’
-
-alltrains?version=   0%[                 ]       0  --.-KB/s               alltrains?version= 100%[================>] 130.86K  --.-KB/s    in 0s      
-
-2026-06-18 03:22:07 (574 MB/s) - ‘alltrains?version=34’ saved [134000/134000]
-

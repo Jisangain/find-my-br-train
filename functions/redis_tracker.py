@@ -26,54 +26,42 @@ class RedisTrainTracker:
     - Data validity: positions older than 10 hours are considered invalid
     """
     
-    def __init__(self, host: str = "localhost", port: int = 6379, db: int = 0, 
+    def __init__(self, host: str = "localhost", port: int = 6379, db: int = 0,
                  ttl_seconds: int = 600, last_known_ttl: int = 36000):
         self.redis = redis.Redis(host=host, port=port, db=db, decode_responses=True)
         self.ttl = ttl_seconds            # 10 minutes for active user data
         self.last_known_ttl = last_known_ttl  # 10 hours for last known position/bot data
         self.max_valid_age = 36000        # 10 hours in seconds - data older than this is invalid
         self.bound_tolerance = 0.50       # Tolerance for bounds validation
+        self.pre_departure_window = 30    # Minutes before scheduled departure that pings are accepted
+        self.max_delay_allowance = 480    # Minutes past scheduled arrival that pings are still accepted
         self.train_data = None            # Reference to train schedule data
     
     def set_train_data(self, data: Dict):
         """Set reference to train schedule data for scheduled position calculations"""
         self.train_data = data
     
-    def _calculate_scheduled_position(self, train_id: str, timestamp: int = None) -> Optional[float]:
+    def _get_station_times(self, train_id: str) -> Optional[list]:
         """
-        Calculate scheduled position based on current time and train schedule.
-        Uses interpolation between stations based on scheduled times.
-        
-        Note: No train runs more than 24 hours, so we only need to handle
-        a single midnight crossing at most.
-        
-        Returns position as float (0 = first station, N-1 = last station)
-        Returns None if train not found or no schedule data.
+        Parse scheduled times for a train's type-1 (stoppage) stations.
+        Returns a list of (type1_index, minutes_since_midnight) tuples,
+        or None if the train or its schedule data is unavailable.
         """
         if self.train_data is None:
             return None
-        
+
         tid_to_stations = self.train_data.get("tid_to_stations", {})
         stations = tid_to_stations.get(str(train_id))
-        
+
         if not stations:
             return None
-        
-        # Use provided timestamp or current time, always in Bangladesh timezone
-        if timestamp:
-            now = datetime.fromtimestamp(timestamp, tz=BD_TZ)
-        else:
-            now = datetime.now(tz=BD_TZ)
-        
-        current_minutes = now.hour * 60 + now.minute
-        
-        # Parse all station times first (using type-1 station indices)
+
         station_times = []  # List of (type1_index, raw_minutes)
-        
+
         type1_idx = 0
         for station in stations:
             is_type1 = (len(station) > 1 and station[1] == 1)
-            
+
             if is_type1 and len(station) >= 3 and station[2] is not None:
                 time_str = station[2]
                 if isinstance(time_str, str) and time_str != "--:--":
@@ -83,13 +71,73 @@ class RedisTrainTracker:
                         station_times.append((type1_idx, station_minutes))
                     except (ValueError, IndexError, AttributeError):
                         pass
-                        
+
             if is_type1:
                 type1_idx += 1
-        
+
+        return station_times if station_times else None
+
+    def _current_bd_minutes(self, timestamp: int = None) -> int:
+        """Minute-of-day in Bangladesh timezone for the given (or current) time."""
+        if timestamp:
+            now = datetime.fromtimestamp(timestamp, tz=BD_TZ)
+        else:
+            now = datetime.now(tz=BD_TZ)
+        return now.hour * 60 + now.minute
+
+    def _is_journey_active(self, train_id: str, timestamp: int = None) -> Tuple[bool, str]:
+        """
+        Check whether the train's scheduled journey window contains the given time.
+        The window opens `pre_departure_window` minutes before the first scheduled
+        departure and stays open for the scheduled journey duration plus
+        `max_delay_allowance` (so heavily delayed trains remain trackable).
+
+        Uses minute-of-day arithmetic on a rolling 24h basis, which also handles
+        midnight-crossing schedules. Trains without schedule data are never gated.
+
+        Returns: (active: bool, reason: str)
+        """
+        station_times = self._get_station_times(train_id)
+        if not station_times:
+            return True, ""  # No schedule data - cannot gate, accept the update
+
+        first_departure = station_times[0][1]
+        last_arrival = station_times[-1][1]
+        journey_duration = (last_arrival - first_departure) % 1440
+
+        current_minutes = self._current_bd_minutes(timestamp)
+        since_departure = (current_minutes - first_departure) % 1440
+
+        if since_departure <= journey_duration + self.max_delay_allowance:
+            return True, ""
+
+        minutes_until_departure = (first_departure - current_minutes) % 1440
+        if minutes_until_departure <= self.pre_departure_window:
+            return True, ""
+
+        return False, (
+            f"Journey not active for train {train_id}: scheduled departure is in "
+            f"{minutes_until_departure} minutes (updates accepted from "
+            f"{self.pre_departure_window} minutes before departure)"
+        )
+
+    def _calculate_scheduled_position(self, train_id: str, timestamp: int = None) -> Optional[float]:
+        """
+        Calculate scheduled position based on current time and train schedule.
+        Uses interpolation between stations based on scheduled times.
+
+        Note: No train runs more than 24 hours, so we only need to handle
+        a single midnight crossing at most.
+
+        Returns position as float (0 = first station, N-1 = last station)
+        Returns None if train not found or no schedule data.
+        """
+        station_times = self._get_station_times(train_id)
         if not station_times:
             return None
-        
+
+        current_minutes = self._current_bd_minutes(timestamp)
+
         first_station_time = station_times[0][1]
         last_station_time = station_times[-1][1]
         
@@ -187,14 +235,21 @@ class RedisTrainTracker:
                     return False, f"Illegal position {position} exceeds maximum valid position {max_pos} for train {train_id}"
         
         is_bot = user_id.lower().startswith("bot")
-        
+
         # Calculate scheduled position for bounds
         scheduled_position = self._calculate_scheduled_position(train_id, timestamp)
-        
+
         # If this is a bot user, update the bounds first
         if is_bot:
             self._update_bot_bounds(train_id, position, scheduled_position, timestamp)
         else:
+            # Reject user pings outside the scheduled journey window. Without this,
+            # passengers waiting at the origin station publish "live at position 0"
+            # hours before the train actually departs.
+            active, reason = self._is_journey_active(train_id, timestamp)
+            if not active:
+                return False, reason
+
             # Validate position against bounds for non-bot users
             valid, reason = self._validate_position_against_bounds(train_id, position, scheduled_position)
             if not valid:

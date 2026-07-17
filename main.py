@@ -295,6 +295,70 @@ async def get_active_trains_handler():
     return live.get_active_trains_details(tracker)
 
 
+@app.get("/recent-conversations")
+async def get_recent_conversations():
+    import time
+    import json
+    redis_client = tracker.redis
+    try:
+        keys = redis_client.keys("train:*:chat")
+    except Exception as e:
+        print(f"Error fetching keys from Redis: {e}")
+        return []
+        
+    conversations = []
+    current_time = int(time.time())
+    train_names = DATA.get("train_names", {})
+    
+    for key in keys:
+        if isinstance(key, bytes):
+            key_str = key.decode("utf-8")
+        else:
+            key_str = key
+            
+        parts = key_str.split(":")
+        if len(parts) < 3:
+            continue
+        train_id = parts[1]
+        
+        try:
+            latest_items = redis_client.zrange(key, -1, -1, withscores=True)
+            if not latest_items:
+                continue
+                
+            msg_data_raw, score = latest_items[0]
+            if isinstance(msg_data_raw, bytes):
+                msg_data_str = msg_data_raw.decode("utf-8")
+            else:
+                msg_data_str = msg_data_raw
+                
+            msg_data = json.loads(msg_data_str)
+            timestamp = int(score)
+            
+            names = train_names.get(train_id)
+            if not names:
+                train_name_en = f"Train {train_id}"
+                train_name_bn = f"ট্রেন {train_id}"
+            else:
+                train_name_en = names[0]
+                train_name_bn = names[1]
+                
+            conversations.append({
+                "train_id": train_id,
+                "train_name_en": train_name_en,
+                "train_name_bn": train_name_bn,
+                "latest_message": msg_data.get("text", ""),
+                "sender": msg_data.get("sender", ""),
+                "timestamp": timestamp,
+                "elapsed_seconds": max(0, current_time - timestamp)
+            })
+        except Exception as e:
+            print(f"Error parsing conversation for {key_str}: {e}")
+            
+    conversations.sort(key=lambda x: x["timestamp"], reverse=True)
+    return conversations
+
+
 # Root endpoint
 @app.get("/")
 async def root():
@@ -315,6 +379,7 @@ async def root():
             "/health": "GET - Server health check",
             "/live": "GET - View live trains",
             "/location-improver": "GET/POST - Location Improver dashboard and receiver",
+            "/recent-conversations": "GET - Get trains sorted by latest chat messages",
             "/docs": "GET - Interactive API documentation",
         },
         "github": "https://github.com/jisangain/find-my-br-train",

@@ -192,9 +192,31 @@ async def get_all_trains(request: Request, version: int = 0, is_sql: bool = Fals
     import json
     import os
 
-    # Serve SQLite database for version 33 or higher if requested and it exists
-    db_path = os.path.join("sqlite_db", f"version{version}.db")
-    if version >= 33 and is_sql and os.path.exists(db_path):
+    # Serve SQLite database if requested
+    if is_sql:
+        resolved_version = 0
+        if version >= 29 and os.path.exists("train_routes"):
+            available_versions = []
+            for folder in os.listdir("train_routes"):
+                if folder.startswith("version"):
+                    try:
+                        v = int(folder.replace("version", ""))
+                        if v >= 29:
+                            available_versions.append(v)
+                    except ValueError:
+                        pass
+            valid_versions = [v for v in available_versions if v <= version]
+            if valid_versions:
+                resolved_version = max(valid_versions)
+
+        db_dir = "sqlite_db"
+        os.makedirs(db_dir, exist_ok=True)
+        db_path = os.path.join(db_dir, f"version{resolved_version}.db")
+        
+        # Generate or check database validity
+        from sqlite_generator import get_or_create_sqlite_db
+        get_or_create_sqlite_db(DATA, CURRENT_REVISION, DATA_HASHES, resolved_version, db_path)
+
         if "gzip" in request.headers.get("accept-encoding", ""):
             with open(db_path, "rb") as f:
                 db_data = f.read()
@@ -204,14 +226,14 @@ async def get_all_trains(request: Request, version: int = 0, is_sql: bool = Fals
                 media_type="application/vnd.sqlite3",
                 headers={
                     "Content-Encoding": "gzip",
-                    "Content-Disposition": f'attachment; filename="alltrains_v{version}.db"'
+                    "Content-Disposition": f'attachment; filename="alltrains_v{resolved_version}.db"'
                 }
             )
             
         return FileResponse(
             db_path,
             media_type="application/vnd.sqlite3",
-            filename=f"alltrains_v{version}.db"
+            filename=f"alltrains_v{resolved_version}.db"
         )
 
     result = data.get_all_trains(DATA, version)

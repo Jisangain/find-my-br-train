@@ -15,7 +15,7 @@
   "ads": [
     {
       "id": "sample-house-ad",
-      "enabled": false,
+      "enabled": true,
       "weight": 1,
       "image_url": null,
       "title": "Fill me in before enabling",

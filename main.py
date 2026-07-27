@@ -167,6 +167,8 @@ if os.path.exists("train_routes"):
     app.mount("/train_routes", StaticFiles(directory="train_routes"), name="train_routes")
 if os.path.exists(".well-known"):
     app.mount("/.well-known", StaticFiles(directory=".well-known"), name="well-known")
+if os.path.exists("ads"):
+    app.mount("/ads", StaticFiles(directory="ads"), name="ads")
 
 
 # ============= ROUTES =============
@@ -402,6 +404,7 @@ async def root():
             "/live": "GET - View live trains",
             "/location-improver": "GET/POST - Location Improver dashboard and receiver",
             "/recent-conversations": "GET - Get trains sorted by latest chat messages",
+            "/ads/promo_banners.json": "GET - House banner ad fallback config",
             "/docs": "GET - Interactive API documentation",
         },
         "github": "https://github.com/jisangain/find-my-br-train",

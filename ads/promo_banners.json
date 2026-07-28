@@ -17,7 +17,7 @@
   "ads": [
     {
       "id": "sample-house-ad",
-      "enabled": true,
+      "enabled": false,
       "weight": 1,
       "cta_text": "Open",
       "click_url": "https://findmytrain.freeddns.org",

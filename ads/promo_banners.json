@@ -9,6 +9,7 @@
     "background_color": "optional hex color e.g. #0F172A, used behind image/text slides, defaults to the app card color",
     "text_color": "optional hex color e.g. #FFFFFF, defaults to theme text color",
     "slides": "optional array of {image_url, title, description} - if there's more than one, they auto-cycle in place every few seconds and loop back to the first after the last. Each slide can be image-only, text-only (omit image_url), or both. If omitted, put image_url/title/description directly on the ad instead for a single-slide banner.",
+    "slide_interval_seconds": "optional number, how long each slide stays before sliding to the next (default 4, clamped to 1-60). Ignored for single-slide ads.",
     "image_url": "single-slide shorthand: absolute https URL to a full banner-shaped creative (e.g. 320x50) - it fills the whole slot, not a small icon. Ignored if slides is present.",
     "title": "single-slide shorthand: short headline, keep under ~40 chars so it fits a banner-sized card. Ignored if slides is present.",
     "description": "single-slide shorthand: optional short subtitle, keep under ~50 chars. Ignored if slides is present."
@@ -22,6 +23,7 @@
       "click_url": "https://findmytrain.freeddns.org",
       "background_color": null,
       "text_color": null,
+      "slide_interval_seconds": 4,
       "slides": [
         {
           "image_url": "https://i.postimg.cc/qvrbJyYM/1785191244313.png",

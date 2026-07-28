@@ -1,0 +1,38 @@
+{
+  "_readme": "House/self-promo native ads. Served as-is at GET /ads/promo_natives.json. Edit and push to master; the GitHub webhook restarts the server and picks up changes automatically (see restart_app.sh). These are ONLY shown by the app when a real AdMob/Meta native ad request comes back with no fill (never used to replace a filled ad) so it is safe to edit anytime.",
+  "_schema": {
+    "id": "unique string, used for click analytics",
+    "enabled": "bool, set false to retire an ad without deleting it",
+    "weight": "positive number, relative odds of being picked when multiple ads are enabled",
+    "cta_text": "short button label, e.g. Open, Install, Visit - shared by all slides",
+    "click_url": "absolute https URL opened in the browser/Play Store when the card is tapped - shared by all slides",
+    "background_color": "optional hex color e.g. #0F172A, used behind media/caption areas, defaults to the app card color",
+    "text_color": "optional hex color e.g. #FFFFFF, defaults to theme text color",
+    "slide_interval_seconds": "optional number, max time each slide stays before sliding to the next (default 6, clamped to 1-60). For a video slide this is a ceiling, not a fixed wait: the slide actually shows for min(slide_interval_seconds, video length), so a short video isn't followed by a frozen last frame and a long video isn't left running past the configured pace. Ignored for single-slide ads.",
+    "slides": "optional array of {media_url, media_type, title, description} - if there's more than one, they auto-cycle in place every slide_interval_seconds (or sooner for video, see above) and loop back to the first after the last. Each slide can be media-only, text-only (omit media_url), or both (media on top, caption+CTA below, like AdMob's own native template). If omitted, put media_url/media_type/title/description directly on the ad instead for a single-slide native ad.",
+    "media_url": "single-slide shorthand: absolute https URL to an image or video. Ignored if slides is present.",
+    "media_type": "'image' or 'video' (default 'image'). Ignored if slides is present.",
+    "title": "single-slide shorthand: short headline. Ignored if slides is present.",
+    "description": "single-slide shorthand: optional short subtitle. Ignored if slides is present."
+  },
+  "ads": [
+    {
+      "id": "sample-house-native-ad",
+      "enabled": true,
+      "weight": 1,
+      "cta_text": "Open",
+      "click_url": "https://findmytrain.freeddns.org",
+      "background_color": null,
+      "text_color": null,
+      "slide_interval_seconds": 6,
+      "slides": [
+        {
+          "media_url": null,
+          "media_type": "image",
+          "title": "Fill me in before enabling",
+          "description": ""
+        }
+      ]
+    }
+  ]
+}

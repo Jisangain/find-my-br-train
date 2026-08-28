@@ -1,5 +1,5 @@
 {
-    "Revision": 151,
+    "Revision": 152,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "persistence_notice": {
@@ -1540,10 +1540,6 @@
             23.670818338406,
             91.155868105007
         ],
-        "Atrai": [
-            24.621497202379,
-            88.97676247623
-        ],
         "Nilganj": [
             24.497034428604,
             90.793258725682
@@ -1723,10 +1719,6 @@
         "Jhawtola": [
             22.356557559248,
             91.80752261254
-        ],
-        "Bottoli": [
-            22.335040462596,
-            91.82583137133
         ],
         "Mohammad_Nagar": [
             22.791588004374,
@@ -3254,10 +3246,6 @@
             "Shaldanodi",
             "সালদানদী"
         ],
-        "Atrai": [
-            "Atrai",
-            "আত্রাই"
-        ],
         "Nilganj": [
             "Nilganj",
             "নীলগঞ্জ"
@@ -3437,10 +3425,6 @@
         "Jhawtola": [
             "Jhawtola",
             "ঝাউতলা"
-        ],
-        "Bottoli": [
-            "Bottoli",
-            "বটতলী"
         ],
         "Mohammad_Nagar": [
             "Mohammad_Nagar",
@@ -29079,7 +29063,7 @@
                 -1
             ],
             [
-                "Atrai",
+                "Ahsanganj",
                 0,
                 -1
             ],
@@ -29216,7 +29200,7 @@
                 -1
             ],
             [
-                "Atrai",
+                "Ahsanganj",
                 0,
                 -1
             ],
@@ -32905,14 +32889,14 @@
                 "14:50"
             ],
             [
-                "Bottoli",
+                "Chattogram",
                 1,
                 "15:00"
             ]
         ],
         "9011": [
             [
-                "Bottoli",
+                "Chattogram",
                 1,
                 "14:30"
             ],

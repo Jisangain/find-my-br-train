@@ -19,6 +19,31 @@ def is_backward(t1, t2):
     except Exception:
         return False
 
+def _dist(locs, a, b):
+    """Planar distance between two station ids; inf if either is unknown."""
+    try:
+        (y1, x1), (y2, x2) = locs[a], locs[b]
+        return ((y1 - y2) ** 2 + (x1 - x2) ** 2) ** 0.5
+    except (KeyError, TypeError, ValueError):
+        return float('inf')
+
+def _reinsert_landmarks(head, sequence, tail, landmarks, locs):
+    """Fold landmark hints back into a reconstructed segment at the gap that
+    adds the least extra length to the polyline head -> sequence -> tail."""
+    for lm in landmarks:
+        if _dist(locs, head, lm) == float('inf') or _dist(locs, tail, lm) == float('inf'):
+            sequence.append(lm)
+            continue
+        chain = [head] + sequence + [tail]
+        best_gap, best_cost = 0, float('inf')
+        for k in range(len(chain) - 1):
+            a, b = chain[k], chain[k + 1]
+            cost = _dist(locs, a, lm) + _dist(locs, lm, b) - _dist(locs, a, b)
+            if cost < best_cost:
+                best_cost, best_gap = cost, k
+        sequence.insert(best_gap, lm)
+    return sequence
+
 def get_intermediates(X, Y, all_routes, active_pairs, base_station_names=None):
     if (X, Y) in active_pairs or (Y, X) in active_pairs:
         return []
@@ -63,34 +88,63 @@ def get_intermediates(X, Y, all_routes, active_pairs, base_station_names=None):
     return full_sequence
 
 
-def generate_route(train_stops, all_routes, extra_stations):
+def generate_route(train_stops, all_routes, extra_stations, station_locs=None):
+    station_locs = station_locs or {}
     base_station_names = {stop[0] for stop in train_stops}
     result = []
-    
-    for i in range(len(train_stops) - 1):
-        X = train_stops[i][0]
-        Y = train_stops[i+1][0]
-        tX = train_stops[i][2]
-        tY = train_stops[i+1][2]
-        
+    n = len(train_stops)
+
+    def is_landmark(k):
+        # -1 stops (and the extra landmark points) are visual hints, not real
+        # stops. They must not break a segment or the physical intermediates
+        # between the two surrounding real stops never get reconstructed.
+        return train_stops[k][1] == -1 or train_stops[k][0] in extra_stations
+
+    i = 0
+    while i < n - 1:
         stop_data = list(train_stops[i])
         if stop_data[0] in extra_stations:
             stop_data[1] = -1
             stop_data[2] = -1
         result.append(stop_data)
-        
+
+        # Absorb a run of landmark-only stops so the segment spans real -> real.
+        j = i + 1
+        landmarks = []
+        while j < n - 1 and is_landmark(j):
+            landmarks.append(train_stops[j][0])
+            j += 1
+
+        X = train_stops[i][0]
+        Y = train_stops[j][0]
+        tX = train_stops[i][2]
+        tY = train_stops[j][2]
+
         # Rule 1: Skip if the segment itself is a backward time jump, with exception for Bidyaganj -> Narundi
         skip = is_backward(tX, tY)
         if (X, Y) == ("Bidyaganj", "Narundi"):
             skip = False
-            
+
+        segment = []
         if not skip:
             intermediates = get_intermediates(X, Y, all_routes, set(), base_station_names)
-            filtered_intermediates = [z for z in intermediates if z not in base_station_names]
-            for station in filtered_intermediates:
-                stype = -1 if station in extra_stations else 0
-                result.append([station, stype, -1])
-            
+            segment = [z for z in intermediates if z not in base_station_names]
+
+        if landmarks:
+            if segment:
+                # Reconstruction succeeded: keep the landmark hints too, placed
+                # where they add the least detour to the new path.
+                _reinsert_landmarks(X, segment, Y, landmarks, station_locs)
+            else:
+                # Nothing better available: keep the landmark hints as-is.
+                segment = list(landmarks)
+
+        for station in segment:
+            stype = -1 if (station in extra_stations or station in landmarks) else 0
+            result.append([station, stype, -1])
+
+        i = j
+
     last_stop = list(train_stops[-1])
     if last_stop[0] in extra_stations:
         last_stop[1] = -1
@@ -115,6 +169,7 @@ def main():
     data = payload.get('DATA', payload)
     base_routes = data.get('tid_to_stations', {})
     all_routes = {tid: [stop[0] for stop in stops] for tid, stops in base_routes.items()}
+    station_locs = {**data.get('sid_to_sloc', {}), **data.get('xsid_to_sloc', {})}
     
     # 2. Prepare directory
     print(f"🧹 Preparing directory: {version_dir}")
@@ -145,7 +200,7 @@ def main():
     print(f"⚙️ Generating version {version} routes for {len(base_routes)} trains...")
     generated_count = 0
     for tid, base_stops in base_routes.items():
-        expanded_route = generate_route(base_stops, all_routes, extra_stations)
+        expanded_route = generate_route(base_stops, all_routes, extra_stations, station_locs)
         
         file_path = os.path.join(version_dir, f"{tid}.json")
         with open(file_path, 'w', encoding='utf-8') as f:

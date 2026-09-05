@@ -11,6 +11,13 @@ t.set_train_data({
                  ["ghorashal", -1, -1], ["Narsingdi", 1, "11:39"], ["Bhairab", 1, "14:00"]],
         # Overnight train: 23:00 -> 05:30 (crosses midnight)
         "999": [["A", 1, "23:00"], ["B", 1, "01:00"], ["C", 1, "05:30"]],
+        # Same-day (non-midnight-crossing) train, like Benapole Express
+        # (12:25 -> 20:30): its own clock times never cross midnight, but
+        # departure + journey_duration + max_delay_allowance (485+480=965min)
+        # does roll past 24:00 relative to departure. A train checked deep in
+        # that grace period, after real midnight, must be read as "very late
+        # into (or past) yesterday's run", not "hasn't departed today yet".
+        "700": [["P", 1, "12:25"], ["Q", 1, "16:00"], ["R", 1, "20:30"]],
         # No schedule data
         "555": [["X", 1, "--:--"], ["Y", 1, None]],
     }
@@ -35,6 +42,8 @@ cases = [
     ("999", 12, 0, True,  "overnight train at noon, within duration+8h -> accept"),
     ("999", 14, 0, False, "overnight train at 14:00, outside window -> reject"),
     ("999", 22, 40, True, "20 min before overnight departure -> accept"),
+    ("700", 6, 0,  False, "same-day train, well before its own departure -> reject"),
+    ("700", 2, 0,  True,  "same-day train, 02:00 next-day delay grace -> accept"),
     ("555", 12, 0, True,  "no schedule data -> never gated"),
     ("nope", 12, 0, True, "unknown train -> never gated"),
 ]
@@ -52,5 +61,15 @@ sp = t._calculate_scheduled_position("781", ts(11, 18))
 print(f"scheduled position 781 @11:18 = {sp} (expect ~1.5 between stop 1 and 2)")
 sp0 = t._calculate_scheduled_position("781", ts(9, 0))
 print(f"scheduled position 781 @09:00 = {sp0} (expect 0.0 before start)")
+
+# Regression test: a same-day (non-midnight-crossing) schedule checked deep
+# in its post-arrival delay-allowance grace period, after real midnight, used
+# to be misread as "hasn't departed today yet" (returned 0.0) instead of
+# "very late into yesterday's run" (should read at/near the last station).
+sp700 = t._calculate_scheduled_position("700", ts(2, 0))
+print(f"scheduled position 700 @02:00 (next-day grace) = {sp700} (expect 2.0, at/past last stop)")
+if sp700 != 2.0:
+    print("FAIL: same-day-schedule midnight-rollover regression")
+    failures += 1
 
 sys.exit(1 if failures else 0)

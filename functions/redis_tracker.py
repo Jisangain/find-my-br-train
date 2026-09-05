@@ -13,7 +13,6 @@ from .position_filter import (
     build_cumulative_km,
     position_to_km,
     check_teleport,
-    check_schedule_ceiling,
     cluster_pings_by_km,
     position_to_delay_minutes,
 )
@@ -31,11 +30,16 @@ class RedisTrainTracker:
       distance-clustered consensus when several reports disagree
     - Stores last known position for 10 hours (fallback when no active users)
     - Every ping - bot or user - is run through the same plausibility filter
-      (functions/position_filter.py): journey-active window, a real-km
-      teleport/speed check against the train's last known position, and a
-      loose "can't be ahead of schedule" ceiling. An authenticated "bot"
-      caller (see urls/positions.py) is a trusted *identity*, not a trusted
-      *position* - it gets no bypass.
+      (functions/position_filter.py): journey-active window, then a real-km
+      teleport/speed check against the train's last known position. An
+      authenticated "bot" caller (see urls/positions.py) is a trusted
+      *identity*, not a trusted *position* - it gets no bypass. (A "can't be
+      ahead of the timetable" ceiling was tried and dropped as a hard gate -
+      real schedules pad different legs very unevenly, so an on-time train
+      can legitimately look tens of percent "ahead" in km on a fast
+      non-stop stretch. position_km/scheduled_km are still logged per ping,
+      so the same "how far ahead of schedule" signal is available to a
+      future ML model - it's just not used as a reject condition here.)
     - Calculates scheduled position automatically from train data
     - Persists across server restarts (stored in Redis)
     - Data validity: positions older than 10 hours are considered invalid
@@ -57,7 +61,6 @@ class RedisTrainTracker:
         # real report, false-rejects lock a real passenger out of the feature.
         self.max_train_speed_kmh = 130.0      # Generous ceiling for BR intercity speeds
         self.position_slack_km = 1.0          # GPS jitter + multi-bogie spread + interpolation error
-        self.schedule_ceiling_slack_km = 5.0  # Loose "ahead of schedule" sanity ceiling
         self.cluster_tolerance_km = 1.5       # Reports within this of each other count as agreeing
 
         self.train_data = None            # Reference to train schedule data
@@ -153,8 +156,19 @@ class RedisTrainTracker:
         Calculate scheduled position based on current time and train schedule.
         Uses interpolation between stations based on scheduled times.
 
-        Note: No train runs more than 24 hours, so we only need to handle
-        a single midnight crossing at most.
+        Works entirely in "minutes since the most recent scheduled departure"
+        (via `% 1440`, exactly like _is_journey_active's own since_departure),
+        instead of trying to detect whether *this schedule's clock times*
+        cross midnight and special-casing that. That per-schedule heuristic
+        breaks for a same-day schedule (e.g. 12:25 -> 20:30) once `timestamp`
+        itself has rolled into the next calendar day while still inside the
+        delay-allowance grace period _is_journey_active correctly keeps open -
+        it looks like "before today's first station" and returns 0.0, when
+        the train is actually deep into (or already past) that run, just very
+        delayed. Only called once _is_journey_active has confirmed we're in
+        an active window, so `since_departure` below is guaranteed to fall
+        within journey_duration + max_delay_allowance (well under 1440 for
+        every real schedule here).
 
         Returns position as float (0 = first station, N-1 = last station)
         Returns None if train not found or no schedule data.
@@ -163,70 +177,54 @@ class RedisTrainTracker:
         if not station_times:
             return None
 
-        current_minutes = self._current_bd_minutes(timestamp)
+        first_departure = station_times[0][1]
 
-        first_station_time = station_times[0][1]
-        last_station_time = station_times[-1][1]
-        
-        # Check if schedule crosses midnight (last time < first time means midnight crossing)
-        crosses_midnight = last_station_time < first_station_time
-        
-        # Adjust station times for midnight crossing
-        adjusted_times = []
-        for idx, minutes in station_times:
-            if crosses_midnight and minutes < first_station_time:
-                # This station is after midnight, add 24 hours
-                adjusted_times.append((idx, minutes + 1440))
-            else:
-                adjusted_times.append((idx, minutes))
-        
-        # Get the adjusted last station time for comparison
-        adjusted_last_time = adjusted_times[-1][1] if adjusted_times else last_station_time
-        
-        # Adjust current time for midnight crossing
-        # Only add 1440 if current time is in the "after midnight" portion of the route
-        # i.e., current time is small (early morning) AND less than last station time (after midnight part)
-        if crosses_midnight and current_minutes < first_station_time:
-            # Check if we're in early morning (after midnight portion) vs afternoon (before train starts)
-            # If current_minutes + 1440 would be within the schedule range, we're in post-midnight
-            # If current_minutes is between last_station_time and first_station_time, train is not running
-            if current_minutes <= last_station_time:
-                # Early morning, after midnight - train is still running from yesterday
-                current_minutes += 1440
-            # else: afternoon/evening before train starts - don't adjust, will return 0
-        
-        # Find bracketing stations
-        previous_station_idx = None
-        previous_station_time = None
-        next_station_idx = None
-        next_station_time = None
-        
-        for idx, station_minutes in adjusted_times:
-            if station_minutes <= current_minutes:
-                previous_station_idx = idx
-                previous_station_time = station_minutes
-            elif next_station_idx is None:
-                next_station_idx = idx
-                next_station_time = station_minutes
-                break
-        
-        # Calculate interpolated position
-        if previous_station_idx is not None and next_station_idx is not None:
-            total_time = next_station_time - previous_station_time
-            elapsed_time = current_minutes - previous_station_time
-            
-            if total_time > 0:
-                progress = elapsed_time / total_time
-                return previous_station_idx + progress * (next_station_idx - previous_station_idx)
-            return float(previous_station_idx)
-        elif previous_station_idx is not None:
-            # Past last scheduled station
-            return float(previous_station_idx)
-        elif next_station_idx is not None:
-            # Before first scheduled station
+        # Minutes-since-departure for each stop, built by walking the
+        # schedule forward and always taking the smallest non-negative step
+        # to the next stop's clock time (wrapping past midnight as needed).
+        # This handles any schedule - same-day, overnight, or (in principle)
+        # multiple midnight crossings - uniformly.
+        indices = [idx for idx, _ in station_times]
+        elapsed_at = [0]
+        prev_clock = first_departure
+        for _, minute in station_times[1:]:
+            delta = (minute - prev_clock) % 1440
+            elapsed_at.append(elapsed_at[-1] + delta)
+            prev_clock = minute
+
+        current_minutes = self._current_bd_minutes(timestamp)
+        since_departure = (current_minutes - first_departure) % 1440
+
+        # since_departure is a minute-of-day-only quantity (`% 1440`), so it
+        # can't itself distinguish "hasn't departed yet today" from "long
+        # past a previous day's already-finished run" - both wrap to the
+        # same value. Bound it the same way _is_journey_active does: beyond
+        # a plausible in-progress-or-just-finished window, treat it as "not
+        # departed yet" rather than wrapping into "past the last station".
+        # In the normal call path (after _is_journey_active already passed)
+        # this never trips - it only matters for callers that invoke this
+        # standalone, outside an active window.
+        if since_departure > elapsed_at[-1] + self.max_delay_allowance:
             return 0.0
 
-        return None
+        # since_departure >= 0 == elapsed_at[0], so we always have a
+        # bracketing "previous" stop; only "next" can be missing (past the
+        # last scheduled stop, within the delay-allowance grace period).
+        previous_i = 0
+        next_i = None
+        for i, elapsed in enumerate(elapsed_at):
+            if elapsed <= since_departure:
+                previous_i = i
+            else:
+                next_i = i
+                break
+
+        if next_i is not None:
+            total = elapsed_at[next_i] - elapsed_at[previous_i]
+            progress = (since_departure - elapsed_at[previous_i]) / total if total > 0 else 0.0
+            return indices[previous_i] + progress * (indices[next_i] - indices[previous_i])
+
+        return float(indices[previous_i])  # past the last scheduled stop
 
     def _get_cumulative_km(self, train_id: str) -> Optional[List[float]]:
         """
@@ -282,9 +280,9 @@ class RedisTrainTracker:
         string is fully attacker-controlled and must not grant trust on its
         own. It only affects storage TTL and the SQLite log tag below - it is
         NOT a validation bypass. Bot pings run through exactly the same
-        journey-active window, teleport/speed check, and schedule ceiling as
-        user pings (see functions/position_filter.py). Scheduled position is
-        calculated automatically from train data.
+        journey-active window and teleport/speed check as user pings (see
+        functions/position_filter.py). Scheduled position is calculated
+        automatically from train data.
 
         Every ping - accepted or rejected - is logged to a local SQLite DB
         (functions/gps_log.py) as training data for a future ML classifier.
@@ -382,16 +380,16 @@ class RedisTrainTracker:
                 _log(False, teleport_reason, **log_extra)
                 return False, teleport_reason
 
-            # Loose sanity ceiling: can't be ahead of the timetable. Doesn't
-            # catch a delayed train reporting a merely "on schedule" fake
-            # position - that gap can only close via the teleport check once
-            # a real reference exists.
-            ok, ceiling_reason = check_schedule_ceiling(
-                position_km, scheduled_km, self.schedule_ceiling_slack_km
-            )
-            if not ok:
-                _log(False, ceiling_reason, **log_extra)
-                return False, ceiling_reason
+            # NOTE: an earlier version also hard-rejected here if a ping was
+            # further along than "scheduled_position + a few km" (can't be
+            # ahead of the timetable). Real schedules turned out to be paced
+            # far too unevenly per leg for that to hold as a hard gate - a
+            # long fast non-stop night segment can legitimately run tens of
+            # percent of the whole route "ahead" of a timetable that pads
+            # other legs with dwell/recovery time, with zero funny business
+            # involved. position_km/scheduled_km (logged below) still carry
+            # the same "how far ahead of schedule" signal for a future ML
+            # model - it's just not enforced as a reject condition here.
         else:
             # No route/coordinate data for this train - can't convert to km,
             # so the physical checks above can't run. Fall through and accept

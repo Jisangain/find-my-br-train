@@ -143,11 +143,18 @@ def check_schedule_ceiling(
     slack_km: float,
 ) -> Tuple[bool, str]:
     """
-    Loose sanity ceiling: a train can't be ahead of its own timetable. This
-    is intentionally generous and does NOT catch a delayed train reporting a
-    plausible-looking "on schedule" position while the real train hasn't
-    moved yet - that gap can only be closed by corroboration over time (see
-    check_teleport, which anchors on real reports instead of the timetable).
+    NOT currently wired into RedisTrainTracker.push()'s reject path - kept
+    here (tested, still called out in redis_tracker.py's comments) because
+    it documents a real design decision. It was tried as a hard "can't be
+    ahead of the timetable" gate and dropped: real BR schedules pad
+    different legs very unevenly (dwell time, slower urban approach vs. a
+    long fast non-stop night stretch), so a genuinely on-time train can
+    legitimately look tens of percent of the whole route "ahead" in km with
+    nothing suspicious going on - a bug this surfaced against live bot data
+    (train 790 was 48% of its route "ahead" while running normally). No
+    fixed or percentage slack_km can be both loose enough for that and tight
+    enough to mean anything. check_teleport (anchored on real prior reports,
+    not the timetable) is the check that actually carries this load.
     """
     if scheduled_km is None:
         return True, ""

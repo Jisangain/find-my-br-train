@@ -44,6 +44,17 @@ CREATE TABLE IF NOT EXISTS gps_updates (
 
 _INDEX = "CREATE INDEX IF NOT EXISTS idx_gps_updates_train_ts ON gps_updates(train_id, timestamp);"
 
+# Columns added after the table's first release. SQLite has no
+# "ADD COLUMN IF NOT EXISTS", so each is attempted and a "duplicate column"
+# failure (already applied, e.g. against an already-deployed gps_updates.db)
+# is silently ignored - this keeps old databases working without a separate
+# migration step.
+_MIGRATIONS = [
+    "ALTER TABLE gps_updates ADD COLUMN teleport_enforced INTEGER",  # 1=enforced, 0=relaxed (unconfirmed reference), NULL=no route data
+    "ALTER TABLE gps_updates ADD COLUMN backward_streak INTEGER",    # consecutive backward-trending reports from this same source, NULL=no route data
+    "ALTER TABLE gps_updates ADD COLUMN delay_zscore REAL",          # delay_minutes vs. this train's own historical mean/stddev, NULL if too little history yet
+]
+
 
 def _get_conn() -> sqlite3.Connection:
     global _conn
@@ -52,6 +63,11 @@ def _get_conn() -> sqlite3.Connection:
         conn.execute("PRAGMA journal_mode=WAL")
         conn.execute(_SCHEMA)
         conn.execute(_INDEX)
+        for migration in _MIGRATIONS:
+            try:
+                conn.execute(migration)
+            except sqlite3.OperationalError:
+                pass  # column already exists
         conn.commit()
         _conn = conn
     return _conn
@@ -73,6 +89,9 @@ def log_update(
     reference_age_seconds: Optional[float] = None,
     implied_speed_kmh: Optional[float] = None,
     delay_minutes: Optional[float] = None,
+    teleport_enforced: Optional[bool] = None,
+    backward_streak: Optional[int] = None,
+    delay_zscore: Optional[float] = None,
 ) -> None:
     """Record one /sendupdate ping. Best-effort - never raises."""
     try:
@@ -84,14 +103,16 @@ def log_update(
                     received_at, train_id, user_id, is_bot, position, timestamp,
                     scheduled_position, position_km, scheduled_km, reference_km,
                     reference_age_seconds, implied_speed_kmh, delay_minutes,
-                    accepted, reject_reason
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    teleport_enforced, backward_streak, delay_zscore, accepted, reject_reason
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     received_at, str(train_id), str(user_id) if user_id is not None else None,
                     1 if is_bot else 0, position, timestamp,
                     scheduled_position, position_km, scheduled_km, reference_km,
                     reference_age_seconds, implied_speed_kmh, delay_minutes,
+                    None if teleport_enforced is None else (1 if teleport_enforced else 0),
+                    backward_streak, delay_zscore,
                     1 if accepted else 0, reject_reason or None,
                 ),
             )

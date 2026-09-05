@@ -261,3 +261,26 @@ def position_to_delay_minutes(
         normalized += 1440
 
     return normalized
+
+
+def welford_update(n: int, mean: float, m2: float, value: float) -> Tuple[int, float, float]:
+    """
+    One step of Welford's online algorithm: updates running (count, mean,
+    sum-of-squared-deviations) with a new value, without storing history.
+    Used to build per-train speed/delay baselines (see redis_tracker.py's
+    _update_train_stats) incrementally, one accepted ping at a time, instead
+    of re-scanning gps_updates.db on every request.
+    """
+    n += 1
+    delta = value - mean
+    mean += delta / n
+    delta2 = value - mean
+    m2 += delta * delta2
+    return n, mean, m2
+
+
+def welford_stddev(n: int, m2: float) -> Optional[float]:
+    """Sample standard deviation from Welford accumulators. None if n < 2."""
+    if n < 2:
+        return None
+    return math.sqrt(m2 / (n - 1))

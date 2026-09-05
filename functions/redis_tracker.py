@@ -15,6 +15,8 @@ from .position_filter import (
     check_teleport,
     cluster_pings_by_km,
     position_to_delay_minutes,
+    welford_update,
+    welford_stddev,
 )
 
 # Bangladesh timezone - train schedules are in this timezone
@@ -40,6 +42,16 @@ class RedisTrainTracker:
       non-stop stretch. position_km/scheduled_km are still logged per ping,
       so the same "how far ahead of schedule" signal is available to a
       future ML model - it's just not used as a reject condition here.)
+    - The teleport check can't tell a good reference from a bad one - it only
+      knows "consistent with what's already believed" or not - so a single
+      wrong report (e.g. someone selects the wrong train by mistake) could
+      otherwise become the reference and then get a *correct* report from
+      someone else rejected instead. It's only enforced against a different
+      reporter once the reference has held (unsuperseded) for
+      confirmation_grace_seconds; a lone, freshly-established one gives way
+      to a disagreeing new reporter. Always enforced against the *same*
+      reporter regardless of confidence - that case is a single source
+      contradicting only itself, exactly what the check is for.
     - Calculates scheduled position automatically from train data
     - Persists across server restarts (stored in Redis)
     - Data validity: positions older than 10 hours are considered invalid
@@ -62,6 +74,38 @@ class RedisTrainTracker:
         self.max_train_speed_kmh = 130.0      # Generous ceiling for BR intercity speeds
         self.position_slack_km = 1.0          # GPS jitter + multi-bogie spread + interpolation error
         self.cluster_tolerance_km = 1.5       # Reports within this of each other count as agreeing
+        # How long a reference must hold (unsuperseded) before it's enforced
+        # against a *different* reporter - see push()/_update_cached_position.
+        # Short enough that a real, prompt correction (a genuine passenger
+        # reporting soon after someone else's mistake) still gets through;
+        # long enough that an established, still-uncontested trend isn't
+        # casually knocked over by one new disagreeing claim.
+        self.confirmation_grace_seconds = 240
+        # Sustained-backward-drift detection (see push()): a single backward
+        # step this small is ordinary GPS jitter; several of them in a row
+        # from the same source is a real, sustained trend a real train
+        # wouldn't produce along its own scheduled direction.
+        self.backward_drift_epsilon_km = 0.3
+        self.backward_drift_streak_limit = 3
+
+        # Per-train historical baselines (Welford running mean/stddev over
+        # every *accepted, genuinely plausible* ping for that train - see
+        # _update_train_stats), replacing flat universal constants with
+        # numbers earned from that specific train's own history. Only ever
+        # WIDENS the speed ceiling above max_train_speed_kmh, never narrows
+        # it - a train we don't have enough history on yet still gets the
+        # same protection as before, and a noisy/short baseline can only
+        # make the check more permissive, not stricter. Needs a minimum
+        # sample size before it's trusted at all, since a baseline built
+        # from a handful of points has a wide, unreliable stddev estimate.
+        self.min_speed_baseline_samples = 20
+        self.speed_baseline_stddev_multiplier = 4.0
+        # Delay baseline is logged only for now (delay_zscore below), not
+        # enforced - the schedule-ceiling check above already taught us that
+        # a time/schedule-based hard reject can go wrong in ways that only
+        # show up against real traffic. Once there's evidence a per-train
+        # delay baseline actually behaves well, it can graduate to a check.
+        self.min_delay_baseline_samples = 10
 
         self.train_data = None            # Reference to train schedule data
         self._cum_km_cache: Dict[str, Optional[List[float]]] = {}  # train_id -> cumulative km per stop
@@ -226,6 +270,51 @@ class RedisTrainTracker:
 
         return float(indices[previous_i])  # past the last scheduled stop
 
+    _EMPTY_STATS = {
+        "speed_n": 0, "speed_mean": 0.0, "speed_m2": 0.0,
+        "delay_n": 0, "delay_mean": 0.0, "delay_m2": 0.0,
+    }
+
+    def _get_train_stats(self, train_id: str) -> Dict:
+        """
+        This train's running speed/delay baseline (Welford accumulators),
+        or a fresh/empty one if it hasn't got any history yet. No expiry -
+        unlike live position data, a historical baseline is meant to persist
+        and keep accumulating indefinitely (small enough - 255 trains, one
+        tiny JSON blob each - that this isn't a real storage concern).
+        """
+        raw = self.redis.get(f"train:{train_id}:stats")
+        return json.loads(raw) if raw else dict(self._EMPTY_STATS)
+
+    def _update_train_stats(self, train_id: str, speed_value: Optional[float],
+                             delay_value: Optional[float]):
+        """
+        Feed one more accepted, genuinely plausible data point (see push() -
+        only pings whose teleport check was actually satisfied, not ones let
+        through via the confirmation-grace relaxation, contribute here) into
+        this train's running baseline. Uses WATCH/MULTI so concurrent
+        updates for the same train can't lose an update to each other.
+        """
+        if speed_value is None and delay_value is None:
+            return
+        stats_key = f"train:{train_id}:stats"
+
+        def _apply(pipe):
+            existing = pipe.get(stats_key)
+            stats = json.loads(existing) if existing else dict(self._EMPTY_STATS)
+            if speed_value is not None:
+                stats["speed_n"], stats["speed_mean"], stats["speed_m2"] = welford_update(
+                    stats["speed_n"], stats["speed_mean"], stats["speed_m2"], speed_value
+                )
+            if delay_value is not None:
+                stats["delay_n"], stats["delay_mean"], stats["delay_m2"] = welford_update(
+                    stats["delay_n"], stats["delay_mean"], stats["delay_m2"], delay_value
+                )
+            pipe.multi()
+            pipe.set(stats_key, json.dumps(stats))
+
+        self.redis.transaction(_apply, stats_key)
+
     def _get_cumulative_km(self, train_id: str) -> Optional[List[float]]:
         """
         Cumulative real-world distance (km) at each of this train's type-1
@@ -247,24 +336,45 @@ class RedisTrainTracker:
         self._cum_km_cache[train_id] = cum_km
         return cum_km
 
-    def _get_reference_position(self, train_id: str, now: int) -> Optional[Tuple[float, int]]:
+    def _get_reference_position(self, train_id: str, now: int) -> Optional[Dict]:
         """
-        The train's best currently-known (position, timestamp), used as the
-        anchor for the teleport/speed check on the *next* incoming ping. Tries
-        the pre-calculated live cache first, then the last-known fallback.
+        The train's best currently-known reference, used as the anchor for
+        the teleport/speed check on the *next* incoming ping. Tries the
+        pre-calculated live cache first, then the last-known fallback.
         Returns None if there's nothing usable (or it's aged past validity) -
         i.e. this is the first ping of a fresh journey, so there's nothing to
         compare against yet.
+
+        Returns a dict: {"position", "timestamp", "established_at",
+        "last_user_id"}. `established_at` is when the *current* value was
+        first reached (carried forward across rounds that just continue the
+        same trend, reset when the aggregate jumps to a different candidate)
+        - see _update_cached_position - and is what push() uses to decide
+        whether this reference is "confirmed" enough to gatekeep a
+        *different* reporter, or still too fresh to enforce against anyone
+        but the same source repeating itself. Missing on data written before
+        this field existed - defaults keep old cached data working, just
+        with confidence starting from scratch.
         """
         live_data = self.redis.get(f"train:{train_id}:cached_live")
         if live_data:
             cached = json.loads(live_data)
             if now - cached["timestamp"] <= self.max_valid_age:
-                return cached["position"], cached["timestamp"]
+                return {
+                    "position": cached["position"],
+                    "timestamp": cached["timestamp"],
+                    "established_at": cached.get("established_at", cached["timestamp"]),
+                    "last_user_id": cached.get("last_user_id"),
+                }
 
         last_known = self._get_last_known_position(train_id)
         if last_known and now - last_known["timestamp"] <= self.max_valid_age:
-            return last_known["position"], last_known["timestamp"]
+            return {
+                "position": last_known["position"],
+                "timestamp": last_known["timestamp"],
+                "established_at": last_known.get("established_at", last_known["timestamp"]),
+                "last_user_id": last_known.get("last_user_id"),
+            }
 
         return None
 
@@ -345,14 +455,32 @@ class RedisTrainTracker:
         reference = self._get_reference_position(train_id, current_time)
         reference_km = None
         reference_age_seconds = None
+        enforce_teleport = True
         if reference and cum_km:
-            ref_position, ref_ts = reference
-            reference_km = position_to_km(cum_km, ref_position)
+            reference_km = position_to_km(cum_km, reference["position"])
             # Absolute difference, not a directional one: a late-arriving ping
             # can legitimately describe a moment *before* the current
             # reference (out-of-order delivery), in which case what matters
             # is still "how much real time separates these two observations".
-            reference_age_seconds = abs(timestamp - ref_ts)
+            reference_age_seconds = abs(timestamp - reference["timestamp"])
+
+            # Don't let a lone, freshly-established reference silently lock
+            # out a *different* reporter - e.g. someone selects the wrong
+            # train by mistake, and a real passenger on the actual train
+            # reports moments later; without this, the mistake becomes the
+            # reference and the real report looks like the implausible one.
+            # A reference is only enforced against a different reporter once
+            # it's held for confirmation_grace_seconds without being
+            # superseded (see _update_cached_position) - carried forward
+            # across rounds that just continue the same trend, so a
+            # long-running, self-consistent source (even a lone one) is
+            # still fully protected once it's had time to prove itself.
+            # Against the *same* reporter, always enforced regardless of
+            # confidence - that's still a single source contradicting only
+            # itself, which is exactly what this check exists to catch.
+            is_same_source = reference.get("last_user_id") == user_id
+            confidence_age = abs(timestamp - reference["established_at"])
+            enforce_teleport = is_same_source or confidence_age >= self.confirmation_grace_seconds
 
         delay_minutes = None
         station_times = self._get_station_times(train_id)
@@ -361,22 +489,52 @@ class RedisTrainTracker:
                 station_times, position, self._current_bd_minutes(timestamp)
             )
 
+        # This train's own historical baseline (Welford running mean/stddev -
+        # see _update_train_stats). Only ever widens the speed ceiling above
+        # the flat default, never narrows it, and only once there's enough
+        # history to trust it - a train we haven't seen much of yet gets
+        # exactly the same protection as before. delay_zscore is logged only
+        # for now, not enforced (see the schedule-ceiling note below).
+        stats = self._get_train_stats(train_id)
+        effective_max_speed_kmh = self.max_train_speed_kmh
+        if stats["speed_n"] >= self.min_speed_baseline_samples:
+            speed_stddev = welford_stddev(stats["speed_n"], stats["speed_m2"])
+            if speed_stddev is not None:
+                baseline_ceiling = stats["speed_mean"] + self.speed_baseline_stddev_multiplier * speed_stddev
+                effective_max_speed_kmh = max(effective_max_speed_kmh, baseline_ceiling)
+
+        delay_zscore = None
+        if delay_minutes is not None and stats["delay_n"] >= self.min_delay_baseline_samples:
+            delay_stddev = welford_stddev(stats["delay_n"], stats["delay_m2"])
+            if delay_stddev:  # exclude 0 too - a degenerate/all-identical baseline isn't a useful scale
+                delay_zscore = (delay_minutes - stats["delay_mean"]) / delay_stddev
+
         log_extra = dict(
             scheduled_position=scheduled_position, position_km=position_km,
             scheduled_km=scheduled_km, reference_km=reference_km,
             reference_age_seconds=reference_age_seconds, delay_minutes=delay_minutes,
+            delay_zscore=delay_zscore,
         )
+
+        # Raw plausibility verdict, independent of whether it's actually
+        # enforced this round - used below to decide whether this ping is
+        # "clean" enough to feed the baseline (see _update_train_stats call).
+        teleport_ok = True
+        implied_speed = None
 
         if position_km is not None:
             # Teleport/speed check: is this plausible given how far the train
             # could physically have travelled since it was last seen? No-op
-            # (always passes) if there's no usable reference yet.
-            ok, implied_speed, teleport_reason = check_teleport(
+            # (always passes) if there's no usable reference yet, or if the
+            # reference isn't confirmed enough yet to enforce against a
+            # different reporter (see enforce_teleport above).
+            teleport_ok, implied_speed, teleport_reason = check_teleport(
                 position_km, reference_km, reference_age_seconds,
-                self.max_train_speed_kmh, self.position_slack_km,
+                effective_max_speed_kmh, self.position_slack_km,
             )
             log_extra["implied_speed_kmh"] = implied_speed
-            if not ok:
+            log_extra["teleport_enforced"] = enforce_teleport
+            if not teleport_ok and enforce_teleport:
                 _log(False, teleport_reason, **log_extra)
                 return False, teleport_reason
 
@@ -396,19 +554,56 @@ class RedisTrainTracker:
             # (matches the existing "no schedule data - can't gate" stance
             # taken elsewhere for trains we don't have full data for).
             log_extra["implied_speed_kmh"] = None
+            log_extra["teleport_enforced"] = None
+
+        user_key = f"train:{train_id}:user:{user_id}:last"
+        # Use longer TTL for bot users
+        user_ttl = self.last_known_ttl if is_bot else self.ttl
+
+        # Sustained-backward-drift check: "position" is progress along THIS
+        # train_id's own scheduled stop order, which a real train doesn't
+        # sustain moving backward through. Genuine GPS jitter is roughly
+        # zero-mean (a touch forward one reading, a touch back the next), so
+        # several CONSECUTIVE backward-trending reports in a row from the
+        # SAME source is a much stronger signal than any single step - this
+        # is what catches someone genuinely riding the opposite-direction
+        # train on a shared track (e.g. an up/down pair sharing rails), whose
+        # own reports smoothly and repeatedly go backward relative to the
+        # train they selected, each step individually far too small/slow to
+        # trip the teleport check above. Bounded by the same per-user ping
+        # TTL as everything else here, so a long gap before this source's
+        # next report naturally starts the streak fresh rather than
+        # comparing against a stale prior position.
+        backward_streak_key = f"train:{train_id}:user:{user_id}:backward_streak"
+        log_extra["backward_streak"] = None
+        if position_km is not None:
+            own_prev_raw = self.redis.get(user_key)
+            if own_prev_raw:
+                own_prev_km = position_to_km(cum_km, json.loads(own_prev_raw)["pos"])
+                if position_km < own_prev_km - self.backward_drift_epsilon_km:
+                    streak = int(self.redis.get(backward_streak_key) or 0) + 1
+                    self.redis.set(backward_streak_key, streak, ex=user_ttl)
+                    log_extra["backward_streak"] = streak
+                    if streak >= self.backward_drift_streak_limit:
+                        reason = (
+                            f"Sustained backward movement: {streak} consecutive reports "
+                            f"trending backward ({own_prev_km - position_km:.2f}km behind the "
+                            f"prior one) - possibly reporting for the wrong-direction train"
+                        )
+                        _log(False, reason, **log_extra)
+                        return False, reason
+                else:
+                    self.redis.delete(backward_streak_key)
+                    log_extra["backward_streak"] = 0
 
         ping = {
             "pos": position,
             "ts": timestamp
         }
 
-        user_key = f"train:{train_id}:user:{user_id}:last"
         active_users_key = f"train:{train_id}:active_users"
         active_trains_key = "active_trains"
         all_trains_key = "all_trains_with_history"
-
-        # Use longer TTL for bot users
-        user_ttl = self.last_known_ttl if is_bot else self.ttl
 
         # Pipeline for atomic operations (single network roundtrip)
         pipe = self.redis.pipeline()
@@ -423,6 +618,17 @@ class RedisTrainTracker:
 
         # Pre-calculate and cache the current position for this train
         self._update_cached_position(train_id)
+
+        # Feed this train's historical baseline - but only from a ping whose
+        # teleport check was genuinely satisfied on its own merits, not one
+        # that only got through via the confirmation-grace relaxation (that
+        # data is exactly the kind we don't want normalizing the baseline).
+        if teleport_ok:
+            self._update_train_stats(
+                train_id,
+                speed_value=implied_speed,
+                delay_value=delay_minutes,
+            )
 
         _log(True, **log_extra)
         return True, "Position updated"
@@ -457,6 +663,7 @@ class RedisTrainTracker:
             if current_time - ping["ts"] > self.max_valid_age:
                 expired_users.append(uid)
                 continue
+            ping["uid"] = uid  # in-memory only, for last_user_id below
             pings.append(ping)
         
         # Cleanup expired/invalid users from set
@@ -522,25 +729,58 @@ class RedisTrainTracker:
             final_position = sum_pos_weight / sum_weights
         else:
             final_position = statistics.median([p["pos"] for p in pings])
-            
+
         max_timestamp = max(p["ts"] for p in pings)
-        
+        # Whoever contributed the most-recent ping in the winning set - used
+        # by push() to tell "the same source repeating itself" (always
+        # checked for self-consistency) from "a different reporter" (only
+        # gatekept once the reference has held for confirmation_grace_seconds).
+        last_user_id = next(p["uid"] for p in pings if p["ts"] == max_timestamp)
+
+        # established_at tracks how long the *current* value has held,
+        # carried forward across rounds that just continue the same trend
+        # and reset when the aggregate jumps to a genuinely different
+        # candidate - see push()'s confidence_age/enforce_teleport. Compare
+        # against the OLD cached value (before this round overwrites it).
+        established_at = max_timestamp  # default: nothing to compare against yet
+        old_live = self.redis.get(f"train:{train_id}:cached_live")
+        old_cached = json.loads(old_live) if old_live else None
+        if old_cached:
+            old_established_at = old_cached.get("established_at", old_cached["timestamp"])
+            if cum_km:
+                old_km = position_to_km(cum_km, old_cached["position"])
+                new_km = position_to_km(cum_km, final_position)
+                elapsed = abs(max_timestamp - old_cached["timestamp"])
+                continuing, _, _ = check_teleport(
+                    new_km, old_km, elapsed, self.max_train_speed_kmh, self.position_slack_km
+                )
+            else:
+                # No route data to judge continuity in km - don't penalize
+                # confidence for a train we can't reason about physically.
+                continuing = True
+            if continuing:
+                established_at = old_established_at
+
         # Store as cached live position (short TTL, refreshed on each update)
         live_cache_key = f"train:{train_id}:cached_live"
         live_data = {
             "position": final_position,
             "timestamp": max_timestamp,
             "active_user": total_active_users,
-            "cached_at": current_time
+            "cached_at": current_time,
+            "established_at": established_at,
+            "last_user_id": last_user_id,
         }
-        
+
         # Store as last known position with 10-hour TTL (fallback)
         last_known_key = f"train:{train_id}:last_known"
         last_known_data = {
             "position": final_position,
-            "timestamp": max_timestamp
+            "timestamp": max_timestamp,
+            "established_at": established_at,
+            "last_user_id": last_user_id,
         }
-        
+
         # Pipeline for atomic operations
         pipe = self.redis.pipeline()
         pipe.set(live_cache_key, json.dumps(live_data), ex=self.ttl)

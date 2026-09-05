@@ -1,8 +1,10 @@
+import html
 import time
+from collections import deque
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Deque, Optional
 
 class UserReport(BaseModel):
     reported_user_id: str
@@ -12,8 +14,10 @@ class UserReport(BaseModel):
     train_id: str
     train_name: Optional[str] = None
 
-# In-memory storage for user reports
-USER_REPORTS: List[dict] = []
+# In-memory storage for user reports. Bounded so memory usage can't grow
+# without limit for the life of the process.
+MAX_USER_REPORTS = 500
+USER_REPORTS: Deque[dict] = deque(maxlen=MAX_USER_REPORTS)
 
 def register_user_report_endpoints(app: FastAPI):
     """
@@ -26,8 +30,9 @@ def register_user_report_endpoints(app: FastAPI):
         if report_dict.get("timestamp") is None:
             report_dict["timestamp"] = int(time.time())
         
-        # Insert at the beginning of the list to show newest first
-        USER_REPORTS.insert(0, report_dict)
+        # Insert at the beginning to show newest first (oldest entries drop
+        # off automatically once MAX_USER_REPORTS is exceeded)
+        USER_REPORTS.appendleft(report_dict)
         
         print(f"\n🚨 USER REPORT RECEIVED:")
         print(f"   Reported User: {report_dict['reported_user_id']}")
@@ -131,16 +136,20 @@ def register_user_report_endpoints(app: FastAPI):
         else:
             for idx, r in enumerate(USER_REPORTS):
                 report_time = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(r['timestamp']))
-                train_info = f"{r['train_id']}"
+                train_info = html.escape(str(r['train_id']))
                 if r.get('train_name'):
-                    train_info += f" ({r['train_name']})"
-                    
+                    train_info += f" ({html.escape(str(r['train_name']))})"
+
+                reported_user_id = html.escape(str(r['reported_user_id']))
+                reported_by = html.escape(str(r['reported_by']))
+                report_text = html.escape(str(r['text']))
+
                 html_content += f"""
     <div class="report-card">
         <div class="report-header">
-            Report #{total_reports - idx}: User <strong>{r['reported_user_id']}</strong> was reported by <strong>{r['reported_by']}</strong>
+            Report #{total_reports - idx}: User <strong>{reported_user_id}</strong> was reported by <strong>{reported_by}</strong>
         </div>
-        <div class="report-text">{r['text']}</div>
+        <div class="report-text">{report_text}</div>
         <div class="meta-info">
             <span class="meta-item"><strong>Train:</strong> {train_info}</span>
             <span class="meta-item"><strong>Time:</strong> {report_time}</span>

@@ -1,8 +1,16 @@
 # positions.py - Train position endpoints
 
+import hmac
+import os
 from fastapi import HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict
+
+# Shared secret that authenticates a "bot" (trusted GPS source) update. The
+# client-supplied user_id string must never grant bot trust on its own - it's
+# fully attacker-controlled. If this isn't configured, no request can be
+# treated as a bot (fail closed).
+BOT_API_KEY = os.getenv("BOT_API_KEY", "")
 
 
 class LocationUpdate(BaseModel):
@@ -11,7 +19,14 @@ class LocationUpdate(BaseModel):
     user_id: Optional[str] = "unknown"
     time: int
     position: float
+    bot_token: Optional[str] = None  # Shared secret for trusted bot updates
     # Note: scheduled_position is calculated automatically from train data
+
+
+def _is_authenticated_bot(bot_token: Optional[str]) -> bool:
+    if not BOT_API_KEY or not bot_token:
+        return False
+    return hmac.compare_digest(bot_token, BOT_API_KEY)
 
 
 def get_current_positions(train_ids: str, tracker) -> Dict:
@@ -44,11 +59,11 @@ def receive_update(update: LocationUpdate, tracker):
     if train_id is None or timestamp is None or position is None:
         raise HTTPException(status_code=400, detail="Missing required fields")
     
-    is_bot = user_id.lower().startswith("bot")
+    is_bot = _is_authenticated_bot(update.bot_token)
     print(f"{'[BOT]' if is_bot else '[USER]'} train={train_id} pos={position} user={user_id} ts={timestamp}")
-    
+
     # Store in Redis (scheduled_position is calculated automatically from train data)
-    success, message = tracker.push(train_id, user_id, position, timestamp)
+    success, message = tracker.push(train_id, user_id, position, timestamp, is_bot=is_bot)
     
     if not success:
         print(f"Position rejected: {message}")

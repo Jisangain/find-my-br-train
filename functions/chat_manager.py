@@ -1,10 +1,21 @@
+import hmac
 import os
 import json
 import time
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 
-# Set default train moderator if not set
-os.environ["train_mod"] = os.getenv("train_mod", "user_2052")
+# Secret that authenticates a moderator connection. There is no default -
+# matching against a known/default user_id (as before) let anyone claim the
+# "Moderator" label just by picking that user_id, since it's fully
+# client-controlled. Without this configured, nobody can be shown as
+# Moderator (fail closed).
+MODERATOR_TOKEN = os.getenv("MODERATOR_TOKEN", "")
+
+
+def _is_authenticated_moderator(mod_token: str) -> bool:
+    if not MODERATOR_TOKEN or not mod_token:
+        return False
+    return hmac.compare_digest(mod_token, MODERATOR_TOKEN)
 
 class TrainChatManager:
     def __init__(self):
@@ -40,10 +51,11 @@ def register_chat_endpoint(app: FastAPI, tracker):
 
     @app.websocket("/chat/{train_id}")
     async def websocket_chat_endpoint(
-        websocket: WebSocket, 
-        train_id: str, 
-        user_id: str = "unknown", 
-        inside_train: str = "false"
+        websocket: WebSocket,
+        train_id: str,
+        user_id: str = "unknown",
+        inside_train: str = "false",
+        mod_token: str = ""
     ):
         # Parse inside_train robustly
         is_inside = False
@@ -61,8 +73,7 @@ def register_chat_endpoint(app: FastAPI, tracker):
         else:
             display_user = short_user_id.capitalize() if short_user_id else ""
 
-        train_mod = os.getenv("train_mod", "user_2052")
-        if short_user_id == train_mod:
+        if _is_authenticated_moderator(mod_token):
             nickname = "Moderator"
         elif is_inside:
             nickname = f"{display_user}(Inside Train)"

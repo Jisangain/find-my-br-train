@@ -3,8 +3,37 @@
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from typing import Optional
+import html
 import json
+import os
 import time
+
+LOG_PATH = "issue_reports.log"
+MAX_LOG_BYTES = 5 * 1024 * 1024  # 5 MB
+MAX_LOG_LINES = 5000
+
+
+def _append_report_line(line: str):
+    """Append a report line and periodically rotate the log so it can't
+    grow without bound. The size check is O(1); the truncate/rewrite only
+    runs once the file actually crosses the threshold.
+    """
+    try:
+        with open(LOG_PATH, "a") as f:
+            f.write(line + "\n")
+    except Exception as e:
+        print(f"Failed to write issue report to file: {e}")
+        return
+
+    try:
+        if os.path.getsize(LOG_PATH) > MAX_LOG_BYTES:
+            with open(LOG_PATH, "r") as f:
+                lines = f.readlines()
+            if len(lines) > MAX_LOG_LINES:
+                with open(LOG_PATH, "w") as f:
+                    f.writelines(lines[-MAX_LOG_LINES:])
+    except Exception as e:
+        print(f"Failed to rotate issue report log: {e}")
 
 
 class IssueReport(BaseModel):
@@ -46,11 +75,7 @@ async def report_issue_post(report: IssueReport):
     
     print("   ✅ Issue report logged successfully\n")
     
-    try:
-        with open("issue_reports.log", "a") as f:
-            f.write(json.dumps(report.model_dump()) + "\n")
-    except Exception as e:
-        print(f"Failed to write issue report to file: {e}")
+    _append_report_line(json.dumps(report.model_dump()))
 
     return {"status": "success", "message": "Issue report received"}
 
@@ -61,7 +86,7 @@ async def view_reports():
         reports = []
         
         try:
-            with open("issue_reports.log", "r") as f:
+            with open(LOG_PATH, "r") as f:
                 for line in f:
                     if line.strip():
                         try:
@@ -72,7 +97,10 @@ async def view_reports():
         except FileNotFoundError:
             pass
         
-        reports.sort(key=lambda x: x.get('timestamp', ''), reverse=True)
+        # x.get('timestamp', '') only falls back to '' when the key is
+        # missing, not when it's present but null - `or ''` also covers a
+        # stored null so sorting can't crash comparing None against str.
+        reports.sort(key=lambda x: x.get('timestamp') or '', reverse=True)
         
         total_reports = len(reports)
         categorized_issues = len([r for r in reports if r.get('issue_type')])
@@ -104,12 +132,12 @@ async def view_reports():
             html_content += "<p><em>No reports submitted yet.</em></p>"
         else:
             for i, report in enumerate(reports):
-                issue_type = report.get('issue_type', 'General Issue')
-                train_name = report.get('train_name', 'Unknown Train')
-                train_id = report.get('train_id', 'Unknown ID')
-                user_id = report.get('user_id', 'Anonymous')
-                timestamp = report.get('timestamp', 'Unknown Time')
-                description = report.get('description', 'No description provided')
+                issue_type = html.escape(str(report.get('issue_type', 'General Issue')))
+                train_name = html.escape(str(report.get('train_name', 'Unknown Train')))
+                train_id = html.escape(str(report.get('train_id', 'Unknown ID')))
+                user_id = html.escape(str(report.get('user_id', 'Anonymous')))
+                timestamp = html.escape(str(report.get('timestamp', 'Unknown Time')))
+                description = html.escape(str(report.get('description', 'No description provided')))
                 blue_pos = report.get('blue_train_position')
                 gray_pos = report.get('gray_train_position')
                 is_gps = report.get('is_using_gps', False)
@@ -167,7 +195,7 @@ async def view_reports():
         <html>
         <body>
             <h1>Error Loading Reports</h1>
-            <p>Error: {str(e)}</p>
+            <p>Error: {html.escape(str(e))}</p>
         </body>
         </html>
         """)

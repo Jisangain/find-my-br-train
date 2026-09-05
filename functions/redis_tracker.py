@@ -19,7 +19,7 @@ class RedisTrainTracker:
     - Auto-expires user data after 10 minutes (TTL)
     - Pre-calculates and caches median position when new data arrives
     - Stores last known position for 10 hours (fallback when no active users)
-    - Bot users (user_id starts with "bot") provide accurate bounds
+    - Trusted "bot" callers (authenticated via a shared secret, see urls/positions.py) provide accurate bounds
     - Validates user positions against bot bounds
     - Calculates scheduled position automatically from train data
     - Persists across server restarts (stored in Redis)
@@ -201,16 +201,20 @@ class RedisTrainTracker:
         
         return None
     
-    def push(self, train_id: str, user_id: str, position: float, timestamp: int) -> Tuple[bool, str]:
+    def push(self, train_id: str, user_id: str, position: float, timestamp: int,
+             is_bot: bool = False) -> Tuple[bool, str]:
         """
         Store user's latest position update for a train.
         Only keeps the last update per user (overwrites previous).
         Auto-expires after TTL.
-        
-        Bot users (user_id starts with "bot") are trusted and set bounds.
-        Regular users are validated against bot bounds.
-        Scheduled position is calculated automatically from train data.
-        
+
+        `is_bot` must be determined by the caller from an authenticated source
+        (a shared bot secret), never from the client-supplied user_id - that
+        string is fully attacker-controlled and must not grant trust on its own.
+        Trusted (bot) callers set bounds; regular users are validated against
+        those bounds. Scheduled position is calculated automatically from
+        train data.
+
         Returns: (success: bool, message: str)
         """
         # Convert timestamp from milliseconds to seconds if needed
@@ -234,8 +238,6 @@ class RedisTrainTracker:
                 if position > max_pos + 0.99:
                     return False, f"Illegal position {position} exceeds maximum valid position {max_pos} for train {train_id}"
         
-        is_bot = user_id.lower().startswith("bot")
-
         # Calculate scheduled position for bounds
         scheduled_position = self._calculate_scheduled_position(train_id, timestamp)
 
@@ -384,42 +386,49 @@ class RedisTrainTracker:
         pipe.set(last_known_key, json.dumps(last_known_data), ex=self.last_known_ttl)
         pipe.execute()
     
-    def _update_bot_bounds(self, train_id: str, bot_position: float, 
+    def _update_bot_bounds(self, train_id: str, bot_position: float,
                            scheduled_position: float = None, timestamp: int = None):
         """
         Update bounds for a train based on bot data.
         - Lower bound: max(0, bot_position - 0.50) - train can't be behind this
         - Upper bound: scheduled_position + 0.50 - train can't be ahead of schedule
-        
+
         Bot bounds are stored with 10-hour TTL.
+
+        Uses WATCH/MULTI so concurrent bot updates for the same train can't
+        race each other (redis-py's `transaction()` retries automatically if
+        another client changes `bounds_key` between the read and the write).
         """
         bounds_key = f"train:{train_id}:bounds"
-        
-        # Get existing bounds
-        existing = self.redis.get(bounds_key)
-        if existing:
-            bounds = json.loads(existing)
-        else:
-            bounds = {"lower": None, "upper": None, "bot_position": None, "timestamp": None}
-        
-        # Update lower bound based on bot position
-        # Lower bound = max(0, bot_position - tolerance)
-        new_lower = max(0, bot_position - self.bound_tolerance)
-        
-        # Only update if new lower bound is higher (train moved forward)
-        if bounds["lower"] is None or new_lower > bounds["lower"]:
-            bounds["lower"] = new_lower
-        
-        # Update upper bound if scheduled position provided
-        if scheduled_position is not None:
-            bounds["upper"] = scheduled_position + self.bound_tolerance
-        
-        # Store bot position and timestamp
-        bounds["bot_position"] = bot_position
-        bounds["timestamp"] = timestamp or int(time.time())
-        
-        # Save with 10-hour TTL
-        self.redis.set(bounds_key, json.dumps(bounds), ex=self.last_known_ttl)
+        ts = timestamp or int(time.time())
+
+        def _apply(pipe):
+            existing = pipe.get(bounds_key)
+            if existing:
+                bounds = json.loads(existing)
+            else:
+                bounds = {"lower": None, "upper": None, "bot_position": None, "timestamp": None}
+
+            # Update lower bound based on bot position
+            # Lower bound = max(0, bot_position - tolerance)
+            new_lower = max(0, bot_position - self.bound_tolerance)
+
+            # Only update if new lower bound is higher (train moved forward)
+            if bounds["lower"] is None or new_lower > bounds["lower"]:
+                bounds["lower"] = new_lower
+
+            # Update upper bound if scheduled position provided
+            if scheduled_position is not None:
+                bounds["upper"] = scheduled_position + self.bound_tolerance
+
+            # Store bot position and timestamp
+            bounds["bot_position"] = bot_position
+            bounds["timestamp"] = ts
+
+            pipe.multi()
+            pipe.set(bounds_key, json.dumps(bounds), ex=self.last_known_ttl)
+
+        self.redis.transaction(_apply, bounds_key)
     
     def _validate_position_against_bounds(self, train_id: str, position: float, 
                                           scheduled_position: float = None) -> Tuple[bool, str]:

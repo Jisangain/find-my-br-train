@@ -193,7 +193,6 @@ def generate_sqlite_db(data: dict, current_revision: int, data_hashes: dict, ver
         "first_open_notice",
         "app_update_notice",
         "data_update_notice",
-        "location_improver"
     ]
     
     metadata_to_insert = []

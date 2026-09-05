@@ -13,6 +13,12 @@ GITHUB_SECRET = os.getenv("GITHUB_SECRET", "").encode()
 
 def verify_github_signature(request_body: bytes, signature_header: str) -> bool:
     """Verify GitHub webhook signature"""
+    # Fail closed: if the server has no configured secret, an empty HMAC key
+    # would make every signature trivially forgeable, so refuse everything
+    # instead of silently trusting an unconfigured deployment.
+    if not GITHUB_SECRET:
+        return False
+
     if not signature_header or not signature_header.startswith("sha256="):
         return False
 
@@ -27,7 +33,7 @@ async def github_webhook(request: Request):
     """Handle GitHub webhook for auto-deployment"""
     signature = request.headers.get("X-Hub-Signature-256")
     body = await request.body()
-    
+
     if not verify_github_signature(body, signature):
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Invalid signature")
     

@@ -8,6 +8,16 @@ from typing import Dict, List, Optional, Tuple
 from zoneinfo import ZoneInfo
 import redis
 
+from . import gps_log
+from .position_filter import (
+    build_cumulative_km,
+    position_to_km,
+    check_teleport,
+    check_schedule_ceiling,
+    cluster_pings_by_km,
+    position_to_delay_minutes,
+)
+
 # Bangladesh timezone - train schedules are in this timezone
 BD_TZ = ZoneInfo("Asia/Dhaka")
 
@@ -17,29 +27,46 @@ class RedisTrainTracker:
     Redis-based train position tracker.
     - Stores last ping from each user per train
     - Auto-expires user data after 10 minutes (TTL)
-    - Pre-calculates and caches median position when new data arrives
+    - Pre-calculates and caches a position when new data arrives, using
+      distance-clustered consensus when several reports disagree
     - Stores last known position for 10 hours (fallback when no active users)
-    - Trusted "bot" callers (authenticated via a shared secret, see urls/positions.py) provide accurate bounds
-    - Validates user positions against bot bounds
+    - Every ping - bot or user - is run through the same plausibility filter
+      (functions/position_filter.py): journey-active window, a real-km
+      teleport/speed check against the train's last known position, and a
+      loose "can't be ahead of schedule" ceiling. An authenticated "bot"
+      caller (see urls/positions.py) is a trusted *identity*, not a trusted
+      *position* - it gets no bypass.
     - Calculates scheduled position automatically from train data
     - Persists across server restarts (stored in Redis)
     - Data validity: positions older than 10 hours are considered invalid
+    - Logs every accepted/rejected ping to a local SQLite DB (gps_log.py) as
+      training data for a future ML-based fake-GPS classifier
     """
-    
+
     def __init__(self, host: str = "localhost", port: int = 6379, db: int = 0,
                  ttl_seconds: int = 600, last_known_ttl: int = 36000):
         self.redis = redis.Redis(host=host, port=port, db=db, decode_responses=True)
         self.ttl = ttl_seconds            # 10 minutes for active user data
         self.last_known_ttl = last_known_ttl  # 10 hours for last known position/bot data
         self.max_valid_age = 36000        # 10 hours in seconds - data older than this is invalid
-        self.bound_tolerance = 0.50       # Tolerance for bounds validation
         self.pre_departure_window = 30    # Minutes before scheduled departure that pings are accepted
         self.max_delay_allowance = 480    # Minutes past scheduled arrival that pings are still accepted
+
+        # Plausibility-filter tuning (see functions/position_filter.py). These
+        # are deliberately generous: false-accepts get cleaned up by the next
+        # real report, false-rejects lock a real passenger out of the feature.
+        self.max_train_speed_kmh = 130.0      # Generous ceiling for BR intercity speeds
+        self.position_slack_km = 1.0          # GPS jitter + multi-bogie spread + interpolation error
+        self.schedule_ceiling_slack_km = 5.0  # Loose "ahead of schedule" sanity ceiling
+        self.cluster_tolerance_km = 1.5       # Reports within this of each other count as agreeing
+
         self.train_data = None            # Reference to train schedule data
-    
+        self._cum_km_cache: Dict[str, Optional[List[float]]] = {}  # train_id -> cumulative km per stop
+
     def set_train_data(self, data: Dict):
         """Set reference to train schedule data for scheduled position calculations"""
         self.train_data = data
+        self._cum_km_cache = {}  # Route/schedule may have changed - drop cached distances
     
     def _get_station_times(self, train_id: str) -> Optional[list]:
         """
@@ -198,36 +225,97 @@ class RedisTrainTracker:
         elif next_station_idx is not None:
             # Before first scheduled station
             return 0.0
-        
+
         return None
-    
+
+    def _get_cumulative_km(self, train_id: str) -> Optional[List[float]]:
+        """
+        Cumulative real-world distance (km) at each of this train's type-1
+        stops, used to convert the abstract "position" unit into a physically
+        meaningful scale for the teleport/speed check. Cached per train_id
+        until the next set_train_data() call (route/schedule reload).
+        """
+        train_id = str(train_id)
+        if train_id in self._cum_km_cache:
+            return self._cum_km_cache[train_id]
+
+        cum_km = None
+        if self.train_data:
+            stations = self.train_data.get("tid_to_stations", {}).get(train_id)
+            sid_to_sloc = self.train_data.get("sid_to_sloc", {})
+            if stations:
+                cum_km = build_cumulative_km(stations, sid_to_sloc)
+
+        self._cum_km_cache[train_id] = cum_km
+        return cum_km
+
+    def _get_reference_position(self, train_id: str, now: int) -> Optional[Tuple[float, int]]:
+        """
+        The train's best currently-known (position, timestamp), used as the
+        anchor for the teleport/speed check on the *next* incoming ping. Tries
+        the pre-calculated live cache first, then the last-known fallback.
+        Returns None if there's nothing usable (or it's aged past validity) -
+        i.e. this is the first ping of a fresh journey, so there's nothing to
+        compare against yet.
+        """
+        live_data = self.redis.get(f"train:{train_id}:cached_live")
+        if live_data:
+            cached = json.loads(live_data)
+            if now - cached["timestamp"] <= self.max_valid_age:
+                return cached["position"], cached["timestamp"]
+
+        last_known = self._get_last_known_position(train_id)
+        if last_known and now - last_known["timestamp"] <= self.max_valid_age:
+            return last_known["position"], last_known["timestamp"]
+
+        return None
+
     def push(self, train_id: str, user_id: str, position: float, timestamp: int,
              is_bot: bool = False) -> Tuple[bool, str]:
         """
-        Store user's latest position update for a train.
+        Store a user's latest position update for a train.
         Only keeps the last update per user (overwrites previous).
         Auto-expires after TTL.
 
         `is_bot` must be determined by the caller from an authenticated source
         (a shared bot secret), never from the client-supplied user_id - that
-        string is fully attacker-controlled and must not grant trust on its own.
-        Trusted (bot) callers set bounds; regular users are validated against
-        those bounds. Scheduled position is calculated automatically from
-        train data.
+        string is fully attacker-controlled and must not grant trust on its
+        own. It only affects storage TTL and the SQLite log tag below - it is
+        NOT a validation bypass. Bot pings run through exactly the same
+        journey-active window, teleport/speed check, and schedule ceiling as
+        user pings (see functions/position_filter.py). Scheduled position is
+        calculated automatically from train data.
+
+        Every ping - accepted or rejected - is logged to a local SQLite DB
+        (functions/gps_log.py) as training data for a future ML classifier.
 
         Returns: (success: bool, message: str)
         """
+        received_at = int(time.time())
+
         # Convert timestamp from milliseconds to seconds if needed
         if timestamp > 2500000000:
             timestamp = int(timestamp / 1000)
-        
+
+        def _log(accepted: bool, reason: str = "", **extra):
+            try:
+                gps_log.log_update(
+                    received_at=received_at, train_id=str(train_id), user_id=user_id,
+                    is_bot=is_bot, position=position, timestamp=timestamp,
+                    accepted=accepted, reject_reason=reason, **extra,
+                )
+            except Exception as e:
+                print(f"Warning: GPS log call failed: {e}")
+
         # Reject future timestamps (allow up to 60 seconds tolerance for clock drift)
-        current_time = int(time.time())
+        current_time = received_at
         max_future_tolerance = 60  # seconds
         if timestamp > current_time + max_future_tolerance:
             future_diff = timestamp - current_time
-            return False, f"Timestamp rejected: {future_diff}s in the future (clock drift?)"
-            
+            reason = f"Timestamp rejected: {future_diff}s in the future (clock drift?)"
+            _log(False, reason)
+            return False, reason
+
         # Reject illegal position values exceeding maximum possible type-1 index
         if self.train_data:
             tid_to_stations = self.train_data.get("tid_to_stations", {})
@@ -236,40 +324,94 @@ class RedisTrainTracker:
                 type1_count = sum(1 for s in stations if len(s) > 1 and s[1] == 1)
                 max_pos = max(0, type1_count - 1)
                 if position > max_pos + 0.99:
-                    return False, f"Illegal position {position} exceeds maximum valid position {max_pos} for train {train_id}"
-        
-        # Calculate scheduled position for bounds
+                    reason = f"Illegal position {position} exceeds maximum valid position {max_pos} for train {train_id}"
+                    _log(False, reason)
+                    return False, reason
+
+        # Reject pings outside the scheduled journey window. Without this,
+        # passengers waiting at the origin station publish "live at position
+        # 0" hours before the train actually departs. Applies to bots too.
+        active, reason = self._is_journey_active(train_id, timestamp)
+        if not active:
+            _log(False, reason)
+            return False, reason
+
         scheduled_position = self._calculate_scheduled_position(train_id, timestamp)
+        cum_km = self._get_cumulative_km(train_id)
+        position_km = position_to_km(cum_km, position) if cum_km else None
+        scheduled_km = (
+            position_to_km(cum_km, scheduled_position)
+            if (cum_km and scheduled_position is not None) else None
+        )
 
-        # If this is a bot user, update the bounds first
-        if is_bot:
-            self._update_bot_bounds(train_id, position, scheduled_position, timestamp)
+        reference = self._get_reference_position(train_id, current_time)
+        reference_km = None
+        reference_age_seconds = None
+        if reference and cum_km:
+            ref_position, ref_ts = reference
+            reference_km = position_to_km(cum_km, ref_position)
+            # Absolute difference, not a directional one: a late-arriving ping
+            # can legitimately describe a moment *before* the current
+            # reference (out-of-order delivery), in which case what matters
+            # is still "how much real time separates these two observations".
+            reference_age_seconds = abs(timestamp - ref_ts)
+
+        delay_minutes = None
+        station_times = self._get_station_times(train_id)
+        if station_times:
+            delay_minutes = position_to_delay_minutes(
+                station_times, position, self._current_bd_minutes(timestamp)
+            )
+
+        log_extra = dict(
+            scheduled_position=scheduled_position, position_km=position_km,
+            scheduled_km=scheduled_km, reference_km=reference_km,
+            reference_age_seconds=reference_age_seconds, delay_minutes=delay_minutes,
+        )
+
+        if position_km is not None:
+            # Teleport/speed check: is this plausible given how far the train
+            # could physically have travelled since it was last seen? No-op
+            # (always passes) if there's no usable reference yet.
+            ok, implied_speed, teleport_reason = check_teleport(
+                position_km, reference_km, reference_age_seconds,
+                self.max_train_speed_kmh, self.position_slack_km,
+            )
+            log_extra["implied_speed_kmh"] = implied_speed
+            if not ok:
+                _log(False, teleport_reason, **log_extra)
+                return False, teleport_reason
+
+            # Loose sanity ceiling: can't be ahead of the timetable. Doesn't
+            # catch a delayed train reporting a merely "on schedule" fake
+            # position - that gap can only close via the teleport check once
+            # a real reference exists.
+            ok, ceiling_reason = check_schedule_ceiling(
+                position_km, scheduled_km, self.schedule_ceiling_slack_km
+            )
+            if not ok:
+                _log(False, ceiling_reason, **log_extra)
+                return False, ceiling_reason
         else:
-            # Reject user pings outside the scheduled journey window. Without this,
-            # passengers waiting at the origin station publish "live at position 0"
-            # hours before the train actually departs.
-            active, reason = self._is_journey_active(train_id, timestamp)
-            if not active:
-                return False, reason
+            # No route/coordinate data for this train - can't convert to km,
+            # so the physical checks above can't run. Fall through and accept
+            # (matches the existing "no schedule data - can't gate" stance
+            # taken elsewhere for trains we don't have full data for).
+            log_extra["implied_speed_kmh"] = None
 
-            # Validate position against bounds for non-bot users
-            valid, reason = self._validate_position_against_bounds(train_id, position, scheduled_position)
-            if not valid:
-                return False, reason
-        
         ping = {
             "pos": position,
             "ts": timestamp
         }
-        
+
         user_key = f"train:{train_id}:user:{user_id}:last"
         active_users_key = f"train:{train_id}:active_users"
         active_trains_key = "active_trains"
         all_trains_key = "all_trains_with_history"
-        
+
         # Use longer TTL for bot users
         user_ttl = self.last_known_ttl if is_bot else self.ttl
-        
+
         # Pipeline for atomic operations (single network roundtrip)
         pipe = self.redis.pipeline()
         pipe.set(user_key, json.dumps(ping), ex=user_ttl)  # Store ping with appropriate TTL
@@ -280,12 +422,14 @@ class RedisTrainTracker:
         pipe.sadd(all_trains_key, train_id)                # Track all trains with history
         pipe.expire(all_trains_key, self.last_known_ttl)   # 10 hour expiry
         pipe.execute()
-        
+
         # Pre-calculate and cache the current position for this train
         self._update_cached_position(train_id)
-        
+
+        _log(True, **log_extra)
         return True, "Position updated"
-    
+
+
     def _update_cached_position(self, train_id: str):
         """
         Pre-calculate and cache the current position for a train.
@@ -323,11 +467,30 @@ class RedisTrainTracker:
         
         if not pings:
             return
-        
+
+        # How many people are actually reporting right now - reported to the
+        # app as-is, regardless of whether some of them get excluded as
+        # outliers below (that's about which position to trust, not about
+        # under-reporting how many people are engaged).
+        total_active_users = len(pings)
+
+        # When several reports disagree, trust the largest mutually-agreeing
+        # cluster (by real-world km) and discard the rest as outliers, rather
+        # than averaging a lone fake/mistaken report in with genuine ones.
+        # With 0-1 pings (the common case for this app) there's nothing to
+        # cluster and this is a no-op.
+        cum_km = self._get_cumulative_km(train_id)
+        if cum_km and len(pings) > 1:
+            kms = [position_to_km(cum_km, p["pos"]) for p in pings]
+            clusters = cluster_pings_by_km(kms, self.cluster_tolerance_km)
+            if len(clusters) > 1:
+                best = max(clusters, key=lambda c: (len(c), max(pings[i]["ts"] for i in c)))
+                pings = [pings[i] for i in best]
+
         # Calculate final position using weighted priority based on update age
         sum_pos_weight = 0.0
         sum_weights = 0.0
-        
+
         for p in pings:
             time_diff_min = (current_time - p["ts"]) / 60.0
             
@@ -369,7 +532,7 @@ class RedisTrainTracker:
         live_data = {
             "position": final_position,
             "timestamp": max_timestamp,
-            "active_user": len(pings),
+            "active_user": total_active_users,
             "cached_at": current_time
         }
         
@@ -386,90 +549,26 @@ class RedisTrainTracker:
         pipe.set(last_known_key, json.dumps(last_known_data), ex=self.last_known_ttl)
         pipe.execute()
     
-    def _update_bot_bounds(self, train_id: str, bot_position: float,
-                           scheduled_position: float = None, timestamp: int = None):
-        """
-        Update bounds for a train based on bot data.
-        - Lower bound: max(0, bot_position - 0.50) - train can't be behind this
-        - Upper bound: scheduled_position + 0.50 - train can't be ahead of schedule
-
-        Bot bounds are stored with 10-hour TTL.
-
-        Uses WATCH/MULTI so concurrent bot updates for the same train can't
-        race each other (redis-py's `transaction()` retries automatically if
-        another client changes `bounds_key` between the read and the write).
-        """
-        bounds_key = f"train:{train_id}:bounds"
-        ts = timestamp or int(time.time())
-
-        def _apply(pipe):
-            existing = pipe.get(bounds_key)
-            if existing:
-                bounds = json.loads(existing)
-            else:
-                bounds = {"lower": None, "upper": None, "bot_position": None, "timestamp": None}
-
-            # Update lower bound based on bot position
-            # Lower bound = max(0, bot_position - tolerance)
-            new_lower = max(0, bot_position - self.bound_tolerance)
-
-            # Only update if new lower bound is higher (train moved forward)
-            if bounds["lower"] is None or new_lower > bounds["lower"]:
-                bounds["lower"] = new_lower
-
-            # Update upper bound if scheduled position provided
-            if scheduled_position is not None:
-                bounds["upper"] = scheduled_position + self.bound_tolerance
-
-            # Store bot position and timestamp
-            bounds["bot_position"] = bot_position
-            bounds["timestamp"] = ts
-
-            pipe.multi()
-            pipe.set(bounds_key, json.dumps(bounds), ex=self.last_known_ttl)
-
-        self.redis.transaction(_apply, bounds_key)
-    
-    def _validate_position_against_bounds(self, train_id: str, position: float, 
-                                          scheduled_position: float = None) -> Tuple[bool, str]:
-        """
-        Validate a user's reported position against bounds.
-        
-        - Upper bound: Always enforced based on scheduled_position + tolerance
-          (train can't be ahead of schedule)
-        - Lower bound: Only enforced if bot has set it
-          (train can't be behind bot's reported position)
-        
-        Returns: (valid: bool, reason: str)
-        """
-        # Always check upper bound against scheduled position (train can't be ahead of schedule)
-        if scheduled_position is not None:
-            upper_bound = scheduled_position + self.bound_tolerance
-            if position > upper_bound:
-                return False, f"Position {position:.2f} exceeds scheduled position {scheduled_position:.2f} (upper bound {upper_bound:.2f})"
-        
-        # Check lower bound from bot data (if exists)
-        bounds_key = f"train:{train_id}:bounds"
-        bounds_data = self.redis.get(bounds_key)
-        
-        if bounds_data:
-            bounds = json.loads(bounds_data)
-            lower_bound = bounds.get("lower")
-            
-            # Check lower bound (train can't be behind bot position - tolerance)
-            if lower_bound is not None and position < lower_bound:
-                return False, f"Position {position:.2f} is below lower bound {lower_bound:.2f}"
-        
-        return True, "Position within bounds"
-    
     def get_train_bounds(self, train_id: str) -> Optional[Dict]:
-        """Get current bounds for a train."""
-        bounds_key = f"train:{train_id}:bounds"
-        data = self.redis.get(bounds_key)
-        if data:
-            return json.loads(data)
-        return None
-    
+        """
+        Debug/diagnostic endpoint data: the reference position and age that
+        the next incoming ping for this train would be teleport-checked
+        against (see _get_reference_position / push). Not used by the app;
+        kept for the same `/bounds/{train_id}` URL for compatibility with any
+        external tooling.
+
+        This replaces the old per-bot "bounds" mechanism (a lower bound only
+        a bot could raise, an upper bound pinned to the static schedule) with
+        the same reference the real filter now uses, which - unlike the old
+        one - is grounded in actual recent reports rather than the timetable,
+        and isn't bot-specific.
+        """
+        reference = self._get_reference_position(train_id, int(time.time()))
+        if reference is None:
+            return None
+        position, ts = reference
+        return {"reference_position": position, "reference_timestamp": ts}
+
     def get_train_position(self, train_id: str) -> Optional[Dict]:
         """
         Get position for a train - serves directly from pre-calculated cache.

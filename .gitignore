@@ -6,3 +6,9 @@ __pycache__/
 *.pyd
 scrap.py
 two_train_routes.json
+
+# Raw per-ping GPS log (functions/gps_log.py) - keeps growing, not curated
+# content like the sqlite_db/ exports, and not meant to live in git history.
+gps_updates.db
+gps_updates.db-wal
+gps_updates.db-shm

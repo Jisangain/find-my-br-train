@@ -274,7 +274,8 @@ async def get_current_positions_handler(train_ids: str):
 
 @app.get("/bounds/{train_id}")
 async def get_train_bounds_handler(train_id: str):
-    """Get current bounds for a train (set by bot users)"""
+    """Debug endpoint: the reference position new pings for this train are
+    currently being teleport-checked against"""
     return positions.get_train_bounds(train_id, tracker)
 
 

@@ -38,11 +38,12 @@ def get_current_positions(train_ids: str, tracker) -> Dict:
 
 
 def get_train_bounds(train_id: str, tracker) -> Dict:
-    """Get current bounds for a train (set by bot users)"""
+    """Debug endpoint: the reference position new pings for this train are
+    currently being teleport-checked against (see RedisTrainTracker.push)."""
     bounds = tracker.get_train_bounds(train_id)
     if bounds:
         return {"train_id": train_id, "bounds": bounds}
-    return {"train_id": train_id, "bounds": None, "message": "No bounds set"}
+    return {"train_id": train_id, "bounds": None, "message": "No reference position yet"}
 
 
 def receive_update(update: LocationUpdate, tracker):

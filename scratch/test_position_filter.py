@@ -313,6 +313,30 @@ def run_test():
     )
     check(f"normal operation continues after re-anchoring ({msg})", ok)
 
+    # --- 9. Someone standing at a station with tracking on (not actually
+    #         riding) reports the same near-station position indefinitely.
+    #         That must never "age into" a protected reference the way a
+    #         real, progressing trend does - otherwise the first real rider
+    #         who boards later gets rejected instead of the bystander. ---
+    clean()
+    tracker.push(TRAIN_ID, "userStation", 5.0, ts(180), is_bot=False)  # exact station index
+    tracker.push(TRAIN_ID, "userStation", 5.0, ts(185), is_bot=False)  # unchanged, 5 min later
+    tracker.push(TRAIN_ID, "userStation", 5.0, ts(200), is_bot=False)  # still unchanged, 20 min in
+
+    ref = tracker._get_reference_position(TRAIN_ID, ts(200))
+    check(
+        f"confidence never ages while parked at a station (established_at stayed at ts(200), got age="
+        f"{ts(200) - ref['established_at']}s)",
+        ref is not None and ref["established_at"] == ts(200),
+    )
+
+    # A real, different rider reports a genuine ~17km jump a minute later -
+    # would fail teleport enforcement outright if the station-parked value
+    # had been allowed to become "confirmed" over those 20 minutes; must be
+    # accepted instead, since it never actually confirmed.
+    ok, msg = tracker.push(TRAIN_ID, "userRealRider", 6.0, ts(201), is_bot=False)
+    check(f"a real rider's report overrides the never-confirmed station-parked value ({msg})", ok)
+
     clean()
     print(f"\n{'✅ All checks passed' if failures == 0 else f'❌ {failures} check(s) FAILED'}")
     sys.exit(1 if failures else 0)

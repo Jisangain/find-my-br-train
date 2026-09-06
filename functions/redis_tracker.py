@@ -100,6 +100,15 @@ class RedisTrainTracker:
         self.shadow_buffer_size = 5
         self.shadow_min_consistent_size = 3
         self.shadow_min_diversity_seconds = 600
+        # Someone standing at a station with "I'm inside" switched on (not
+        # actually riding - the app already down-weights this in the
+        # multi-reporter average below) reports the same near-station
+        # position indefinitely. Trivially "continuing" its own last value
+        # (nothing moved, so nothing contradicted it either) would otherwise
+        # let it accumulate confirmation_grace_seconds confidence just like
+        # a real, progressing trend does - then it blocks the train's real
+        # movement once someone actually boards. See _update_cached_position.
+        self.near_station_confidence_epsilon = 0.02
 
         # Per-train historical baselines (Welford running mean/stddev over
         # every *accepted, genuinely plausible* ping for that train - see
@@ -844,7 +853,16 @@ class RedisTrainTracker:
                 # No route data to judge continuity in km - don't penalize
                 # confidence for a train we can't reason about physically.
                 continuing = True
-            if continuing:
+
+            # A position sitting at/near an exact station index never gets
+            # to "carry forward" confidence, even if it trivially continues
+            # itself (delta ~0) - see near_station_confidence_epsilon above.
+            # It still gets displayed and stored normally; it just can't age
+            # into a protected reference the way genuine, progressing
+            # movement does, so a later real rider isn't locked out by a
+            # bystander who never actually moved.
+            at_station = abs(final_position - round(final_position)) <= self.near_station_confidence_epsilon
+            if continuing and not at_station:
                 established_at = old_established_at
 
         # Store as cached live position (short TTL, refreshed on each update)

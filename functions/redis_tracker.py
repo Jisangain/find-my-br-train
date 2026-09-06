@@ -88,6 +88,19 @@ class RedisTrainTracker:
         self.backward_drift_epsilon_km = 0.3
         self.backward_drift_streak_limit = 3
 
+        # Escape valve for a *stuck* reference (see _check_shadow_consensus):
+        # once confirmed, a reference can never be dislodged by elapsed time
+        # alone if it was simply wrong to begin with - the "impossible jump"
+        # only grows. A rolling buffer of recent teleport-rejections lets a
+        # run of mutually-consistent ones (an internally coherent trend that
+        # just happens to disagree with the stuck reference) out-vote it.
+        # Diversity requirement (2+ reporters, or the run's own time span)
+        # stops one identity from forcing a re-anchor by spamming a handful
+        # of fake values in quick succession.
+        self.shadow_buffer_size = 5
+        self.shadow_min_consistent_size = 3
+        self.shadow_min_diversity_seconds = 600
+
         # Per-train historical baselines (Welford running mean/stddev over
         # every *accepted, genuinely plausible* ping for that train - see
         # _update_train_stats), replacing flat universal constants with
@@ -378,6 +391,65 @@ class RedisTrainTracker:
 
         return None
 
+    def _check_shadow_consensus(self, train_id: str, position_km: float, timestamp: int,
+                                 user_id: str, effective_max_speed_kmh: float) -> bool:
+        """
+        Called only when a ping just failed the *enforced* teleport check
+        (see push()). Records this attempt in a small rolling buffer of
+        recent rejections for this train, then checks whether the most
+        recent run of them - walking backward from this one - tells one
+        mutually-consistent story on its own (each consecutive step
+        physically plausible relative to the one before it), regardless of
+        how far that story has drifted from the stuck official reference.
+
+        Requires shadow_min_consistent_size or more such entries, spanning
+        either 2+ distinct reporters or shadow_min_diversity_seconds on
+        their own - a single identity can't force a re-anchor by quickly
+        submitting a handful of fake-but-mutually-agreeing values.
+
+        Returns True if this ping should be accepted and the reference
+        cleared so it restarts fresh (confidence resets to zero - the new
+        anchor has to earn its own confirmation before it can lock out the
+        next challenger too, same as any other reference).
+        """
+        key = f"train:{train_id}:shadow_rejects"
+        self.redis.lpush(key, json.dumps({"km": position_km, "ts": timestamp, "uid": user_id}))
+        self.redis.ltrim(key, 0, self.shadow_buffer_size - 1)
+        self.redis.expire(key, self.max_valid_age)
+
+        buffer = sorted(
+            (json.loads(raw) for raw in self.redis.lrange(key, 0, -1)),
+            key=lambda e: e["ts"],
+        )
+
+        # Walk backward from the newest entry, extending the tail only
+        # while each next-older entry is plausible relative to the current
+        # start of the tail - an old, unrelated bout of noise naturally
+        # breaks the chain instead of being folded in.
+        tail = [buffer[-1]]
+        for entry in reversed(buffer[:-1]):
+            ok, _, _ = check_teleport(
+                tail[0]["km"], entry["km"], abs(tail[0]["ts"] - entry["ts"]),
+                effective_max_speed_kmh, self.position_slack_km,
+            )
+            if not ok:
+                break
+            tail.insert(0, entry)
+
+        if len(tail) < self.shadow_min_consistent_size:
+            return False
+
+        distinct_reporters = len({e["uid"] for e in tail})
+        time_span_seconds = tail[-1]["ts"] - tail[0]["ts"]
+        if distinct_reporters < 2 and time_span_seconds < self.shadow_min_diversity_seconds:
+            return False
+
+        # Promoted: clear the stuck reference (this ping, once stored
+        # normally below, becomes a fresh - not yet confirmed - one) and
+        # this buffer, so a repeat challenge has to earn confirmation again.
+        self.redis.delete(f"train:{train_id}:cached_live", f"train:{train_id}:last_known", key)
+        return True
+
     def push(self, train_id: str, user_id: str, position: float, timestamp: int,
              is_bot: bool = False) -> Tuple[bool, str]:
         """
@@ -534,9 +606,22 @@ class RedisTrainTracker:
             )
             log_extra["implied_speed_kmh"] = implied_speed
             log_extra["teleport_enforced"] = enforce_teleport
+            log_extra["shadow_promoted"] = False
             if not teleport_ok and enforce_teleport:
-                _log(False, teleport_reason, **log_extra)
-                return False, teleport_reason
+                if self._check_shadow_consensus(
+                    train_id, position_km, timestamp, user_id, effective_max_speed_kmh
+                ):
+                    # A run of mutually-consistent, sufficiently independent
+                    # reports has out-voted the stuck reference - accept
+                    # this one instead of rejecting it (see
+                    # _check_shadow_consensus for why elapsed time alone
+                    # can never recover from a reference that was simply
+                    # wrong to begin with).
+                    log_extra["teleport_enforced"] = False
+                    log_extra["shadow_promoted"] = True
+                else:
+                    _log(False, teleport_reason, **log_extra)
+                    return False, teleport_reason
 
             # NOTE: an earlier version also hard-rejected here if a ping was
             # further along than "scheduled_position + a few km" (can't be
@@ -555,6 +640,7 @@ class RedisTrainTracker:
             # taken elsewhere for trains we don't have full data for).
             log_extra["implied_speed_kmh"] = None
             log_extra["teleport_enforced"] = None
+            log_extra["shadow_promoted"] = None
 
         user_key = f"train:{train_id}:user:{user_id}:last"
         # Use longer TTL for bot users

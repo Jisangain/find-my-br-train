@@ -268,6 +268,51 @@ def run_test():
         ok,
     )
 
+    # --- 8. Shadow consensus: escape valve for a *stuck* reference. Modeled
+    #         directly on a real production case - a bad reference got
+    #         "confirmed" (held long enough), and elapsed time alone could
+    #         never rescue it afterward (the required jump only grows). A
+    #         run of mutually-consistent rejections from the same single
+    #         source, spanning enough of its own time, should eventually
+    #         out-vote it and re-anchor. ---
+    clean()
+    tracker.push(TRAIN_ID, "userStuck", 1.0, ts(180), is_bot=False)  # becomes the reference
+    stuck_km = position_to_km(cum_km, 1.0)
+    trend_km = position_to_km(cum_km, 10.0)  # ~160km away - always implausible vs. the stuck ref
+
+    # Attempt 1: alone in the shadow buffer, not enough evidence yet.
+    ok, msg = tracker.push(TRAIN_ID, "userTrend", km_to_position(cum_km, trend_km), ts(190), is_bot=False)
+    check(f"trend attempt 1/3 still rejected vs. the stuck reference ({msg})", not ok)
+
+    # Attempt 2: small, self-consistent step forward from attempt 1 - still
+    # only 2 in the buffer, still not enough.
+    ok, msg = tracker.push(
+        TRAIN_ID, "userTrend", km_to_position(cum_km, trend_km + 1.0), ts(196), is_bot=False
+    )
+    check(f"trend attempt 2/3 still rejected - not enough evidence yet ({msg})", not ok)
+
+    # Attempt 3: a third mutually-consistent step, and the run now spans
+    # ts(190)->ts(202) = 12 minutes on its own (over shadow_min_diversity_seconds),
+    # from a single source - should promote and get accepted.
+    ok, msg = tracker.push(
+        TRAIN_ID, "userTrend", km_to_position(cum_km, trend_km + 2.0), ts(202), is_bot=False
+    )
+    check(f"trend attempt 3/3 promoted and accepted, out-voting the stuck reference ({msg})", ok)
+
+    pos = tracker.get_train_position(TRAIN_ID)
+    check(
+        f"reference re-anchored to the trend (~{trend_km:.0f}km), not the old stuck value "
+        f"(~{stuck_km:.0f}km) (got {pos['position'] if pos else None})",
+        pos is not None and abs(position_to_km(cum_km, pos["position"]) - (trend_km + 2.0)) < 1.0,
+    )
+
+    # The system keeps working normally afterward - a further small step
+    # from the same source is accepted like any other.
+    ok, msg = tracker.push(
+        TRAIN_ID, "userTrend", km_to_position(cum_km, trend_km + 2.5), ts(203), is_bot=False
+    )
+    check(f"normal operation continues after re-anchoring ({msg})", ok)
+
     clean()
     print(f"\n{'✅ All checks passed' if failures == 0 else f'❌ {failures} check(s) FAILED'}")
     sys.exit(1 if failures else 0)

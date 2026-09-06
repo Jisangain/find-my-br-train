@@ -53,6 +53,7 @@ _MIGRATIONS = [
     "ALTER TABLE gps_updates ADD COLUMN teleport_enforced INTEGER",  # 1=enforced, 0=relaxed (unconfirmed reference), NULL=no route data
     "ALTER TABLE gps_updates ADD COLUMN backward_streak INTEGER",    # consecutive backward-trending reports from this same source, NULL=no route data
     "ALTER TABLE gps_updates ADD COLUMN delay_zscore REAL",          # delay_minutes vs. this train's own historical mean/stddev, NULL if too little history yet
+    "ALTER TABLE gps_updates ADD COLUMN shadow_promoted INTEGER",    # 1 = accepted by out-voting a stuck reference (see _check_shadow_consensus), else 0/NULL
 ]
 
 
@@ -92,6 +93,7 @@ def log_update(
     teleport_enforced: Optional[bool] = None,
     backward_streak: Optional[int] = None,
     delay_zscore: Optional[float] = None,
+    shadow_promoted: Optional[bool] = None,
 ) -> None:
     """Record one /sendupdate ping. Best-effort - never raises."""
     try:
@@ -103,8 +105,9 @@ def log_update(
                     received_at, train_id, user_id, is_bot, position, timestamp,
                     scheduled_position, position_km, scheduled_km, reference_km,
                     reference_age_seconds, implied_speed_kmh, delay_minutes,
-                    teleport_enforced, backward_streak, delay_zscore, accepted, reject_reason
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    teleport_enforced, backward_streak, delay_zscore, shadow_promoted,
+                    accepted, reject_reason
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     received_at, str(train_id), str(user_id) if user_id is not None else None,
@@ -113,6 +116,7 @@ def log_update(
                     reference_age_seconds, implied_speed_kmh, delay_minutes,
                     None if teleport_enforced is None else (1 if teleport_enforced else 0),
                     backward_streak, delay_zscore,
+                    None if shadow_promoted is None else (1 if shadow_promoted else 0),
                     1 if accepted else 0, reject_reason or None,
                 ),
             )

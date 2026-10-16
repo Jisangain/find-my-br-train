@@ -1,5 +1,5 @@
 {
-    "Revision": 152,
+    "Revision": 153,
     "online_user_update_delay": 10,
     "update_delay": 20,
     "persistence_notice": {
@@ -15,7 +15,7 @@
     },
     "first_open_notice": "",
     "app_update_notice": "",
-    "data_update_notice": "New trains added",
+    "data_update_notice": "Akkelpur as a stop in Chilahati express",
     "location_improver": false,
     "xsid_to_sloc": {
         "gazipur_left_1": [
@@ -20571,8 +20571,8 @@
             ],
             [
                 "Akkelpur",
-                0,
-                -1
+                1,
+                "23:05"
             ],
             [
                 "Jamalganj",
